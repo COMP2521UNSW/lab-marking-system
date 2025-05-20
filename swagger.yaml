@@ -1,0 +1,329 @@
+openapi: 3.0.9
+
+info:
+  title: COMP2521 Marking App API
+  description: |
+    API description for the new COMP2521 Marking App.
+  version: 0.1.0
+
+paths:
+  /login:
+    post:
+      summary: Logs a user in
+      tags:
+        - Auth
+      operationId: login
+      requestBody:
+        $ref: "#/components/requestBodies/Login"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        "403":
+          $ref: "#/components/responses/403Error"
+  
+  /logout:
+    post:
+      summary: Logs out an active user
+      tags:
+        - Auth
+      operationId: logout
+      parameters:
+        - $ref: "#/components/parameters/Token"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Empty"
+        "401":
+          $ref: "#/components/responses/401Error"
+  
+  /student/details:
+    get:
+      summary: Gets details about the currently logged in student
+      tags:
+        - Student
+      operationId: getFromToken
+      parameters:
+        - $ref: "#/components/parameters/Token"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+  
+  /student/{zid}:
+    get:
+      summary: Gets details about the given student
+      tags:
+        - Student
+      operationId: getFromId
+      parameters:
+        - $ref: "#/components/parameters/Token"
+        - $ref: "#/components/parameters/Zid"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+  
+  /student/request:
+    get:
+      summary: Get the marking requests for the currently logged in student
+      tags:
+        - Student
+      operationId: getMarkingRequests
+      parameters:
+        - $ref: "#/components/parameters/Token"
+      responses:
+        "200":
+          $ref: "#/components/responses/200MarkRequests"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+    post:
+      summary: Create a new lab marking request
+      tags:
+        - Student
+      operationId: requestMarking
+      parameters:
+        - $ref: "#/components/parameters/Token"
+      requestBody:
+        $ref: "#/components/requestBodies/MarkRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Empty"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+    put:
+      summary: Update a lab marking request
+      tags:
+        - Student
+      operationId: updateMarkingRequests
+      parameters:
+        - $ref: "#/components/parameters/Token"
+      requestBody:
+        $ref: "#/components/requestBodies/MarkRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Empty"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+    delete:
+      summary: Withdraw a lab marking request
+      tags:
+        - Student
+      operationId: withdrawMarkingRequests
+      parameters:
+        - $ref: "#/components/parameters/Token"
+      requestBody:
+        $ref: "#/components/requestBodies/WithdrawRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Empty"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+  
+  /requests:
+    get:
+      summary: Get the marking requests for a given lab
+      tags:
+        - MarkingRequests
+      operationId: getLabMarkingRequests
+      parameters:
+        - $ref: "#/components/parameters/Token"
+        - $ref: "#/components/parameters/Lab"
+      responses:
+        "200":
+          $ref: "#/components/responses/200MarkRequests"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+components:
+  schemas:
+    zid:
+      type: string
+      default: "z1234567"
+    token:
+      type: string
+      default: "23748"
+    labCode:
+      type: string
+      default: "T13A"
+    labExercise:
+      type: string
+      default: "lab04"
+    bool:
+      type: boolean
+      default: false
+    reason:
+      type: string
+      default: "reason"
+
+    Login:
+      type: object
+      properties:
+        zid:
+          $ref: "#/components/schemas/zid"
+        zpass:
+          type: string
+          default: "password"
+    Token:
+      properties:
+        token:
+          $ref: "#/components/schemas/token"
+    ErrorMessage:
+      type: object
+      properties:
+        error:
+          type: string
+          default: "Specific error message here"
+    Student:
+      type: object
+      properties:
+        zid:
+          type: string
+          default: "z1234567"
+        name:
+          type: string
+          default: "Andrew Taylor"
+        class:
+          $ref: "#/components/schemas/LabClass"
+    LabClass:
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/labCode"
+        room:
+          type: string
+          default: "Strings Lab"
+    MarkRequest:
+      type: object
+      properties:
+        labCode:
+          $ref: "#/components/schemas/labCode"
+        exerciseCodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/labExercise"
+    MarkingRequests:
+      type: object
+      properties:
+        requestForExercises:
+          type: array
+          items:
+            $ref: "#/components/schemas/IndividualMarkingRequest"
+    IndividualMarkingRequest:
+      type: object
+      properties:
+        studentId:
+          $ref: "#/components/schemas/zid"
+        exerciseCode:
+          $ref: "#/components/schemas/labExercise"
+        labCode:
+          $ref: "#/components/schemas/labCode"
+        isMarked:
+          $ref: "#/components/schemas/bool"
+    WithdrawRequest:
+      type: object
+      properties:
+        exerciseCode:
+          $ref: "#/components/schemas/labExercise"
+        withdrawReason:
+          $ref: "#/components/schemas/reason"
+    TutorRequest:
+      type: object
+      properties:
+        labCode:
+          $ref: "#/components/schemas/labCode"
+
+  parameters:
+    Token:
+      in: header
+      name: token
+      required: true
+      schema:
+        $ref: "#/components/schemas/token"
+    Zid:
+      in: path
+      name: zid
+      required: true
+      schema:
+        $ref: "#/components/schemas/zid"
+    Lab:
+      in: query
+      name: labCode
+      required: true
+      schema:
+        $ref: "#/components/schemas/labCode"
+
+  requestBodies:
+    Login:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Login"
+    MarkRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MarkRequest"
+    WithdrawRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/WithdrawRequest"
+  
+  responses:
+    200Empty:
+      description: "OK"
+      content:
+        application/json:
+          schema:
+            type: object
+    200MarkRequests:
+      description: "OK"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MarkingRequests"
+    401Error:
+      description: "Unauthorised - Token is empty or invalid"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessage"
+    403Error:
+      description: "Forbidden - Invalid permissions"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessage"
