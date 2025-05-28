@@ -174,7 +174,8 @@ paths:
         "403":
           $ref: "#/components/responses/403Error"
 
-    delete:
+  /marking/request/withdraw:
+    post:
       summary: Withdraw a lab marking request
       tags:
         - MarkingRequests
@@ -209,7 +210,7 @@ paths:
         "403":
           $ref: "#/components/responses/403Error"
 
-  /mark/{zid}/{labExercise}:
+  /mark/{zid}/{exerciseCode}:
     post:
       summary: Mark a student's lab marking request
       tags:
@@ -248,7 +249,8 @@ paths:
         "403":
           $ref: "#/components/responses/403Error"
 
-    delete:
+  /mark/{zid}/{exerciseCode}/decline:
+    post:
       summary: Decline a student's lab marking request
       tags:
         - MarkingRequests
@@ -285,7 +287,7 @@ paths:
         "403":
           $ref: "#/components/responses/403Error"
 
-  /mark/late/{zid}/{labExercise}/approve:
+  /mark/late/{zid}/{exerciseCode}/approve:
     post:
       summary: Approve a late marking submission
       tags:
@@ -303,7 +305,7 @@ paths:
         "403":
           $ref: "#/components/responses/403Error"
 
-  /mark/late/{zid}/{labExercise}/deny:
+  /mark/late/{zid}/{exerciseCode}/deny:
     post:
       summary: Deny a late marking submission
       tags:
