@@ -1,6 +1,5 @@
 openapi: 3.0.9
 
-
 info:
   title: COMP2521 Marking App API
   description: |
@@ -13,176 +12,139 @@ paths:
       summary: Logs a user in
       tags:
         - Auth
-      operationId: login
+      operationId: logIn
       requestBody:
-        $ref: "#/components/requestBodies/Login"
+        $ref: "#/components/requestBodies/LogIn"
+      security: []
+      responses:
+        "200":
+          $ref: "#/components/responses/200LogIn"
+        "401":
+          $ref: "#/components/responses/401Credentials"
+
+  /logout:
+    post:
+      summary: Logs a user out
+      tags:
+        - Auth
+      operationId: logOut
+      responses:
+        "200":
+          $ref: "#/components/responses/200LogOut"
+        "401":
+          $ref: "#/components/responses/401Error"
+
+  /user:
+    get:
+      summary: Get current user
+      tags:
+        - Auth
+      operationId: getUser
+      responses:
+        "200":
+          $ref: "#/components/responses/200SessionUser"
+
+  /activities/all:
+    get:
+      summary: Get all activities
+      tags:
+        - Activities
+      operationId: getAllActivities
       responses:
         "200":
           description: "OK"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Token"
+                $ref: "#/components/schemas/ActivityAsTutor[]"
+
+  /activities/active:
+    get:
+      summary: Get active activities
+      tags:
+        - Activities
+      operationId: getActiveActivities
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActivityAsStudent[]"
+
+  /classes/all:
+    get:
+      summary: Get all classes
+      tags:
+        - Classes
+      operationId: getAllClasses
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Classes"
+
+  /classes/active:
+    get:
+      summary: Get active classes
+      tags:
+        - Classes
+      operationId: getActiveClasses
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Classes"
+
+  /requests/self:
+    get:
+      summary: Get open requests made by the current user
+      tags:
+        - Marking Requests
+      operationId: getActiveRequestsForSelf
+      responses:
+        "200":
+          $ref: "#/components/responses/200RequestDetails"
+  
+  /requests:
+    get:
+      summary: Get all recent marking requests for a given class
+      tags:
+        - Marking Requests
+      operationId: getRequestsByClass
+      parameters:
+        - $ref: "#/components/parameters/ClassCode"
+      responses:
+        "200":
+          $ref: "#/components/responses/200ClassRequests"
+        "401":
+          $ref: "#/components/responses/401Error"
         "403":
           $ref: "#/components/responses/403Error"
-
-  /logout:
+    
     post:
-      summary: Logs out an active user
+      summary: Create or edit marking requests
       tags:
-        - Auth
-      operationId: logout
-      parameters:
-        - $ref: "#/components/parameters/Token"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Empty"
-        "401":
-          $ref: "#/components/responses/401Error"
-
-  /student/details:
-    get:
-      summary: Gets details about the currently logged in student
-      tags:
-        - Student
-      operationId: getFromToken
-      parameters:
-        - $ref: "#/components/parameters/Token"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Student"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /student/{zid}:
-    get:
-      summary: Gets details about the given student
-      tags:
-        - Student
-      operationId: getFromId
-      parameters:
-        - $ref: "#/components/parameters/Token"
-        - $ref: "#/components/parameters/Zid"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Student"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /student/search:
-    get:
-      summary: Gets details about students in search  
-      tags:
-        - Student
-      operationId: search
-      parameters:
-        - $ref: "#/components/parameters/Token"
-        - $ref: "#/components/parameters/Search"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Students"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /student/{zid}/marks:
-    get:
-      summary: See all marks a student has received
-      tags:
-        - Student
-      operationId: viewMarks
-      parameters:
-        - $ref: "#/components/parameters/Token"
-        - $ref: "#/components/parameters/Zid"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Marks"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /student/{zid}/logs:
-    get:
-      summary: See all marking logs for a student
-      tags:
-        - Student
-      operationId: viewMarkingLogs
-      parameters:
-        - $ref: "#/components/parameters/Token"
-        - $ref: "#/components/parameters/Zid"
-      responses:
-        "200":
-          $ref: "#/components/responses/200MarkLogs"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /marking/self:
-    get:
-      summary: Get the marking requests for the currently logged in student
-      tags:
-        - MarkingRequests
-      operationId: getMarkingRequests
-      parameters:
-        - $ref: "#/components/parameters/Token"
-      responses:
-        "200":
-          $ref: "#/components/responses/200MarkRequests"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /marking/request:
-    post:
-      summary: Create a new lab marking request
-      tags:
-        - MarkingRequests
-      operationId: requestMarking
-      parameters:
-        - $ref: "#/components/parameters/Token"
+        - Marking Requests
+      operationId: updateRequests
       requestBody:
-        $ref: "#/components/requestBodies/MarkRequest"
+        $ref: "#/components/requestBodies/UpdateRequests"
       responses:
         "200":
           $ref: "#/components/responses/200Empty"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
 
-    put:
-      summary: Update a lab marking request
-      tags:
-        - MarkingRequests
-      operationId: updateMarkingRequests
-      parameters:
-        - $ref: "#/components/parameters/Token"
-      requestBody:
-        $ref: "#/components/requestBodies/MarkRequest"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Empty"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /marking/request/withdraw:
+  /requests/{id}/withdraw:
     post:
-      summary: Withdraw a lab marking request
+      summary: Withdraw a marking request
       tags:
-        - MarkingRequests
-      operationId: withdrawMarkingRequests
+        - Marking Requests
+      operationId: withdrawRequest
       parameters:
-        - $ref: "#/components/parameters/Token"
+        - $ref: "#/components/parameters/RequestId"
       requestBody:
         $ref: "#/components/requestBodies/WithdrawRequest"
       responses:
@@ -193,186 +155,166 @@ paths:
         "403":
           $ref: "#/components/responses/403Error"
 
-  /requests:
-    get:
-      summary: Get the marking requests for a given lab
+  /requests/{id}/decline:
+    post:
+      summary: Decline a marking request
       tags:
-        - MarkingRequests
-      operationId: getLabMarkingRequests
+        - Marking Requests
+      operationId: declineRequest
       parameters:
-        - $ref: "#/components/parameters/Token"
-        - $ref: "#/components/parameters/LabQuery"
+        - $ref: "#/components/parameters/RequestId"
+      requestBody:
+        $ref: "#/components/requestBodies/DeclineRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Empty"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+  /requests/{id}/mark:
+    post:
+      summary: Mark a marking request
+      tags:
+        - Marking Requests
+      operationId: markRequest
+      parameters:
+        - $ref: "#/components/parameters/RequestId"
+      requestBody:
+        $ref: "#/components/requestBodies/Mark"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Empty"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+  /requests/{id}/amend:
+    post:
+      summary: Amend the mark for a recently marked request
+      tags:
+        - Marking Requests
+      operationId: amendMark
+      parameters:
+        - $ref: "#/components/parameters/RequestId"
+      requestBody:
+        $ref: "#/components/requestBodies/Mark"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Empty"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+  /requests/manual:
+    get:
+      summary: Get all manual marking requests
+      tags:
+        - Marking Requests
+      operationId: getAllManualRequests
+      responses:
+        "200":
+          $ref: "#/components/responses/200ManualRequests"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+    
+    post:
+      summary: Create a manual marking request
+      tags:
+        - Marking Requests
+      operationId: createManualRequest
+      requestBody:
+        $ref: "#/components/requestBodies/CreateManualRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Empty"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+  /requests/manual/{id}/approve:
+    get:
+      summary: Approve a manual marking request
+      tags:
+        - Marking Requests
+      operationId: approveManualRequest
+      parameters:
+        - $ref: "#/components/parameters/RequestId"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Empty"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+  /requests/manual/{id}/deny:
+    get:
+      summary: Deny a manual marking request
+      tags:
+        - Marking Requests
+      operationId: approveManualRequest
+      parameters:
+        - $ref: "#/components/parameters/RequestId"
+      requestBody:
+        - $ref: "#/components/requestBodies/DenyManualRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Empty"
+        "401":
+          $ref: "#/components/responses/401Error"
+        "403":
+          $ref: "#/components/responses/403Error"
+
+  /students:
+    get:
+      summary: Search for students  
+      tags:
+        - Students
+      operationId: searchStudents
+      parameters:
         - $ref: "#/components/parameters/Search"
       responses:
         "200":
-          $ref: "#/components/responses/200LabMarkRequests"
+          $ref: "#/components/responses/200Students"
         "401":
           $ref: "#/components/responses/401Error"
         "403":
           $ref: "#/components/responses/403Error"
 
-  /mark/{zid}/{exerciseCode}:
-    post:
-      summary: Mark a student's lab marking request
-      tags:
-        - MarkingRequests
-      operationId: markLabRequest
-      parameters:
-        - $ref: "#/components/parameters/Token"
-        - $ref: "#/components/parameters/Zid"
-        - $ref: "#/components/parameters/LabPath"
-      requestBody:
-        $ref: "#/components/requestBodies/LabMark"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Empty"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-    put:
-      summary: Ammend a student's lab mark
-      tags:
-        - MarkingRequests
-      operationId: ammendLabMark
-      parameters:
-        - $ref: "#/components/parameters/Token"
-        - $ref: "#/components/parameters/Zid"
-        - $ref: "#/components/parameters/LabPath"
-      requestBody:
-        $ref: "#/components/requestBodies/LabMark"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Empty"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /mark/{zid}/{exerciseCode}/decline:
-    post:
-      summary: Decline a student's lab marking request
-      tags:
-        - MarkingRequests
-      operationId: declineRequest
-      parameters:
-        - $ref: "#/components/parameters/Token"
-        - $ref: "#/components/parameters/Zid"
-        - $ref: "#/components/parameters/LabPath"
-      requestBody:
-        $ref: "#/components/requestBodies/DeclineRequest"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Empty"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /mark/late:
-    post:
-      summary: Manually mark a student's lab pending approval
-      tags:
-        - MarkingRequests
-      operationId: lateLabMark
-      parameters:
-        - $ref: "#/components/parameters/Token"
-      requestBody:
-        $ref: "#/components/requestBodies/LateLabMark"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Empty"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /mark/late/{zid}/{exerciseCode}/approve:
-    post:
-      summary: Approve a late marking submission
-      tags:
-        - MarkingRequests
-      operationId: approveLateMark
-      parameters:
-        - $ref: "#/components/parameters/Token"
-        - $ref: "#/components/parameters/Zid"
-        - $ref: "#/components/parameters/LabPath"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Empty"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /mark/late/{zid}/{exerciseCode}/deny:
-    post:
-      summary: Deny a late marking submission
-      tags:
-        - MarkingRequests
-      operationId: denyLateMark
-      parameters:
-        - $ref: "#/components/parameters/Token"
-        - $ref: "#/components/parameters/Zid"
-        - $ref: "#/components/parameters/LabPath"
-      requestBody:
-        $ref: "#/components/requestBodies/DeclineRequest"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Empty"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /misconduct/report:
-    post:
-      summary: Report a suspicious lab submission
-      tags:
-        - Misconduct
-      operationId: reportSus
-      parameters:
-        - $ref: "#/components/parameters/Token"
-      requestBody:
-        $ref: "#/components/requestBodies/ReportedMisconduct"
-      responses:
-        "200":
-          $ref: "#/components/responses/200Empty"
-        "401":
-          $ref: "#/components/responses/401Error"
-        "403":
-          $ref: "#/components/responses/403Error"
-
-  /misconduct:
+  /students/{zid}/marks:
     get:
-      summary: Get a list of all unresolved misconduct submissions
+      summary: Get a student's marks
       tags:
-        - Misconduct
-      operationId: getMisconduct
+        - Students
+      operationId: getStudentMarks
       parameters:
-        - $ref: "#/components/parameters/Token"
+        - $ref: "#/components/parameters/Zid"
       responses:
         "200":
-          $ref: "#/components/responses/200Misconduct"
+          $ref: "#/components/responses/200StudentMarks"
         "401":
           $ref: "#/components/responses/401Error"
         "403":
           $ref: "#/components/responses/403Error"
 
-  /misconduct/resolve:
-    post:
-      summary: Resolve the misconduct report for a student on a lab
+  /students/{zid}/logs:
+    get:
+      summary: Get a student's logs
       tags:
-        - Misconduct
-      operationId: resolveMisconduct
+        - Students
+      operationId: getStudentLogs
       parameters:
-        - $ref: "#/components/parameters/Token"
-      requestBody:
-        $ref: "#/components/requestBodies/ResolvedMisconduct"
+        - $ref: "#/components/parameters/Zid"
       responses:
         "200":
-          $ref: "#/components/responses/200Empty"
+          $ref: "#/components/responses/200StudentLogs"
         "401":
           $ref: "#/components/responses/401Error"
         "403":
@@ -380,50 +322,90 @@ paths:
 
 components:
   schemas:
-    action:
+    activityCode:
       type: string
-      default: "Marking Requested"
+      default: "lab01"
+    activityName:
+      type: string
+      default: "Lab 1"
     bool:
       type: boolean
       default: false
+    classCode:
+      type: string
+      default: "T13A"
     datetime:
       type: string
       format: date-time
     error:
       type: string
       default: "Specific error message here"
-    labCode:
-      type: string
-      default: "T13A"
-    labExercise:
-      type: string
-      default: "lab04"
-    labRoom:
+    labLocation:
       type: string
       default: "Strings Lab"
+    logEvent:
+      type: string
+      default: "request-marked"
+    manualRequestStatus:
+      type: string
+      default: "pending"
     mark:
       type: number
       default: "1.0"
     name:
       type: string
       default: "Andrew Taylor"
+    password:
+      type: string
+      default: "password"
     reason:
       type: string
       default: "reason"
+    requestId:
+      type: number
+      default: 1
+    requestStatus:
+      type: string
+      default: "pending"
+    role:
+      type: string
+      default: "student"
     search:
       type: string
       default: "search"
-    token:
-      type: string
-      default: "23748"
     zid:
       type: string
       default: "z1234567"
-    zpass:
-      type: string
-      default: "password"
 
+    ActivityAsStudent:
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/activityCode"
+        name:
+          $ref: "#/components/schemas/activityName"
+    ActivityAsTutor:
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/activityCode"
+        name:
+          $ref: "#/components/schemas/activityName"
+        maxMark:
+          $ref: "#/components/schemas/mark"
+    Class:
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/classCode"
+        labLocation:
+          $ref: "#/components/schemas/labLocation"
     DeclineRequest:
+      type: object
+      properties:
+        reason:
+          $ref: "#/components/schemas/reason"
+    DenyManualRequest:
       type: object
       properties:
         reason:
@@ -431,26 +413,8 @@ components:
     ErrorMessage:
       type: object
       properties:
-        error:
+        message:
           $ref: "#/components/schemas/error"
-    IndividualMarkingRequest:
-      type: object
-      properties:
-        studentId:
-          $ref: "#/components/schemas/zid"
-        exerciseCode:
-          $ref: "#/components/schemas/labExercise"
-        labCode:
-          $ref: "#/components/schemas/labCode"
-        isMarked:
-          $ref: "#/components/schemas/bool"
-    LabClass:
-      type: object
-      properties:
-        code:
-          $ref: "#/components/schemas/labCode"
-        room:
-          $ref: "#/components/schemas/labRoom"
     LabMark:
       type: object
       properties:
@@ -458,82 +422,94 @@ components:
           $ref: "#/components/schemas/mark"
         partnerZid:
           $ref: "#/components/schemas/zid"
-    LabMarkRequest:
-      type: object
-      properties:
-        studentId:
-          $ref: "#/components/schemas/zid"
-        exerciseCodes:
-          $ref: "#/components/schemas/ExerciseCodes"
-        isMarked:
-          $ref: "#/components/schemas/bool"
-    LateLabMark:
+    LoginRequest:
       type: object
       properties:
         zid:
           $ref: "#/components/schemas/zid"
-        exerciseCode:
-          $ref: "#/components/schemas/labExercise"
-        mark:
-          $ref: "#/components/schemas/mark"
-        partnerZid:
-          $ref: "#/components/schemas/zid"
+        password:
+          $ref: "#/components/schemas/password"
+    ManualRequest:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/requestId"
+        student:
+          $ref: "#/components/schemas/Student"
+        activity:
+          $ref: "#/components/schemas/ActivityAsTutor"
         reason:
           $ref: "#/components/schemas/reason"
-    Login:
-      type: object
-      properties:
-        zid:
-          $ref: "#/components/schemas/zid"
-        zpass:
-          $ref: "#/components/schemas/zpass"
-    MarkRequest:
-      type: object
-      properties:
-        labCode:
-          $ref: "#/components/schemas/labCode"
-        exerciseCodes:
-          $ref: "#/components/schemas/ExerciseCodes"
-    MarkingLog:
-      type: object
-      properties:
-        action:
-          $ref: "#/components/schemas/action"
-        exerciseCode:
-          $ref: "#/components/schemas/labExercise"
         mark:
           $ref: "#/components/schemas/mark"
-        markedById:
-          $ref: "#/components/schemas/zid"
-        markedByName:
+        markerName:
           $ref: "#/components/schemas/name"
         markedAt:
           $ref: "#/components/schemas/datetime"
-    MisconductReport:
+        status:
+          $ref: "#/components/schemas/manualRequestStatus"
+    ManualRequestInput:
       type: object
       properties:
-        studentId:
+        studentZid:
           $ref: "#/components/schemas/zid"
-        exerciseCode:
-          $ref: "#/components/schemas/labExercise"
-        reasonForReport:
-          $ref: "#/components/schemas/reason"
-    ReportedMisconduct:
-      type: object
-      properties:
-        studentId:
-          $ref: "#/components/schemas/zid"
-        exerciseCode:
-          $ref: "#/components/schemas/labExercise"
+        activityCode:
+          $ref: "#/components/schemas/activityCode"
         reason:
           $ref: "#/components/schemas/reason"
-    ResolvedMisconduct:
+        mark:
+          $ref: "#/components/schemas/mark"
+    Mark:
       type: object
       properties:
-        studentId:
+        mark:
+          $ref: "#/components/schemas/mark"
+    MarkingRequestAsStudent:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/requestId"
+        activity:
+          $ref: "#/components/schemas/ActivityAsStudent"
+        createdAt:
+          $ref: "#/components/schemas/datetime"
+        status:
+          $ref: "#/components/schemas/requestStatus"
+        closedAt:
+          $ref: "#/components/schemas/datetime"
+    MarkingRequestAsTutor:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/requestId"
+        activity:
+          $ref: "#/components/schemas/ActivityAsTutor"
+        createdAt:
+          $ref: "#/components/schemas/datetime"
+        status:
+          $ref: "#/components/schemas/requestStatus"
+        closedAt:
+          $ref: "#/components/schemas/datetime"
+    RequestDetails:
+      type: object
+      properties:
+        class:
+          $ref: "#/components/schemas/LabClass"
+        requests:
+          $ref: "#/components/schemas/MarkingRequestsAsStudent"
+    RequestDetailsInput:
+      type: object
+      properties:
+        classCode:
+          $ref: "#/components/schemas/classCode"
+        activityCodes:
+          $ref: "#/components/schemas/ActivityCodes"
+    SessionUser:
+      properties:
+        zid:
           $ref: "#/components/schemas/zid"
-        exerciseCode:
-          $ref: "#/components/schemas/labExercise"
+        role:
+          $ref: "#/components/schemas/role"
     Student:
       type: object
       properties:
@@ -541,87 +517,119 @@ components:
           $ref: "#/components/schemas/zid"
         name:
           $ref: "#/components/schemas/name"
-        class:
-          $ref: "#/components/schemas/LabClass"
+    StudentSearchResult:
+      type: object
+      properties:
+        zid:
+          $ref: "#/components/schemas/zid"
+        name:
+          $ref: "#/components/schemas/name"
+        classCode:
+          $ref: "#/components/schemas/classCode"
+    StudentLog:
+      type: object
+      properties:
+        eventType:
+          $ref: "#/components/schemas/logEvent"
+        activity:
+          $ref: "#/components/schemas/ActivityAsTutor"
+        classCode:
+          $ref: "#/components/schemas/classCode"
+        markerName:
+          $ref: "#/components/schemas/name"
+        mark:
+          $ref: "#/components/schemas/mark"
+        timestamp:
+          $ref: "#/components/schemas/datetime"
     StudentMark:
       type: object
       properties:
-        exerciseCode:
-          $ref: "#/components/schemas/labExercise"
+        activity:
+          $ref: "#/components/schemas/ActivityAsTutor"
         mark:
           $ref: "#/components/schemas/mark"
         markedAt:
           $ref: "#/components/schemas/datetime"
-    Token:
+    StudentWithRequests:
       properties:
-        token:
-          $ref: "#/components/schemas/token"
-    TutorRequest:
-      type: object
-      properties:
-        labCode:
-          $ref: "#/components/schemas/labCode"
+        student:
+          $ref: "#/components/schemas/Student"
+        requests:
+          $ref: "#/components/schemas/MarkingRequestsAsTutor"
     WithdrawRequest:
       type: object
       properties:
-        exerciseCode:
-          $ref: "#/components/schemas/labExercise"
-        withdrawReason:
+        reason:
           $ref: "#/components/schemas/reason"
 
-    ExerciseCodes:
+    ActivityAsStudent[]:
       type: array
       items:
-        $ref: "#/components/schemas/labExercise"
-    LabMarkingRequests:
+        $ref: "#/components/schemas/ActivityAsStudent"
+    ActivityAsTutor[]:
       type: array
       items:
-        $ref: "#/components/schemas/LabMarkRequest"
-    LabMarkingLogs:
+        $ref: "#/components/schemas/ActivityAsTutor"
+    ActivityCodes:
       type: array
       items:
-        $ref: "#/components/schemas/MarkingLog"
-    MarkingRequests:
+        $ref: "#/components/schemas/activityCode"
+    Classes:
       type: array
       items:
-        $ref: "#/components/schemas/IndividualMarkingRequest"
-    MisconductReports:
+        $ref: "#/components/schemas/Class"
+    ManualRequests:
       type: array
       items:
-        $ref: "#/components/schemas/MisconductReport"
+        $ref: "#/components/schemas/ManualRequest"
+    MarkingRequestsAsStudent:
+      type: array
+      items:
+        $ref: "#/components/schemas/MarkingRequestAsStudent"
+    MarkingRequestsAsTutor:
+      type: array
+      items:
+        $ref: "#/components/schemas/MarkingRequestAsTutor"
+    StudentLogs:
+      type: array
+      items:
+        $ref: "#/components/schemas/StudentLog"
     StudentMarks:
       type: array
       items:
         $ref: "#/components/schemas/StudentMark"
+    StudentSearchResults:
+      type: array
+      items:
+        $ref: "#/components/schemas/StudentSearchResult"
     Students:
       type: array
       items:
         $ref: "#/components/schemas/Student"
+    StudentsWithRequests:
+      type: array
+      items:
+        $ref: "#/components/schemas/StudentWithRequests"
 
   parameters:
-    LabPath:
-      in: path
-      name: exerciseCode
-      required: true
-      schema:
-        $ref: "#/components/schemas/labExercise"
-    LabQuery:
+    ClassCode:
       in: query
-      name: labCode
+      name: classCode
       required: true
       schema:
-        $ref: "#/components/schemas/labCode"
+        $ref: "#/components/schemas/classCode"
+    RequestId:
+      in: path
+      name: id
+      required: true
+      schema:
+        $ref: "#/components/schemas/requestId"
     Search:
       in: query
       name: search
-      schema:
-        $ref: "#/components/schemas/search"
-    Token:
-      in: header
-      name: token
       required: true
       schema:
-        $ref: "#/components/schemas/token"
+        $ref: "#/components/schemas/search"
     Zid:
       in: path
       name: zid
@@ -630,113 +638,146 @@ components:
         $ref: "#/components/schemas/zid"
 
   requestBodies:
+    CreateManualRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ManualRequestInput"
     DeclineRequest:
       required: true
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/DeclineRequest"
-    LabMark:
+    DenyManualRequest:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/LabMark"
-    LateLabMark:
+            $ref: "#/components/schemas/DenyManualRequest"
+    LogIn:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/LateLabMark"
-    Login:
+            $ref: "#/components/schemas/LoginRequest"
+    Mark:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Login"
+            $ref: "#/components/schemas/Mark"
     MarkRequest:
       required: true
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/MarkRequest"
-    ReportedMisconduct:
+    UpdateRequests:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ReportedMisconduct"
-    ResolvedMisconduct:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ResolvedMisconduct"
+            $ref: "#/components/schemas/RequestDetailsInput"
     WithdrawRequest:
       required: true
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/WithdrawRequest"
-  
+
   responses:
+    200ClassRequests:
+      description: "OK"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/StudentsWithRequests"
     200Empty:
       description: "OK"
       content:
         application/json:
           schema:
             type: object
-    200LabMarkRequests:
+    200LogIn:
+      description: "OK"
+      headers:
+        Set-Cookie:
+          schema:
+            type: string
+            example: token=abcde12345; Path=/; HttpOnly; Secure; SameSite=Lax
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SessionUser"
+    200LogOut:
+      description: "OK"
+      headers:
+        Set-Cookie:
+          schema:
+            type: string
+            example: token=; Path=/; HttpOnly; Secure; SameSite=Lax
+    200ManualRequests:
       description: "OK"
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/LabMarkingRequests"
-    200MarkLogs:
+            $ref: "#/components/schemas/ManualRequests"
+    200RequestDetails:
       description: "OK"
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/LabMarkingLogs"
-    200MarkRequests:
+            $ref: "#/components/schemas/RequestDetails"
+    200SessionUser:
       description: "OK"
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/MarkingRequests"
-    200Marks:
+            $ref: "#/components/schemas/SessionUser"
+    200StudentLogs:
+      description: "OK"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/StudentLogs"
+    200StudentMarks:
       description: "OK"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/StudentMarks"
-    200Misconduct:
-      description: "OK"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/MisconductReports"
-    200Student:
-      description: "OK"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Student"
     200Students:
       description: "OK"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/Students"
+    401Credentials:
+      description: "Unauthorized - Invalid credentials"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessage"
     401Error:
-      description: "Unauthorised - Token is empty or invalid"
+      description: "Unauthorized"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorMessage"
     403Error:
-      description: "Forbidden - Invalid permissions"
+      description: "Forbidden"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorMessage"
+
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+
+security:
+  - cookieAuth: []
