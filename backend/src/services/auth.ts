@@ -1,13 +1,14 @@
-import * as dbUsers from '@/db/users';
-import { UnauthorizedError } from '@/lib/errors';
-import { authenticate as authenticateLdap } from '@/lib/ldap';
-import { devMode } from '@/lib/utils';
 import type {
 	GetUserResponseData,
 	LogInRequestData,
 	LogInResponseData,
-} from '@/types/services/auth';
-import type { SessionUser } from '@/types/users';
+} from '@workspace/types/services/auth';
+import type { SessionUser } from '@workspace/types/users';
+
+import * as dbUsers from '@/db/users';
+import { UnauthorizedError } from '@/lib/errors';
+import { authenticate as authenticateLdap } from '@/lib/ldap';
+import { devMode } from '@/lib/utils';
 
 import { info } from './utils';
 

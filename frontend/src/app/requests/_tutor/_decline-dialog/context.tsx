@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 
-import type { MarkingRequestAsTutor } from '@/types/requests';
-import type { Student } from '@/types/users';
+import type { MarkingRequestAsTutor } from '@workspace/types/requests';
+import type { Student } from '@workspace/types/users';
 
 import { DeclineDialog } from './decline-dialog';
 

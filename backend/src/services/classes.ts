@@ -1,14 +1,15 @@
 import { addMinutes, format, getISODay, subMinutes } from 'date-fns';
 
-import { get } from '@/db/cache';
-import * as dbClasses from '@/db/classes';
-import * as dbSettings from '@/db/settings';
-import '@/lib/polyfills/group-by';
 import type {
 	GetActiveClassesResponseData,
 	GetAllClassesResponseData,
-} from '@/types/services/classes';
-import type { SessionUser } from '@/types/users';
+} from '@workspace/types/services/classes';
+import type { SessionUser } from '@workspace/types/users';
+
+import * as dbClasses from '@/db/classes';
+import * as dbSettings from '@/db/settings';
+import { get } from '@/lib/cache';
+import '@/lib/polyfills/group-by';
 
 import { getCurrentTime } from './utils';
 

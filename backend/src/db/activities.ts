@@ -1,6 +1,6 @@
 import { and, eq, gte, lte } from 'drizzle-orm';
 
-import { get } from '@/db/cache';
+import { get } from '@/lib/cache';
 
 import { db } from './db';
 import { activitiesTable, marksTable } from './schema/schema';

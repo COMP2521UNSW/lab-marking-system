@@ -5,6 +5,9 @@ import * as React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import z from 'zod';
 
+import type { ActivityAsTutor } from '@workspace/types/activities';
+import type { Student } from '@workspace/types/users';
+
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -25,8 +28,6 @@ import { Text } from '@/components/ui/base/typography';
 import { MAX_REASON_LEN } from '@/lib/constants';
 import { ApiError } from '@/lib/errors';
 import * as requestsService from '@/services/requests';
-import type { ActivityAsTutor } from '@/types/activities';
-import type { Student } from '@/types/users';
 
 export function MarkDialog({
 	open,

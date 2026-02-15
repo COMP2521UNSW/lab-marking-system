@@ -1,4 +1,3 @@
-import { api } from '@/api/api';
 import type {
 	AmendMarkRequestData,
 	ApproveManualRequestRequestData,
@@ -14,7 +13,9 @@ import type {
 	MarkRequestRequestData,
 	UpdateRequestsRequestData,
 	WithdrawRequestRequestData,
-} from '@/types/services/requests';
+} from '@workspace/types/services/requests';
+
+import { api } from '@/api/api';
 
 ////////////////////////////////////////////////////////////////////////////////
 

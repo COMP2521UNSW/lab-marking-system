@@ -1,6 +1,7 @@
+import type { Class } from '@workspace/types/classes';
+import type { MarkingRequestAsStudent } from '@workspace/types/requests';
+
 import { studentSocket } from '@/server';
-import type { Class } from '@/types/classes';
-import type { MarkingRequestAsStudent } from '@/types/requests';
 
 function requestsUpdated(
 	zid: string,

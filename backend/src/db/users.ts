@@ -1,7 +1,8 @@
 import { and, eq, like, or } from 'drizzle-orm';
 
-import { get } from '@/db/cache';
-import type { NonNullableKeys } from '@/types/utils';
+import type { NonNullableKeys } from '@workspace/types/utils';
+
+import { get } from '@/lib/cache';
 
 import { db } from './db';
 import { usersTable } from './schema/schema';

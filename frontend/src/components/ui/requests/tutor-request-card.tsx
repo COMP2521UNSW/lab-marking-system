@@ -2,13 +2,17 @@
 
 import * as React from 'react';
 
+import type {
+	MarkedRequest,
+	MarkingRequestAsTutor,
+} from '@workspace/types/requests';
+import type { Student } from '@workspace/types/users';
+
 import { Button } from '@/components/ui/base/button';
 import { RequestStatus } from '@/components/ui/base/request-status';
 import { Separator } from '@/components/ui/base/separator';
 import { Text } from '@/components/ui/base/typography';
 import { cn } from '@/lib/utils';
-import type { MarkedRequest, MarkingRequestAsTutor } from '@/types/requests';
-import type { Student } from '@/types/users';
 
 export function TutorRequestCard({
 	student,

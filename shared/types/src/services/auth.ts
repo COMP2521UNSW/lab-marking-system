@@ -1,4 +1,4 @@
-import type { SessionUser } from '@/types/users';
+import type { SessionUser } from '../users';
 
 export type LogInRequestData = {
 	zid: string;

@@ -3,8 +3,9 @@
 import { useRouter } from 'next/navigation';
 import * as React from 'react';
 
+import type { SessionUser } from '@workspace/types/users';
+
 import * as authService from '@/services/auth';
-import type { SessionUser } from '@/types/users';
 
 interface AuthContextType {
 	user: SessionUser | null;

@@ -1,4 +1,4 @@
-import type { ActivityAsTutor } from '@/types/activities';
+import type { ActivityAsTutor } from './activities';
 
 export type EventType =
 	| 'class-changed'

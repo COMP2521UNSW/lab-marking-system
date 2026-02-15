@@ -4,6 +4,10 @@ import { Helmet } from '@dr.pogodin/react-helmet';
 import { InfoIcon, TriangleAlertIcon } from 'lucide-react';
 import * as React from 'react';
 
+import type { ActivityWithStatus } from '@workspace/types/activities';
+import type { ActiveClasses, Class } from '@workspace/types/classes';
+import type { MarkingRequestAsStudent } from '@workspace/types/requests';
+
 import { Button } from '@/components/ui/base/button';
 import { Card } from '@/components/ui/base/card';
 import { Image } from '@/components/ui/base/image';
@@ -18,9 +22,6 @@ import { Text } from '@/components/ui/base/typography';
 import { StudentRequestCard } from '@/components/ui/requests/student-request-card';
 import { ApiError } from '@/lib/errors';
 import * as pagesService from '@/services/pages';
-import type { ActivityWithStatus } from '@/types/activities';
-import type { ActiveClasses, Class } from '@/types/classes';
-import type { MarkingRequestAsStudent } from '@/types/requests';
 
 import { DeclinedDialogProvider } from './_declined-dialog/context';
 import {

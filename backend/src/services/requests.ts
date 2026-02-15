@@ -1,20 +1,10 @@
 import { addMinutes, format, getDay, isSameDay } from 'date-fns';
 
-import * as dbActivities from '@/db/activities';
-import * as dbClasses from '@/db/classes';
-import * as dbLog from '@/db/log';
-import * as dbMarks from '@/db/marks';
-import * as dbRequests from '@/db/requests';
-import * as dbSettings from '@/db/settings';
-import * as dbUsers from '@/db/users';
-import { MAX_REASON_LEN } from '@/lib/constants';
-import { BadRequestError } from '@/lib/errors';
-import '@/lib/polyfills/group-by';
-import * as activitiesService from '@/services/activities';
-import * as studentMessages from '@/sockets/student-messages';
-import * as tutorMessages from '@/sockets/tutor-messages';
-import type { ActivityAsTutor } from '@/types/activities';
-import type { ManualRequest, MarkingRequestAsTutor } from '@/types/requests';
+import type { ActivityAsTutor } from '@workspace/types/activities';
+import type {
+	ManualRequest,
+	MarkingRequestAsTutor,
+} from '@workspace/types/requests';
 import type {
 	AmendMarkRequestData,
 	ApproveManualRequestRequestData,
@@ -30,8 +20,22 @@ import type {
 	MarkRequestRequestData,
 	UpdateRequestsRequestData,
 	WithdrawRequestRequestData,
-} from '@/types/services/requests';
-import type { SessionUser } from '@/types/users';
+} from '@workspace/types/services/requests';
+import type { SessionUser } from '@workspace/types/users';
+
+import * as dbActivities from '@/db/activities';
+import * as dbClasses from '@/db/classes';
+import * as dbLogs from '@/db/logs';
+import * as dbMarks from '@/db/marks';
+import * as dbRequests from '@/db/requests';
+import * as dbSettings from '@/db/settings';
+import * as dbUsers from '@/db/users';
+import { MAX_REASON_LEN } from '@/lib/constants';
+import { BadRequestError } from '@/lib/errors';
+import '@/lib/polyfills/group-by';
+import * as activitiesService from '@/services/activities';
+import * as studentMessages from '@/sockets/student-messages';
+import * as tutorMessages from '@/sockets/tutor-messages';
 
 import {
 	badRequestError,
@@ -103,11 +107,11 @@ export async function updateRequests(
 	// Log event
 
 	if (currClass !== null && req.classCode !== currClass.code) {
-		await dbLog.logClassChanged(user.zid, req.classCode, timestamp);
+		await dbLogs.logClassChanged(user.zid, req.classCode, timestamp);
 	}
 
 	if (req.activityCodes.length > 0) {
-		await dbLog.logRequestsCreated(
+		await dbLogs.logRequestsCreated(
 			user.zid,
 			req.activityCodes,
 			req.classCode,
@@ -244,7 +248,7 @@ export async function withdrawRequest(
 	info(user, 'Request successfully withdrawn');
 
 	// Log event
-	await dbLog.logRequestWithdrawn(
+	await dbLogs.logRequestWithdrawn(
 		user.zid,
 		res.activityCode,
 		res.classCode,
@@ -342,7 +346,7 @@ export async function declineRequest(
 	info(user, 'Request successfully declined');
 
 	// Log event
-	await dbLog.logRequestDeclined(
+	await dbLogs.logRequestDeclined(
 		res.studentZid,
 		res.activityCode,
 		res.classCode,
@@ -404,7 +408,7 @@ export async function markRequest(
 	info(user, 'Request successfully marked');
 
 	// Log event
-	await dbLog.logRequestMarked(
+	await dbLogs.logRequestMarked(
 		res.studentZid,
 		res.activityCode,
 		res.classCode,
@@ -477,7 +481,7 @@ export async function amendMark(user: SessionUser, req: AmendMarkRequestData) {
 	info(user, 'Mark successfully amended');
 
 	// Log event
-	await dbLog.logMarkAmended(
+	await dbLogs.logMarkAmended(
 		res.studentZid,
 		res.activityCode,
 		res.classCode,
@@ -543,7 +547,7 @@ export async function createManualRequest(
 
 	info(user, 'Request successfully created', { id: res.id });
 
-	await dbLog.logManualRequestCreated(
+	await dbLogs.logManualRequestCreated(
 		req.studentZid,
 		req.activityCode,
 		user.zid,
@@ -625,7 +629,7 @@ export async function approveManualRequest(
 
 	info(user, 'Request successfully approved');
 
-	await dbLog.logManualRequestApproved(
+	await dbLogs.logManualRequestApproved(
 		res.studentZid,
 		res.activityCode,
 		user.zid,
@@ -663,7 +667,7 @@ export async function denyManualRequest(
 
 	info(user, 'Request successfully denied');
 
-	await dbLog.logManualRequestDenied(
+	await dbLogs.logManualRequestDenied(
 		res.studentZid,
 		res.activityCode,
 		user.zid,

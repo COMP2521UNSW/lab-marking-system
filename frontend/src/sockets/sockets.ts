@@ -6,7 +6,7 @@ import type {
 	StudentServerToClientEvents,
 	TutorClientToServerEvents,
 	TutorServerToClientEvents,
-} from '@/types/socket';
+} from '@workspace/types/sockets';
 
 export const studentSocket: Socket<
 	StudentServerToClientEvents,

@@ -1,11 +1,10 @@
-import appRoot from 'app-root-path';
 import type { Request } from 'express';
 import fs from 'fs';
 import morgan from 'morgan';
 import path from 'path';
 
 const logStream = fs.createWriteStream(
-	path.join(appRoot.toString(), 'instance', 'logs', 'requests.log'),
+	path.join('instance', 'logs', 'requests.log'),
 	{
 		flags: 'a',
 	},

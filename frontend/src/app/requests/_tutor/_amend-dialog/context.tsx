@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 
-import type { MarkedRequest } from '@/types/requests';
-import type { Student } from '@/types/users';
+import type { MarkedRequest } from '@workspace/types/requests';
+import type { Student } from '@workspace/types/users';
 
 import { AmendDialog } from './amend-dialog';
 

@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 
+import type { MarkingRequestAsStudent } from '@workspace/types/requests';
+
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -10,7 +12,6 @@ import {
 	DialogTitle,
 } from '@/components/ui/base/dialog';
 import { Text } from '@/components/ui/base/typography';
-import type { MarkingRequestAsStudent } from '@/types/requests';
 
 export function DeclinedDialog({
 	request,

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import type { Student } from '@/types/users';
+import type { Student } from '@workspace/types/users';
 
 import { HistoryDialog } from './history-dialog';
 

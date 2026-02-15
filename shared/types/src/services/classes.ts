@@ -1,4 +1,4 @@
-import type { Class, ClassDetails } from '@/types/classes';
+import type { Class, ClassDetails } from '../classes';
 
 export type GetAllClassesResponseData = ClassDetails[];
 

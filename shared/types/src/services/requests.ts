@@ -1,9 +1,9 @@
-import type { Class } from '@/types/classes';
+import type { Class } from '../classes';
 import type {
 	ManualRequest,
 	MarkingRequestAsStudent,
 	StudentWithRequests,
-} from '@/types/requests';
+} from '../requests';
 
 export type GetActiveRequestsForCurrentUserResponseData =
 	| {

@@ -1,4 +1,4 @@
-import { get } from '@/db/cache';
+import { get } from '@/lib/cache';
 
 import { db } from './db';
 import { settingsTable } from './schema/schema';

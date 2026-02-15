@@ -1,6 +1,6 @@
 import 'express';
 
-import type { SessionUser } from '@/types/users';
+import type { SessionUser } from '@workspace/types/users';
 
 declare global {
 	namespace Express {

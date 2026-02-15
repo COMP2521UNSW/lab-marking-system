@@ -5,6 +5,8 @@ import { format } from 'date-fns';
 import { ChevronRightIcon } from 'lucide-react';
 import * as React from 'react';
 
+import type { ManualRequest } from '@workspace/types/requests';
+
 import { LoginRequired } from '@/components/guards/login-required';
 import { AdminRequired } from '@/components/guards/role-required';
 import { Button } from '@/components/ui/base/button';
@@ -26,7 +28,6 @@ import { Text } from '@/components/ui/base/typography';
 import { ApiError } from '@/lib/errors';
 import { cn } from '@/lib/utils';
 import * as requestsService from '@/services/requests';
-import type { ManualRequest } from '@/types/requests';
 
 import { DenyDialogProvider, useDenyDialog } from './_deny-dialog/context';
 

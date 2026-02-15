@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 
+import type { MarkingRequestAsStudent } from '@workspace/types/requests';
+
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -16,7 +18,6 @@ import { Text } from '@/components/ui/base/typography';
 import { MAX_REASON_LEN } from '@/lib/constants';
 import { ApiError } from '@/lib/errors';
 import * as requestsService from '@/services/requests';
-import type { MarkingRequestAsStudent } from '@/types/requests';
 
 const reasonPresets = [
 	{ value: 'wrong-activity', text: 'Selected the wrong activity' },

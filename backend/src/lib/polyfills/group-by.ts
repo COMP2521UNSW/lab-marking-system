@@ -25,11 +25,9 @@ if (!Object.groupBy) {
 
 		let i = 0;
 		for (const item of items) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			const key = callback(item, i++);
 
 			if (result[key]) {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 				result[key].push(item);
 			} else {
 				result[key] = [item];
@@ -49,15 +47,12 @@ if (!Map.groupBy) {
 
 		let i = 0;
 		for (const item of items) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			const key = callback(item, i++);
 			const group = result.get(key);
 
 			if (group) {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 				group.push(item);
 			} else {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 				result.set(key, [item]);
 			}
 		}

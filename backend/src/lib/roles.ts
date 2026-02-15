@@ -1,4 +1,4 @@
-import type { UserRole } from '@/types/users';
+import type { UserRole } from '@workspace/types/users';
 
 function isAdmin(role: UserRole) {
 	return role === 'admin';

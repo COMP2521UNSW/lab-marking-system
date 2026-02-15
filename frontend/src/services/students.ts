@@ -1,4 +1,3 @@
-import { api } from '@/api/api';
 import type {
 	GetStudentLogsRequestData,
 	GetStudentLogsResponseData,
@@ -6,7 +5,9 @@ import type {
 	GetStudentMarksResponseData,
 	SearchStudentsRequestData,
 	SearchStudentsResponseData,
-} from '@/types/services/students';
+} from '@workspace/types/services/students';
+
+import { api } from '@/api/api';
 
 ////////////////////////////////////////////////////////////////////////////////
 

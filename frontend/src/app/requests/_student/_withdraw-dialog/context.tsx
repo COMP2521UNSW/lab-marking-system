@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import type { MarkingRequestAsStudent } from '@/types/requests';
+import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
 import { WithdrawDialog } from './withdraw-dialog';
 

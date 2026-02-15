@@ -1,9 +1,13 @@
 import { customType } from 'drizzle-orm/sqlite-core';
 
-import type { EventType } from '@/types/log';
-import type { ManualRequestStatus, RequestStatus } from '@/types/requests';
+import type { EventType } from '@workspace/types/logs';
+import type {
+	ManualRequestStatus,
+	RequestStatus,
+} from '@workspace/types/requests';
+import type { UserRole } from '@workspace/types/users';
+
 import type { Time } from '@/types/time';
-import type { UserRole } from '@/types/users';
 
 const boolean = customType<{
 	data: boolean;

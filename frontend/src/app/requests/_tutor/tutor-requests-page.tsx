@@ -3,7 +3,11 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
 import * as React from 'react';
 
+import type { ActiveClasses } from '@workspace/types/classes';
+import type { StudentWithRequests } from '@workspace/types/requests';
+
 import { Card } from '@/components/ui/base/card';
+import { Image } from '@/components/ui/base/image';
 import { Loading } from '@/components/ui/base/loading';
 import { Spinner } from '@/components/ui/base/spinner';
 import { toast } from '@/components/ui/base/toast';
@@ -13,10 +17,7 @@ import { ClassSelect } from '@/components/ui/requests/class-select';
 import { TutorRequestCard } from '@/components/ui/requests/tutor-request-card';
 import { ApiError } from '@/lib/errors';
 import * as classesService from '@/services/classes';
-import type { ActiveClasses } from '@/types/classes';
-import type { StudentWithRequests } from '@/types/requests';
 
-import { Image } from '@/components/ui/base/image';
 import { AmendDialogProvider, useAmendDialog } from './_amend-dialog/context';
 import {
 	DeclineDialogProvider,

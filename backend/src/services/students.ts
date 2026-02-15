@@ -1,8 +1,4 @@
-import * as dbLog from '@/db/log';
-import * as dbMarks from '@/db/marks';
-import * as dbStudents from '@/db/users';
-import { BadRequestError } from '@/lib/errors';
-import type { RequestLogEvent } from '@/types/log';
+import type { RequestLogEvent } from '@workspace/types/logs';
 import type {
 	GetStudentLogsRequestData,
 	GetStudentLogsResponseData,
@@ -10,8 +6,13 @@ import type {
 	GetStudentMarksResponseData,
 	SearchStudentsRequestData,
 	SearchStudentsResponseData,
-} from '@/types/services/students';
-import type { SessionUser } from '@/types/users';
+} from '@workspace/types/services/students';
+import type { SessionUser } from '@workspace/types/users';
+
+import * as dbLogs from '@/db/logs';
+import * as dbMarks from '@/db/marks';
+import * as dbStudents from '@/db/users';
+import { BadRequestError } from '@/lib/errors';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -52,7 +53,7 @@ export async function getStudentLogs(
 	user: SessionUser,
 	req: GetStudentLogsRequestData,
 ): Promise<GetStudentLogsResponseData> {
-	const logs = await dbLog.getStudentLogs(req.zid);
+	const logs = await dbLogs.getStudentLogs(req.zid);
 
 	// logs are expected to satisfy the RequestLogEvent union type
 	return logs as RequestLogEvent[];

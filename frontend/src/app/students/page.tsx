@@ -4,6 +4,9 @@ import { Helmet } from '@dr.pogodin/react-helmet';
 import * as React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
+import type { ActivityAsTutor } from '@workspace/types/activities';
+import type { StudentDetails } from '@workspace/types/users';
+
 import { LoginRequired } from '@/components/guards/login-required';
 import { TutorRequired } from '@/components/guards/role-required';
 import { Button } from '@/components/ui/base/button';
@@ -25,8 +28,6 @@ import { Text } from '@/components/ui/base/typography';
 import { ApiError } from '@/lib/errors';
 import * as activitiesService from '@/services/activities';
 import * as studentsService from '@/services/students';
-import type { ActivityAsTutor } from '@/types/activities';
-import type { StudentDetails } from '@/types/users';
 
 import {
 	HistoryDialogProvider,

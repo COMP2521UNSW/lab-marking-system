@@ -1,7 +1,8 @@
 import * as React from 'react';
 
+import type { RequestStatus } from '@workspace/types/requests';
+
 import { TimeAgo } from '@/components/ui/base/time-ago';
-import type { RequestStatus } from '@/types/requests';
 
 export function RequestStatus({
 	status,

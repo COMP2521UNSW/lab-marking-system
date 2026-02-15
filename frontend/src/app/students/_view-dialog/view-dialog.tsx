@@ -3,6 +3,8 @@
 import { format } from 'date-fns';
 import * as React from 'react';
 
+import type { Student } from '@workspace/types/users';
+
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -23,7 +25,6 @@ import {
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
 import * as studentsService from '@/services/students';
-import type { Student } from '@/types/users';
 
 type DataState =
 	| {

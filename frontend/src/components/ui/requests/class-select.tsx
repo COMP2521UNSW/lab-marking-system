@@ -3,6 +3,8 @@
 import { ChevronDownIcon } from 'lucide-react';
 import * as React from 'react';
 
+import type { ActiveClasses, Class } from '@workspace/types/classes';
+
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -14,7 +16,6 @@ import {
 } from '@/components/ui/base/dropdown-menu';
 import { Text } from '@/components/ui/base/typography';
 import { cn } from '@/lib/utils';
-import type { ActiveClasses, Class } from '@/types/classes';
 
 export function ClassSelect({
 	classes,

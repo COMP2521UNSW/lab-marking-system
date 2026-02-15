@@ -1,9 +1,10 @@
-import { api } from '@/api/api';
 import type {
 	GetUserResponseData,
 	LogInRequestData,
 	LogInResponseData,
-} from '@/types/services/auth';
+} from '@workspace/types/services/auth';
+
+import { api } from '@/api/api';
 
 ////////////////////////////////////////////////////////////////////////////////
 

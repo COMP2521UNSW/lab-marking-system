@@ -2,13 +2,14 @@ import { eq, isNotNull, sql } from 'drizzle-orm';
 import { execSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 
+import type { NonNullableKeys } from '@workspace/types/utils';
+
 import { db } from '@/db/db';
 import {
 	activitiesTable,
 	marksTable,
 	syncedMarksTable,
 } from '@/db/schema/schema';
-import type { NonNullableKeys } from '@/types/utils';
 
 type Mark = {
 	zid: string;

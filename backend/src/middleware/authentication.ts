@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 
-import type { SessionUser } from '@/types/users';
+import type { SessionUser } from '@workspace/types/users';
 
 type Cookies = {
 	token?: string;

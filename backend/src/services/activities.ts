@@ -1,9 +1,10 @@
-import * as dbActivities from '@/db/activities';
 import type {
 	GetActiveActivitiesForUserResponseData,
 	GetAllActivitiesResponseData,
-} from '@/types/services/activities';
-import type { SessionUser } from '@/types/users';
+} from '@workspace/types/services/activities';
+import type { SessionUser } from '@workspace/types/users';
+
+import * as dbActivities from '@/db/activities';
 
 import { getCurrentWeek } from './utils';
 

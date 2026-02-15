@@ -2,17 +2,17 @@
 
 ## How to run
 
-### Setup the server
+### Install dependencies
 
-Run `cd server` from the project root.
+```
+pnpm install
+```
 
-1. Install dependencies
+### Run the backend
 
-    ```
-    npm install
-    ```
+From the `backend` directory:
 
-2. Configure environment
+1. Configure environment
 
     ```
     cp .env.example .env
@@ -20,43 +20,35 @@ Run `cd server` from the project root.
 
     Then generate a secret for the `JWT_SECRET` environment variable.
 
-3. Initialise and seed the database
+2. Initialise and seed the database
 
     ```
-    npx drizzle-kit push
-    npx tsx src/db/seed/index.ts
+    pnpm db:push
+    pnpm db:seed
     ```
 
     This will create an SQLite database in the `instance` directory.
 
-4. Run the server
+3. Run the server
 
     ```
-    npm run dev
+    pnpm dev
     ```
 
-### Setup the client
+### Run the frontend
 
-Run `cd client/lab-marking-system` from the project root.
+From the `frontend` directory:
 
-1. Install dependencies
-
-    ```
-    npm install
-    ```
-
-2. Configure environment
+1. Configure environment
 
     ```
     cp .env.example .env
     ```
 
-3. Run the client
+2. Run the client
 
     ```
-    npm run dev
+    pnpm dev
     ```
 
-### Test the application
-
-Open http://localhost:3000 in the browser.
+3. Open http://localhost:3000 in the browser.

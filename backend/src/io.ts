@@ -10,9 +10,9 @@ import type {
 	StudentServerToClientEvents,
 	TutorClientToServerEvents,
 	TutorServerToClientEvents,
-} from '@/types/socket';
-import type { SessionUser } from '@/types/users';
-import type { EmptyObject } from '@/types/utils';
+} from '@workspace/types/sockets';
+import type { SessionUser } from '@workspace/types/users';
+import type { EmptyObject } from '@workspace/types/utils';
 
 const clientOrigin = process.env.CLIENT_URL!;
 

@@ -1,8 +1,9 @@
-import { api } from '@/api/api';
 import type {
 	// GetActiveActivitiesForUserResponseData,
 	GetAllActivitiesResponseData,
-} from '@/types/services/activities';
+} from '@workspace/types/services/activities';
+
+import { api } from '@/api/api';
 
 ////////////////////////////////////////////////////////////////////////////////
 

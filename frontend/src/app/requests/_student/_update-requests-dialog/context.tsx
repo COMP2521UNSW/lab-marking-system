@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 
-import type { Class } from '@/types/classes';
-import type { MarkingRequestAsStudent } from '@/types/requests';
+import type { Class } from '@workspace/types/classes';
+import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
 import { UpdateRequestsDialog } from './update-requests-dialog';
 

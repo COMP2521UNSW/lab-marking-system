@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 
-import type { ActivityAsTutor } from '@/types/activities';
-import type { Student } from '@/types/users';
+import type { ActivityAsTutor } from '@workspace/types/activities';
+import type { Student } from '@workspace/types/users';
 
 import { MarkDialog } from './mark-dialog';
 

@@ -1,6 +1,7 @@
+import type { MarkingRequestAsTutor } from '@workspace/types/requests';
+import type { User } from '@workspace/types/users';
+
 import { tutorSocket } from '@/server';
-import type { MarkingRequestAsTutor } from '@/types/requests';
-import type { User } from '@/types/users';
 
 function requestsCreated(
 	classCode: string,

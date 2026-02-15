@@ -1,8 +1,9 @@
-import { api } from '@/api/api';
 import type {
 	GetActiveClassesResponseData,
 	GetAllClassesResponseData,
-} from '@/types/services/classes';
+} from '@workspace/types/services/classes';
+
+import { api } from '@/api/api';
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -1,5 +1,7 @@
 import 'dotenv/config';
 
+import chalk from 'chalk';
+
 import { db } from '@/db/db';
 import {
 	activitiesTable,
@@ -10,7 +12,7 @@ import {
 
 import { fakeActivities, fakeClasses, fakeSettings, fakeUsers } from './data';
 
-const BATCH_SIZE = 25;
+const BATCH_SIZE = 1000;
 
 async function main() {
 	await db.insert(settingsTable).values(fakeSettings).onConflictDoNothing();
@@ -35,6 +37,8 @@ async function main() {
 			.values(fakeUsers.slice(i, i + BATCH_SIZE))
 			.onConflictDoNothing();
 	}
+
+	console.log(`[${chalk.green('✓')}] Database seeded`);
 }
 
 void main();

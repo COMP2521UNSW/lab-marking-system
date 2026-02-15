@@ -1,8 +1,9 @@
+import type { GetStudentRequestsPageResponseData } from '@workspace/types/services/pages';
+import type { SessionUser } from '@workspace/types/users';
+
 import * as activitiesService from '@/services/activities';
 import * as classesService from '@/services/classes';
 import * as requestsService from '@/services/requests';
-import type { GetStudentRequestsPageResponseData } from '@/types/services/pages';
-import type { SessionUser } from '@/types/users';
 
 export async function getStudentRequestsPage(
 	user: SessionUser,

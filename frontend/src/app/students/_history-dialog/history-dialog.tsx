@@ -4,6 +4,10 @@ import { format } from 'date-fns';
 import { ChevronRightIcon } from 'lucide-react';
 import * as React from 'react';
 
+import type { ActivityAsTutor } from '@workspace/types/activities';
+import type { RequestLogEvent } from '@workspace/types/logs';
+import type { Student } from '@workspace/types/users';
+
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -25,9 +29,6 @@ import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
 import { cn } from '@/lib/utils';
 import * as studentsService from '@/services/students';
-import type { ActivityAsTutor } from '@/types/activities';
-import type { RequestLogEvent } from '@/types/log';
-import type { Student } from '@/types/users';
 
 type DataState =
 	| {

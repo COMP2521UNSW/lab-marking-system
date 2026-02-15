@@ -2,6 +2,9 @@
 
 import * as React from 'react';
 
+import type { Class } from '@workspace/types/classes';
+import type { MarkingRequestAsStudent } from '@workspace/types/requests';
+
 import { ActivitySelect } from '@/components/ui/base/activity-select';
 import { Button } from '@/components/ui/base/button';
 import {
@@ -15,8 +18,6 @@ import { Text } from '@/components/ui/base/typography';
 import { ClassSelect } from '@/components/ui/requests/class-select';
 import { ApiError } from '@/lib/errors';
 import * as requestsService from '@/services/requests';
-import type { Class } from '@/types/classes';
-import type { MarkingRequestAsStudent } from '@/types/requests';
 
 import { useStudentRequests } from '../context';
 

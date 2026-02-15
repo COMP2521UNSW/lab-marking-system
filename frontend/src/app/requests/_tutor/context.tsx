@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { useImmer } from 'use-immer';
 
-import * as requestsService from '@/services/requests';
-import { tutorSocket as socket } from '@/sockets/sockets';
-import type { ActiveClasses, Class } from '@/types/classes';
+import type { ActiveClasses, Class } from '@workspace/types/classes';
 import type {
 	MarkingRequestAsTutor,
 	StudentWithRequests,
-} from '@/types/requests';
-import type { Student } from '@/types/users';
+} from '@workspace/types/requests';
+import type { Student } from '@workspace/types/users';
+
+import * as requestsService from '@/services/requests';
+import { tutorSocket as socket } from '@/sockets/sockets';
 
 type ContextValue = {
 	activeClasses: ActiveClasses;

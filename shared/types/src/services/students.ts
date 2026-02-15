@@ -1,6 +1,6 @@
-import type { ActivityAsTutor } from '@/types/activities';
-import type { RequestLogEvent } from '@/types/log';
-import type { StudentDetails } from '@/types/users';
+import type { ActivityAsTutor } from '../activities';
+import type { RequestLogEvent } from '../logs';
+import type { StudentDetails } from '../users';
 
 export type SearchStudentsRequestData = {
 	q: string;

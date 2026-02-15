@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/sqlite-core';
 
 import { db } from './db';
-import { activitiesTable, requestLogTable, usersTable } from './schema/schema';
+import { activitiesTable, logsTable, usersTable } from './schema/schema';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -11,7 +11,7 @@ export async function logClassChanged(
 	classCode: string,
 	timestamp: Date,
 ) {
-	await db.insert(requestLogTable).values({
+	await db.insert(logsTable).values({
 		studentZid,
 		event: 'class-changed',
 		classCode,
@@ -25,7 +25,7 @@ export async function logRequestsCreated(
 	classCode: string,
 	timestamp: Date,
 ) {
-	await db.insert(requestLogTable).values(
+	await db.insert(logsTable).values(
 		activityCodes.map((activityCode) => ({
 			studentZid,
 			event: 'request-created' as const,
@@ -43,7 +43,7 @@ export async function logRequestWithdrawn(
 	reason: string,
 	timestamp: Date,
 ) {
-	await db.insert(requestLogTable).values({
+	await db.insert(logsTable).values({
 		studentZid,
 		event: 'request-withdrawn',
 		activityCode,
@@ -61,7 +61,7 @@ export async function logRequestDeclined(
 	reason: string,
 	timestamp: Date,
 ) {
-	await db.insert(requestLogTable).values({
+	await db.insert(logsTable).values({
 		studentZid,
 		event: 'request-declined',
 		activityCode,
@@ -80,7 +80,7 @@ export async function logRequestMarked(
 	mark: number,
 	timestamp: Date,
 ) {
-	await db.insert(requestLogTable).values({
+	await db.insert(logsTable).values({
 		studentZid,
 		event: 'request-marked',
 		activityCode,
@@ -99,7 +99,7 @@ export async function logMarkAmended(
 	mark: number,
 	timestamp: Date,
 ) {
-	await db.insert(requestLogTable).values({
+	await db.insert(logsTable).values({
 		studentZid,
 		event: 'mark-amended',
 		activityCode,
@@ -118,7 +118,7 @@ export async function logManualRequestCreated(
 	reason: string,
 	timestamp: Date,
 ) {
-	await db.insert(requestLogTable).values({
+	await db.insert(logsTable).values({
 		studentZid,
 		event: 'manual-request-created',
 		activityCode,
@@ -135,7 +135,7 @@ export async function logManualRequestApproved(
 	approverZid: string,
 	timestamp: Date,
 ) {
-	await db.insert(requestLogTable).values({
+	await db.insert(logsTable).values({
 		studentZid,
 		event: 'manual-request-approved',
 		activityCode,
@@ -151,7 +151,7 @@ export async function logManualRequestDenied(
 	reason: string,
 	timestamp: Date,
 ) {
-	await db.insert(requestLogTable).values({
+	await db.insert(logsTable).values({
 		studentZid,
 		event: 'manual-request-denied',
 		activityCode,
@@ -169,30 +169,24 @@ export async function getStudentLogs(studentZid: string) {
 
 	return await db
 		.select({
-			eventType: requestLogTable.event,
+			eventType: logsTable.event,
 			activity: {
 				code: activitiesTable.code,
 				name: activitiesTable.name,
 				maxMark: activitiesTable.maxMark,
 			},
-			classCode: requestLogTable.classCode,
+			classCode: logsTable.classCode,
 			markerName: markersTable.name,
-			mark: requestLogTable.mark,
+			mark: logsTable.mark,
 			approverName: approversTable.name,
-			reason: requestLogTable.reason,
-			timestamp: requestLogTable.timestamp,
+			reason: logsTable.reason,
+			timestamp: logsTable.timestamp,
 		})
-		.from(requestLogTable)
-		.leftJoin(
-			activitiesTable,
-			eq(activitiesTable.code, requestLogTable.activityCode),
-		)
-		.leftJoin(markersTable, eq(markersTable.zid, requestLogTable.markerZid))
-		.leftJoin(
-			approversTable,
-			eq(approversTable.zid, requestLogTable.approverZid),
-		)
-		.where(eq(requestLogTable.studentZid, studentZid));
+		.from(logsTable)
+		.leftJoin(activitiesTable, eq(activitiesTable.code, logsTable.activityCode))
+		.leftJoin(markersTable, eq(markersTable.zid, logsTable.markerZid))
+		.leftJoin(approversTable, eq(approversTable.zid, logsTable.approverZid))
+		.where(eq(logsTable.studentZid, studentZid));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

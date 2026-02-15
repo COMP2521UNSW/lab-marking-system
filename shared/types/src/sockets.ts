@@ -1,10 +1,10 @@
-import type { ActiveClasses, Class } from '@/types/classes';
+import type { ActiveClasses, Class } from './classes';
 import type {
 	MarkingRequestAsStudent,
 	MarkingRequestAsTutor,
-} from '@/types/requests';
-import type { SessionUser, User } from '@/types/users';
-import type { EmptyObject } from '@/types/utils';
+} from './requests';
+import type { SessionUser, User } from './users';
+import type { EmptyObject } from './utils';
 
 type StudentClientToServerEvents = EmptyObject;
 

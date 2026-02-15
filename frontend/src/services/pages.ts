@@ -1,5 +1,6 @@
+import type { GetStudentRequestsPageResponseData } from '@workspace/types/services/pages';
+
 import { api } from '@/api/api';
-import type { GetStudentRequestsPageResponseData } from '@/types/services/pages';
 
 ////////////////////////////////////////////////////////////////////////////////
 

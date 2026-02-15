@@ -2,10 +2,11 @@
 
 import * as React from 'react';
 
+import type { UserRole } from '@workspace/types/users';
+
 import { useAuth } from '@/components/providers/auth-provider';
 import { Forbidden } from '@/components/ui/forbidden/forbidden';
 import { isAdmin, isTutor } from '@/lib/roles';
-import type { UserRole } from '@/types/users';
 
 export function RoleRequired({
 	roleChecker,

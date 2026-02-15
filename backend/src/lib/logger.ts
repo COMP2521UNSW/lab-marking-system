@@ -1,9 +1,8 @@
-import appRoot from 'app-root-path';
 import path from 'path';
 import { addColors, createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 
-import type { SessionUser } from '@/types/users';
+import type { SessionUser } from '@workspace/types/users';
 
 const logger = createLogger({
 	format: format.combine(
@@ -41,13 +40,7 @@ const logger = createLogger({
 		}),
 		new transports.DailyRotateFile({
 			level: 'info',
-			filename: path.join(
-				appRoot.toString(),
-				'instance',
-				'logs',
-				'app',
-				'%DATE%.log',
-			),
+			filename: path.join('instance', 'logs', 'app', '%DATE%.log'),
 			datePattern: 'YYYY-MM-DD',
 		}),
 	],

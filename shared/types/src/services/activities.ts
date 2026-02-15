@@ -1,4 +1,4 @@
-import type { ActivityAsTutor, ActivityWithStatus } from '@/types/activities';
+import type { ActivityAsTutor, ActivityWithStatus } from '../activities';
 
 export type GetAllActivitiesResponseData = ActivityAsTutor[];
 

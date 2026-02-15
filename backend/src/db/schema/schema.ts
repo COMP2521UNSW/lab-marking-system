@@ -156,8 +156,8 @@ export const syncedMarksTable = sqliteTable(
 	(table) => [unique().on(table.studentZid, table.activityCode)],
 );
 
-export const requestLogTable = sqliteTable(
-	'requestLog', //
+export const logsTable = sqliteTable(
+	'logs', //
 	{
 		id: integer().primaryKey(),
 		studentZid: text()
@@ -172,5 +172,5 @@ export const requestLogTable = sqliteTable(
 		approverZid: text().references(() => usersTable.zid),
 		reason: text(),
 	},
-	(table) => [index('requestLog_studentZid_index').on(table.studentZid)],
+	(table) => [index('logs_studentZid_index').on(table.studentZid)],
 );

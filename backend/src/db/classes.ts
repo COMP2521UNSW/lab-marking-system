@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 
-import { get } from '@/db/cache';
+import { get } from '@/lib/cache';
 
 import { db } from './db';
 import { classesTable } from './schema/schema';

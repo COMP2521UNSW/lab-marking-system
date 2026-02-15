@@ -1,5 +1,5 @@
-import type { ActivityAsStudent, ActivityAsTutor } from '@/types/activities';
-import type { Student } from '@/types/users';
+import type { ActivityAsStudent, ActivityAsTutor } from './activities';
+import type { Student } from './users';
 
 ////////////////////////////////////////////////////////////////////////////////
 

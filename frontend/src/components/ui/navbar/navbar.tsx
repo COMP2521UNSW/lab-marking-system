@@ -4,6 +4,8 @@ import { ChevronDownIcon, LogInIcon, LogOutIcon, MenuIcon } from 'lucide-react';
 import Link from 'next/link';
 import * as React from 'react';
 
+import type { SessionUser } from '@workspace/types/users';
+
 import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/base/button';
 import {
@@ -20,7 +22,6 @@ import { ThemeToggle } from '@/components/ui/base/theme-toggle';
 import { Text } from '@/components/ui/base/typography';
 import { isAdmin, isTutor } from '@/lib/roles';
 import { cn } from '@/lib/utils';
-import type { SessionUser } from '@/types/users';
 
 export type NavLink = {
 	icon?: React.ReactNode;

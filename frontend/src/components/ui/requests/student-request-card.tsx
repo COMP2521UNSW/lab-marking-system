@@ -1,11 +1,12 @@
 'use client';
 
+import type { MarkingRequestAsStudent } from '@workspace/types/requests';
+
 import { Button } from '@/components/ui/base/button';
 import { Card } from '@/components/ui/base/card';
 import { RequestStatus } from '@/components/ui/base/request-status';
 import { Text } from '@/components/ui/base/typography';
 import { cn } from '@/lib/utils';
-import type { MarkingRequestAsStudent } from '@/types/requests';
 
 export function StudentRequestCard({
 	request,

@@ -1,0 +1,14 @@
+{
+  "name": "@workspace/types",
+  "version": "0.1.0",
+  "description": "Shared type definitions",
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.29.3",
+  "exports": {
+    "./*": {
+      "types": "./src/*.ts",
+      "default": "./src/*.ts"
+    }
+  }
+}

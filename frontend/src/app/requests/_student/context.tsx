@@ -1,9 +1,10 @@
 import * as React from 'react';
 
+import type { ActivityWithStatus } from '@workspace/types/activities';
+import type { ActiveClasses, Class } from '@workspace/types/classes';
+import type { MarkingRequestAsStudent } from '@workspace/types/requests';
+
 import { studentSocket as socket } from '@/sockets/sockets';
-import type { ActivityWithStatus } from '@/types/activities';
-import type { ActiveClasses, Class } from '@/types/classes';
-import type { MarkingRequestAsStudent } from '@/types/requests';
 
 import { useDeclinedDialog } from './_declined-dialog/context';
 
