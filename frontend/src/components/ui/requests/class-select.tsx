@@ -64,7 +64,7 @@ export function ClassSelect({
 				)}
 				<ChevronDownIcon className="flex-none size-6 stroke-foreground" />
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] p-2">
+			<DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) p-2">
 				{noClasses ? (
 					<DropdownMenuLabel>No open classes!</DropdownMenuLabel>
 				) : (

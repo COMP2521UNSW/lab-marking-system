@@ -95,7 +95,7 @@ export function UpdateRequestsDialog({
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogContent
 				showCloseButton={false}
-				className="w-[calc(100%-32px)] !max-w-96 bg-card shadow-regular"
+				className="w-[calc(100%-32px)] max-w-96! bg-card shadow-regular"
 				aria-describedby={undefined}
 			>
 				<DialogHeader>

@@ -33,7 +33,7 @@ export function DeclinedDialog({
 		<Dialog open={open}>
 			<DialogContent
 				showCloseButton={false}
-				className="w-[calc(100%-32px)] !max-w-90 bg-card shadow-regular"
+				className="w-[calc(100%-32px)] max-w-90! bg-card shadow-regular"
 				aria-describedby={undefined}
 			>
 				<DialogHeader>
