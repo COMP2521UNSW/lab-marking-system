@@ -3,6 +3,9 @@
 # dependencies
 /node_modules
 
+# production
+/dist
+
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
