@@ -6,8 +6,8 @@ import type {
 import type { SessionUser } from '@workspace/types/users';
 
 import * as dbUsers from '@/db/users';
+import { authenticate } from '@/lib/auth';
 import { UnauthorizedError } from '@/lib/errors';
-import { authenticate as authenticateLdap } from '@/lib/ldap';
 import { devMode } from '@/lib/utils';
 
 import { info } from './utils';
@@ -24,7 +24,7 @@ export async function logIn(
 	const { zid, password } = req;
 
 	// Checking password first prevents enumeration attack
-	if (!(await authenticate(zid, password))) {
+	if (!(await authenticateUser(zid, password))) {
 		info(undefined, 'Authentication error', loggableData);
 
 		throw new UnauthorizedError('Incorrect zID or password');
@@ -44,11 +44,11 @@ export async function logIn(
 	}
 }
 
-async function authenticate(zid: string, password: string) {
+async function authenticateUser(zid: string, password: string) {
 	if (devMode()) {
 		return true;
 	} else {
-		return await authenticateLdap(zid, password);
+		return await authenticate(zid, password);
 	}
 }
 
