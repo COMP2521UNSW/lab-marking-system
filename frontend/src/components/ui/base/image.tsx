@@ -1,8 +1,6 @@
 import NextImage from 'next/image';
 
-import config from '@/../next.config';
-
-const basePath = config.basePath ?? '';
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 /**
  * This adds basePath in front of the src prop as required by
