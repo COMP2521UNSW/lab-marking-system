@@ -1,7 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 
-import { db } from './db';
-import { activitiesTable, marksTable } from './schema/schema';
+import { activitiesTable, db, marksTable } from './db';
 
 async function setMark(
 	studentZid: string,

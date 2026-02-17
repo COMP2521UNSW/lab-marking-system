@@ -4,8 +4,7 @@ import type { NonNullableKeys } from '@workspace/types/utils';
 
 import { get } from '@/lib/cache';
 
-import { db } from './db';
-import { usersTable } from './schema/schema';
+import { db, usersTable } from './db';
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -3,7 +3,7 @@ import {
 	classesTable,
 	settingsTable,
 	usersTable,
-} from '@/db/schema/schema';
+} from '@/db/db';
 
 export const fakeSettings: (typeof settingsTable.$inferInsert)[] = [
 	{

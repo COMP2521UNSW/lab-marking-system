@@ -4,12 +4,7 @@ import { writeFileSync } from 'node:fs';
 
 import type { NonNullableKeys } from '@workspace/types/utils';
 
-import { db } from '@/db/db';
-import {
-	activitiesTable,
-	marksTable,
-	syncedMarksTable,
-} from '@/db/schema/schema';
+import { activitiesTable, db, marksTable, syncedMarksTable } from '@/db/db';
 
 type Mark = {
 	zid: string;

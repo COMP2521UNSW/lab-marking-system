@@ -2,13 +2,13 @@ import 'dotenv/config';
 
 import chalk from 'chalk';
 
-import { db } from '@/db/db';
 import {
 	activitiesTable,
 	classesTable,
+	db,
 	settingsTable,
 	usersTable,
-} from '@/db/schema/schema';
+} from '@/db/db';
 
 import { fakeActivities, fakeClasses, fakeSettings, fakeUsers } from './data';
 

@@ -1,3 +1,3 @@
-import { drizzle } from 'drizzle-orm/libsql';
+export * from './dialects/sqlite/db';
 
-export const db = drizzle(process.env.DB_FILE_NAME!);
+// export * from './dialects/pg/db';

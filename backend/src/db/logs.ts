@@ -1,8 +1,6 @@
 import { eq } from 'drizzle-orm';
-import { alias } from 'drizzle-orm/sqlite-core';
 
-import { db } from './db';
-import { activitiesTable, logsTable, usersTable } from './schema/schema';
+import { activitiesTable, alias, db, logsTable, usersTable } from './db';
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -1,17 +1,17 @@
 import { startOfDay } from 'date-fns';
 import { and, eq, gte, inArray, isNull, or } from 'drizzle-orm';
-import { alias } from 'drizzle-orm/sqlite-core';
 
 import type { NonNullableKeys } from '@workspace/types/utils';
 
-import { db } from './db';
 import {
 	activitiesTable,
+	alias,
 	classesTable,
+	db,
 	manualRequestsTable,
 	requestsTable,
 	usersTable,
-} from './schema/schema';
+} from './db';
 
 ////////////////////////////////////////////////////////////////////////////////
 
