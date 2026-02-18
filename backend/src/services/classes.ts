@@ -1,4 +1,4 @@
-import { addDays, addMinutes, format, getISODay, subMinutes } from 'date-fns';
+import { addDays } from 'date-fns';
 
 import type {
 	GetActiveClassesResponseData,
@@ -9,7 +9,10 @@ import type { SessionUser } from '@workspace/types/users';
 import * as dbClasses from '@/db/classes';
 import * as dbSettings from '@/db/settings';
 import { get } from '@/lib/cache';
+import { toLocalDayAndTime } from '@/lib/date';
 import '@/lib/polyfills/group-by';
+import { addMinutes, subtractMinutes } from '@/lib/time';
+import type { Time } from '@/types/time';
 
 import { getCurrentTime } from './utils';
 
@@ -53,19 +56,18 @@ export async function getActiveClassesForTutor() {
  * (in < 15 minutes) and classes which have ended recently (up to 1 hour ago)
  */
 async function getAllActiveClasses() {
-	const now = getCurrentTime();
+	const date = getCurrentTime();
 
-	const day = getISODay(now);
-	const time = format(now, 'HH:mm');
+	const { day, time } = toLocalDayAndTime(date);
 
 	return await get(
 		`classes?day=${day}&time=${time}`,
-		() => doGetAllActiveClasses(now),
+		() => getClassesByDate(date, day, time),
 		60,
 	);
 }
 
-async function doGetAllActiveClasses(date: Date) {
+async function getClassesByDate(date: Date, localDay: number, localTime: Time) {
 	if (!(await termInProgress(date))) {
 		return {
 			current: [],
@@ -74,12 +76,12 @@ async function doGetAllActiveClasses(date: Date) {
 		};
 	}
 
-	const day = getISODay(date);
+	return await getClassesByDayAndTime(localDay, localTime);
+}
 
-	const time = format(date, 'HH:mm');
-
-	const upcomingTime = format(addMinutes(date, 15), 'HH:mm');
-	const recentTime = format(subMinutes(date, 60), 'HH:mm');
+async function getClassesByDayAndTime(day: number, time: Time) {
+	const upcomingTime = addMinutes(time, 15);
+	const recentTime = subtractMinutes(time, 60);
 
 	const classes = await dbClasses.getClassesByDay(day);
 
@@ -111,6 +113,6 @@ async function doGetAllActiveClasses(date: Date) {
 async function termInProgress(date: Date) {
 	const { startDate, endDate } = await dbSettings.getTermDates();
 
-	// endDate is inclusive
+	// endDate is inclusive, so add 1 day before comparing
 	return date >= startDate && date < addDays(endDate, 1);
 }
