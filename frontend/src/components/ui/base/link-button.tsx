@@ -1,11 +1,11 @@
 import type { VariantProps } from 'class-variance-authority';
-import Link from 'next/link';
 import * as React from 'react';
 
 import {
 	Button,
 	buttonVariants as linkButtonVariants,
 } from '@/components/ui/base/button';
+import { Link } from '@/components/ui/base/link';
 import { cn } from '@/lib/utils';
 
 function LinkButton({

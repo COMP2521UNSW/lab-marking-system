@@ -1,10 +1,9 @@
 'use client';
 
-import Link from 'next/link';
-
 import { Button } from '@/components/ui/base/button';
 import { Card } from '@/components/ui/base/card';
 import { Image } from '@/components/ui/base/image';
+import { Link } from '@/components/ui/base/link';
 import { Separator } from '@/components/ui/base/separator';
 import {
 	Tooltip,
