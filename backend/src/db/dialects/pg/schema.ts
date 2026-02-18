@@ -25,7 +25,7 @@ export const settingsTable = pgTable(
 	{
 		id: serial().primaryKey(),
 		termStartDate: timestamp({ withTimezone: true }).notNull(),
-		termEndDate: timestamp({ withTimezone: true }).notNull(),
+		termEndDate: timestamp({ withTimezone: true }).notNull(), // inclusive
 		earlyRequestMinutes: integer().notNull().default(0),
 	},
 	(table) => [check('singleton_check', sql`${table.id} = 1`)],

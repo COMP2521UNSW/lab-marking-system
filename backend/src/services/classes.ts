@@ -1,4 +1,4 @@
-import { addMinutes, format, getISODay, subMinutes } from 'date-fns';
+import { addDays, addMinutes, format, getISODay, subMinutes } from 'date-fns';
 
 import type {
 	GetActiveClassesResponseData,
@@ -111,5 +111,6 @@ async function doGetAllActiveClasses(date: Date) {
 async function termInProgress(date: Date) {
 	const { startDate, endDate } = await dbSettings.getTermDates();
 
-	return date >= startDate && date <= endDate;
+	// endDate is inclusive
+	return date >= startDate && date < addDays(endDate, 1);
 }
