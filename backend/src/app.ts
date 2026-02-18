@@ -16,6 +16,9 @@ import { router as studentsRouter } from '@/routes/students';
 const clientOrigin = process.env.CLIENT_URL!;
 
 const app = express();
+
+app.set('trust proxy', 1);
+
 app.use(
 	cors({
 		origin: [clientOrigin],
