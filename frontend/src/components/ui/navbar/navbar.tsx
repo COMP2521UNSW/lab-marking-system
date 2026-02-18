@@ -1,7 +1,6 @@
 'use client';
 
 import { ChevronDownIcon, LogInIcon, LogOutIcon, MenuIcon } from 'lucide-react';
-import Link from 'next/link';
 import * as React from 'react';
 
 import type { SessionUser } from '@workspace/types/users';
@@ -16,6 +15,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/base/dropdown-menu';
+import { Link } from '@/components/ui/base/link';
 import { LinkButton } from '@/components/ui/base/link-button';
 import { LogoImage, LogoText } from '@/components/ui/base/logo';
 import { ThemeToggle } from '@/components/ui/base/theme-toggle';
