@@ -23,8 +23,8 @@ export const settingsTable = sqliteTable(
 	'settings', //
 	{
 		id: integer().primaryKey(),
-		termStartDate: timestamp().notNull(),
-		termEndDate: timestamp().notNull(),
+		termStartDate: timestamp({ withTimezone: true }).notNull(),
+		termEndDate: timestamp({ withTimezone: true }).notNull(), // inclusive
 		earlyRequestMinutes: integer().notNull().default(0),
 	},
 	(table) => [check('singleton_check', sql`${table.id} = 1`)],
@@ -166,7 +166,7 @@ export const logsTable = sqliteTable(
 		event: eventEnum().notNull(),
 		activityCode: text().references(() => activitiesTable.code),
 		classCode: text().references(() => classesTable.code),
-		timestamp: timestamp().notNull(),
+		timestamp: timestamp({ withTimezone: true }).notNull(),
 		markerZid: text().references(() => usersTable.zid),
 		mark: real(),
 		approverZid: text().references(() => usersTable.zid),
