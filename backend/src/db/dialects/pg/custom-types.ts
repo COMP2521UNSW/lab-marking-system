@@ -9,19 +9,6 @@ import type { UserRole } from '@workspace/types/users';
 
 import type { Time } from '@/types/time';
 
-const timestamp = customType<{
-	data: Date;
-	driverData: string;
-	config: { withTimezone: boolean };
-}>({
-	dataType(config) {
-		return `timestamp${config?.withTimezone ? ' with time zone' : ''}`;
-	},
-	fromDriver(value: string): Date {
-		return new Date(value);
-	},
-});
-
 const time = customType<{
 	data: Time;
 	driverData: string;
@@ -72,6 +59,5 @@ export {
 	manualRequestStatusEnum,
 	requestStatusEnum,
 	time,
-	timestamp,
 	userRoleEnum,
 };
