@@ -17,6 +17,7 @@
 	"dependencies": {
 		"@libsql/client": "^0.15.15",
 		"@workspace/types": "workspace:*",
+		"bcrypt": "^6.0.0",
 		"chalk": "^5.6.2",
 		"cookie": "^1.1.1",
 		"cookie-parser": "^1.4.7",
@@ -45,6 +46,7 @@
 		"@eslint/eslintrc": "^3.3.3",
 		"@eslint/js": "^9.39.2",
 		"@jest/globals": "^30.2.0",
+		"@types/bcrypt": "^6.0.0",
 		"@types/cookie-parser": "^1.4.10",
 		"@types/cors": "^2.8.19",
 		"@types/express": "^5.0.6",
