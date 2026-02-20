@@ -41,6 +41,10 @@ export const activitiesTable = sqliteTable(
 		startWeek: integer().notNull(),
 		endWeek: integer().notNull(),
 	},
+	(table) => [
+		check('maxMark_check', sql`${table.maxMark} >= 0`),
+		check('week_check', sql`${table.startWeek} <= ${table.endWeek}`),
+	],
 );
 
 export const classesTable = sqliteTable(

@@ -1,0 +1,18 @@
+
+[[activities]]
+code = 'lab01'
+name = 'lab01'
+ordering = 1
+smsName = 'lab01_subj'
+maxMark = 5
+startWeek = 1
+endWeek = 3
+
+[[activities]]
+code = 'lab02'
+name = 'lab02'
+ordering = 2
+smsName = 'lab02_subj'
+maxMark = 5
+startWeek = 2
+endWeek = 4
