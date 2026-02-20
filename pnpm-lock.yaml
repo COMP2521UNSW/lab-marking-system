@@ -11,6 +11,9 @@ importers:
       '@libsql/client':
         specifier: ^0.15.15
         version: 0.15.15
+      '@workspace/config':
+        specifier: workspace:*
+        version: link:../shared/config
       '@workspace/types':
         specifier: workspace:*
         version: link:../shared/types
@@ -195,6 +198,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.8
         version: 1.2.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@workspace/config':
+        specifier: workspace:*
+        version: link:../shared/config
       '@workspace/types':
         specifier: workspace:*
         version: link:../shared/types
@@ -292,6 +298,8 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+
+  shared/config: {}
 
   shared/types: {}
 

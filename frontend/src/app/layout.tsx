@@ -3,12 +3,13 @@
 import { Helmet, HelmetProvider } from '@dr.pogodin/react-helmet';
 import { Inclusive_Sans, Inconsolata } from 'next/font/google';
 
+import { COURSE_CODE } from '@workspace/config';
+
 import { AuthProvider, useAuth } from '@/components/providers/auth-provider';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Loading } from '@/components/ui/base/loading';
 import { Toaster } from '@/components/ui/base/toast';
 import { Navbar } from '@/components/ui/navbar/navbar';
-import { COURSE_CODE } from '@/lib/constants';
 
 import './globals.css';
 
