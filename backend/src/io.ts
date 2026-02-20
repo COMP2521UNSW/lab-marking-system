@@ -1,6 +1,7 @@
+import type { Server as HTTPServer } from 'node:http';
+
 import * as cookie from 'cookie';
 import jwt from 'jsonwebtoken';
-import type { Server as HttpServer } from 'node:http';
 import type { Namespace } from 'socket.io';
 import { Server } from 'socket.io';
 
@@ -21,7 +22,7 @@ type SocketIOMiddleware = Parameters<
 	Server<any, any, any, SocketData>['use']
 >[number];
 
-function createServer(httpServer: HttpServer) {
+function createServer(httpServer: HTTPServer) {
 	const io = new Server<EmptyObject, EmptyObject, EmptyObject, SocketData>(
 		httpServer,
 		{
