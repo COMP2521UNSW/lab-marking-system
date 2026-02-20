@@ -1,32 +1,160 @@
-// import { db } from '@/db/db';
-// import { usersTable } from '@/db/schema/schema';
-// import { logger } from '@/lib/logger';
+import 'dotenv/config';
 
-import { executeCommand } from './utils';
+import { parseArgs } from 'node:util';
 
-const COURSE_CODE = 'COMP2521';
-const TERM = '26T1';
+import { eq, isNotNull, sql } from 'drizzle-orm';
 
-export async function addStudents() {
-	const students = await getEnrollments();
+import { COURSE_CODE, SESSION } from '@workspace/config';
 
-	void students;
-}
+import { classesTable, db, usersTable } from '@/db/db';
+import { logger } from '@/lib/logger';
 
-async function getEnrollments() {
-	const output = await executeCommand(
-		`grep "^${COURSE_CODE}" ~teachadmin/lib/enrollments/${TERM}_COMP | cut -f2,3,10 -d'|'`,
-	);
+import { executeCommand, parseError } from './utils';
 
-	const lines = output.split('\n');
-	const students = lines.map((line) => {
-		const [zid, name, cseClassCode] = line.split('|');
-		return {
-			zid: `z${zid}`,
-			name: name.split(', ').toReversed().join(' '),
-			cseClassCode,
-		};
+type Student = {
+	zid: string;
+	name: string;
+	classCode: string | null;
+	enrolled?: boolean;
+};
+
+const ENROLLMENTS_FILE = `~teachadmin/lib/enrollments/${SESSION}_${COURSE_CODE.slice(0, 4)}`;
+
+const BATCH_SIZE = 250;
+
+async function main() {
+	const {
+		values: { dryrun },
+	} = parseArgs({
+		options: {
+			dryrun: { type: 'boolean' as const, default: false },
+		},
 	});
 
-	return students;
+	const dbStudents = await getDbStudents();
+
+	const classMap = await getClassMap();
+	const officialStudents = await parseEnrollments(ENROLLMENTS_FILE, classMap);
+
+	const diffs = getDiffs(dbStudents, officialStudents);
+
+	if (dryrun) {
+		console.log(diffs);
+	} else {
+		await insertStudents(diffs);
+	}
 }
+
+async function getDbStudents() {
+	return await db
+		.select({
+			zid: usersTable.zid,
+			name: usersTable.name,
+			classCode: usersTable.classCode,
+		})
+		.from(usersTable)
+		.where(eq(usersTable.role, 'student'))
+		.orderBy(usersTable.zid);
+}
+
+async function getClassMap() {
+	const classes = await db
+		.select({
+			code: classesTable.code,
+			cseCode: classesTable.cseCode,
+		})
+		.from(classesTable)
+		.where(isNotNull(classesTable.cseCode));
+
+	return new Map(classes.map((cls) => [cls.cseCode as string, cls.code]));
+}
+
+async function parseEnrollments(
+	enrollmentsFile: string,
+	classMap: Map<string, string>,
+) {
+	let stdout: string;
+
+	try {
+		stdout = await executeCommand(
+			`grep "^${COURSE_CODE}" ${enrollmentsFile} | cut -f2,3,10 -d'|' | sort`,
+		);
+	} catch {
+		process.exit(1);
+	}
+
+	try {
+		const students = stdout
+			.split('\n')
+			.filter((line) => line.length > 0)
+			.map((line) => line.split('|'))
+			.filter(([zid, name, cseClassCode]) => cseClassCode !== 'crs')
+			.map(([zid, name, cseClassCode]) => ({
+				zid: `z${zid}`,
+				name: name
+					.split(', ')
+					.toReversed()
+					.map((s) => s.trim())
+					.filter((s) => s !== '.')
+					.join(' '),
+				classCode: classMap.get(cseClassCode) || null,
+			}));
+
+		return students;
+	} catch (err) {
+		logger.error(parseError(err));
+		process.exit(1);
+	}
+}
+
+function getDiffs(dbStudents: Student[], sourceStudents: Student[]) {
+	const diffs = [];
+
+	let i = 0;
+	let j = 0;
+	while (i < dbStudents.length || j < sourceStudents.length) {
+		if (i === dbStudents.length) {
+			diffs.push(sourceStudents[j]);
+			j++;
+		} else if (j === sourceStudents.length) {
+			diffs.push({ ...dbStudents[i], enrolled: false });
+			i++;
+		} else if (dbStudents[i].zid < sourceStudents[j].zid) {
+			diffs.push({ ...dbStudents[i], enrolled: false });
+			i++;
+		} else if (sourceStudents[j].zid < dbStudents[i].zid) {
+			diffs.push(sourceStudents[j]);
+		} else if (
+			dbStudents[i].name !== sourceStudents[j].name ||
+			dbStudents[i].classCode !== sourceStudents[j].classCode
+		) {
+			diffs.push(sourceStudents[j]);
+		}
+	}
+
+	return diffs;
+}
+
+async function insertStudents(students: Student[]) {
+	for (let i = 0; i < students.length; i += BATCH_SIZE) {
+		const batch = students.slice(i, i + BATCH_SIZE);
+		await db
+			.insert(usersTable)
+			.values(
+				batch.map((student) => ({
+					...student,
+					role: 'student' as const,
+				})),
+			)
+			.onConflictDoUpdate({
+				target: usersTable.zid,
+				set: {
+					name: sql`excluded.name`,
+					classCode: sql`excluded."classCode"`,
+					enrolled: sql`excluded.enrolled`,
+				},
+			});
+	}
+}
+
+void main();
