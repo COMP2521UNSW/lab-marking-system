@@ -1,10 +1,10 @@
-import { and, eq, like, or } from 'drizzle-orm';
+import { and, eq, or } from 'drizzle-orm';
 
 import type { NonNullableKeys } from '@workspace/types/utils';
 
 import { get } from '@/lib/cache';
 
-import { db, usersTable } from './db';
+import { db, ilike, usersTable } from './db';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -53,8 +53,8 @@ export async function searchStudents(query: string) {
 			and(
 				eq(usersTable.role, 'student'),
 				or(
-					like(usersTable.zid, '%' + query + '%'),
-					like(usersTable.name, '%' + query + '%'),
+					ilike(usersTable.zid, '%' + query + '%'),
+					ilike(usersTable.name, '%' + query + '%'),
 				),
 				eq(usersTable.enrolled, true),
 			),
