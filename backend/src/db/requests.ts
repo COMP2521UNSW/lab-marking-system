@@ -1,4 +1,3 @@
-import { startOfDay } from 'date-fns';
 import { and, eq, gte, inArray, isNull, or } from 'drizzle-orm';
 
 import type { NonNullableKeys } from '@workspace/types/utils';
@@ -135,7 +134,10 @@ export async function withdrawRequest(
 	return rows.length > 0 ? rows[0] : null;
 }
 
-export async function getActiveOrRecentRequestsByClass(classCode: string) {
+export async function getActiveOrRecentRequestsByClass(
+	classCode: string,
+	startOfDay: Date,
+) {
 	const markersTable = alias(usersTable, 'markersTable');
 
 	return await db
@@ -168,7 +170,7 @@ export async function getActiveOrRecentRequestsByClass(classCode: string) {
 				eq(requestsTable.classCode, classCode),
 				or(
 					isNull(requestsTable.closedAt),
-					gte(requestsTable.createdAt, startOfDay(new Date())),
+					gte(requestsTable.createdAt, startOfDay),
 				),
 			),
 		)
