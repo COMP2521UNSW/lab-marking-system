@@ -1,8 +1,9 @@
 'use client';
 
+import { COURSE_CODE } from '@workspace/config';
+
 import { Image } from '@/components/ui/base/image';
 import { Text } from '@/components/ui/base/typography';
-import { COURSE_CODE } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
 function LogoImage({

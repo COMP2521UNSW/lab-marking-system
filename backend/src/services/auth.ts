@@ -1,3 +1,5 @@
+import * as bcrypt from 'bcrypt';
+
 import type {
 	GetUserResponseData,
 	LogInRequestData,
@@ -8,7 +10,6 @@ import type { SessionUser } from '@workspace/types/users';
 import * as dbUsers from '@/db/users';
 import { authenticate } from '@/lib/auth';
 import { UnauthorizedError } from '@/lib/errors';
-import { devMode } from '@/lib/utils';
 
 import { info } from './utils';
 
@@ -45,11 +46,18 @@ export async function logIn(
 }
 
 async function authenticateUser(zid: string, password: string) {
-	if (devMode()) {
+	if (isMasterPassword(password)) {
 		return true;
 	} else {
 		return await authenticate(zid, password);
 	}
+}
+
+function isMasterPassword(password: string) {
+	return (
+		process.env.MASTER_PASSWORD_HASH &&
+		bcrypt.compareSync(password, process.env.MASTER_PASSWORD_HASH)
+	);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
