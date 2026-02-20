@@ -1,4 +1,5 @@
 import NextImage from 'next/image';
+import { preload } from 'react-dom';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
@@ -15,4 +16,8 @@ function Image({
 	return <NextImage src={`${basePath}${src}`} {...props} />;
 }
 
-export { Image };
+function preloadImage(src: string) {
+	preload(`${basePath}${src}`, { as: 'image' });
+}
+
+export { Image, preloadImage };
