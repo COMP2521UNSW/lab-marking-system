@@ -1,7 +1,8 @@
-import type { Request } from 'express';
 import fs from 'fs';
-import morgan from 'morgan';
 import path from 'path';
+
+import type { Request } from 'express';
+import morgan from 'morgan';
 
 const logStream = fs.createWriteStream(
 	path.join('instance', 'logs', 'requests.log'),

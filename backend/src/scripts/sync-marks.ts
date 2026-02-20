@@ -1,5 +1,6 @@
-import { eq, isNotNull, sql } from 'drizzle-orm';
 import { writeFileSync } from 'node:fs';
+
+import { eq, isNotNull, sql } from 'drizzle-orm';
 
 import type { NonNullableKeys } from '@workspace/types/utils';
 
