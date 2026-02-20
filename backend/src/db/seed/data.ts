@@ -24,7 +24,7 @@ export const fakeActivities: (typeof activitiesTable.$inferInsert)[] = [
 ];
 
 // prettier-ignore
-export const fakeClasses: (typeof classesTable.$inferSelect)[] = [
+export const fakeClasses: (typeof classesTable.$inferInsert)[] = [
 	{ code: 'M17B', dayOfWeek: 1, labStartTime: '18:00', labEndTime: '20:00', labLocation: 'Harp Lab' },
 	{ code: 'T09A', dayOfWeek: 2, labStartTime: '10:00', labEndTime: '12:00', labLocation: 'Oboe Lab' },
 	{ code: 'T09B', dayOfWeek: 2, labStartTime: '10:00', labEndTime: '12:00', labLocation: 'Sitar Lab' },
