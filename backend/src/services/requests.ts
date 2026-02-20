@@ -31,6 +31,7 @@ import * as dbRequests from '@/db/requests';
 import * as dbSettings from '@/db/settings';
 import * as dbUsers from '@/db/users';
 import { MAX_REASON_LEN } from '@/lib/constants';
+import { toLocalStartOfDay } from '@/lib/date';
 import { BadRequestError } from '@/lib/errors';
 import '@/lib/polyfills/group-by';
 import * as activitiesService from '@/services/activities';
@@ -291,6 +292,7 @@ export async function getRequestsByClass(
 
 	const requests = await dbRequests.getActiveOrRecentRequestsByClass(
 		req.classCode,
+		toLocalStartOfDay(new Date()),
 	);
 
 	const groupedRequests = Map.groupBy(
