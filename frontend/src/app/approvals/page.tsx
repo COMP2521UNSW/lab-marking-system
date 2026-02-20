@@ -11,7 +11,7 @@ import { LoginRequired } from '@/components/guards/login-required';
 import { AdminRequired } from '@/components/guards/role-required';
 import { Button } from '@/components/ui/base/button';
 import { Card } from '@/components/ui/base/card';
-import { Image } from '@/components/ui/base/image';
+import { Image, preloadImage } from '@/components/ui/base/image';
 import { Loading } from '@/components/ui/base/loading';
 import { ScrollArea, ScrollBar } from '@/components/ui/base/scroll-area';
 import {
@@ -43,6 +43,8 @@ type LoadingState =
 	  };
 
 export default function Page() {
+	preloadImage('/sleeping-fish.png');
+
 	return (
 		<>
 			<LoginRequired>
