@@ -236,5 +236,14 @@ function eventToRowData(event: RequestLogEvent): [
         'Manual request denied',
         event.activity, null, null, event.approverName, event.reason,
       ];
+    case 'mark-imported-from-sms':
+      return [
+        'Mark imported from SMS',
+        event.activity, null,
+        event.mark === null
+          ? `./${event.activity.maxMark}`
+          : `${Math.round(100 * event.mark) / 100}/${event.activity.maxMark}`,
+        null, null,
+      ]
 	}
 }

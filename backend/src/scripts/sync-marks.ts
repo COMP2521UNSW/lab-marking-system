@@ -5,6 +5,7 @@ import { eq, isNotNull, sql } from 'drizzle-orm';
 import type { NonNullableKeys } from '@workspace/types/utils';
 
 import { activitiesTable, db, marksTable, syncedMarksTable } from '@/db/db';
+import { logMarksImportedFromSms } from '@/db/logs';
 
 import { executeCommand } from './utils';
 
@@ -113,7 +114,7 @@ async function getSmsMarks(activities: { code: string; smsName: string }[]) {
 				zid: `z${zid}`,
 				code: activities[i].code,
 				smsName: activities[i].smsName,
-				mark: marks[i] === '.' ? null : Number(marks[i]),
+				mark: marks[i] === '.' || marks[i] === '?' ? null : Number(marks[i]),
 			});
 		}
 	}
@@ -197,9 +198,20 @@ function lessThan(a: Mark, b: Mark) {
 ////////////////////////////////////////////////////////////////////////////////
 
 async function saveDiffs(fromDb: Mark[], fromSms: Mark[]) {
+	const timestamp = new Date();
+
 	await insertMarksIntoSms(fromDb);
 	await updateMarksTable(fromSms);
 	await updateSyncedMarksTable([...fromDb, ...fromSms]);
+
+	await logMarksImportedFromSms(
+		fromSms.map((entry) => ({
+			studentZid: entry.zid,
+			activityCode: entry.code,
+			mark: entry.mark,
+		})),
+		timestamp,
+	);
 }
 
 async function insertMarksIntoSms(markEntries: Mark[]) {
