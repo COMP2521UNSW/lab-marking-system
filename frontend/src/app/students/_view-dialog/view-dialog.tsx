@@ -5,6 +5,7 @@ import * as React from 'react';
 
 import type { Student } from '@workspace/types/users';
 
+import { MIN_WIDTH } from '@/app/layout';
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -69,6 +70,7 @@ export function ViewDialog({
 			<DialogContent
 				showCloseButton={false}
 				className="w-[calc(100%-32px)] bg-card shadow-regular"
+				style={{ minWidth: `${MIN_WIDTH - 32}px` }}
 				aria-describedby={undefined}
 			>
 				<DialogHeader>
@@ -88,7 +90,7 @@ export function ViewDialog({
 									<TableRow className="**:[&th]:text-base **:[&th]:text-primary **:[&th]:font-light">
 										<TableHead>Activity</TableHead>
 										<TableHead>Mark</TableHead>
-										<TableHead>Marking time</TableHead>
+										<TableHead>Time marked</TableHead>
 									</TableRow>
 								</TableHeader>
 

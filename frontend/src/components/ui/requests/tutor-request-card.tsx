@@ -65,12 +65,12 @@ export function TutorRequestCard({
 							/>
 						</Text>
 
-						<div className="justify-self-end space-x-2 whitespace-nowrap">
+						<div className="flex flex-col xs:flex-row gap-2 justify-self-end whitespace-nowrap">
 							{request.closedAt === null ? (
 								<React.Fragment>
 									<Button
 										variant="primary"
-										className="px-2"
+										className="px-2 h-8 xs:h-9"
 										disabled={request.status !== 'pending'}
 										onClick={() => onMarkClick(request)}
 									>
@@ -78,7 +78,7 @@ export function TutorRequestCard({
 									</Button>
 									<Button
 										variant="danger"
-										className="px-2"
+										className="px-2 h-8 xs:h-9"
 										disabled={request.status !== 'pending'}
 										onClick={() => onDeclineClick(request)}
 									>

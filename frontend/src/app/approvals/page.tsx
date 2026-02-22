@@ -7,6 +7,7 @@ import * as React from 'react';
 
 import type { ManualRequest } from '@workspace/types/requests';
 
+import { MAX_WIDTH, MIN_WIDTH } from '@/app/layout';
 import { LoginRequired } from '@/components/guards/login-required';
 import { AdminRequired } from '@/components/guards/role-required';
 import { Button } from '@/components/ui/base/button';
@@ -197,8 +198,13 @@ function RequestList({
 	}
 
 	return (
-		// TODO: stop hardcoding widths
-		<div className="rounded-strong border w-[calc(100vw-66px)] min-w-[294px] max-w-[calc(896px-66px)] overflow-x-auto">
+		<div
+			className="rounded-strong border w-[calc(100vw-66px)] overflow-x-auto"
+			style={{
+				minWidth: `${MIN_WIDTH - 66}px`,
+				maxWidth: `${MAX_WIDTH - 66}px`,
+			}}
+		>
 			<ScrollArea>
 				<Table>
 					<TableHeader className="font-semibold">

@@ -5,6 +5,7 @@ import * as React from 'react';
 import type { Class } from '@workspace/types/classes';
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
+import { MIN_WIDTH } from '@/app/layout';
 import { ActivitySelect } from '@/components/ui/base/activity-select';
 import { Button } from '@/components/ui/base/button';
 import {
@@ -34,8 +35,6 @@ export function UpdateRequestsDialog({
 	attendedClass: Class | null;
 	currentRequests: MarkingRequestAsStudent[];
 }) {
-	console.log('UpdateRequestsDialog');
-
 	const { activeClasses, activeActivities } = useStudentRequests();
 
 	const [selectedClass, setSelectedClass] = React.useState(attendedClass);
@@ -96,6 +95,7 @@ export function UpdateRequestsDialog({
 			<DialogContent
 				showCloseButton={false}
 				className="w-[calc(100%-32px)] max-w-96! bg-card shadow-regular"
+				style={{ minWidth: `${MIN_WIDTH - 32}px` }}
 				aria-describedby={undefined}
 			>
 				<DialogHeader>

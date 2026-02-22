@@ -8,6 +8,7 @@ import z from 'zod';
 import type { ActivityAsTutor } from '@workspace/types/activities';
 import type { Student } from '@workspace/types/users';
 
+import { MIN_WIDTH } from '@/app/layout';
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -130,6 +131,7 @@ export function MarkDialog({
 			<DialogContent
 				showCloseButton={false}
 				className="w-[calc(100%-32px)] max-w-90! bg-card shadow-regular"
+				style={{ minWidth: `${MIN_WIDTH - 32}px` }}
 			>
 				<DialogHeader>
 					<DialogTitle className="text-center text-2xl font-light text-primary">

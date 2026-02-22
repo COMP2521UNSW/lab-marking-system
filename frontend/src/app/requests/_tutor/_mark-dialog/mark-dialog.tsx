@@ -8,6 +8,7 @@ import z from 'zod';
 import type { MarkingRequestAsTutor } from '@workspace/types/requests';
 import type { Student } from '@workspace/types/users';
 
+import { MIN_WIDTH } from '@/app/layout';
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -33,8 +34,6 @@ export function MarkDialog({
 	student: Student;
 	request: MarkingRequestAsTutor;
 }) {
-	console.log('MarkDialog');
-
 	const formSchema = React.useMemo(
 		() =>
 			z.object({
@@ -101,6 +100,7 @@ export function MarkDialog({
 			<DialogContent
 				showCloseButton={false}
 				className="w-[calc(100%-32px)] max-w-90! bg-card shadow-regular"
+				style={{ minWidth: `${MIN_WIDTH - 32}px` }}
 				aria-describedby={undefined}
 			>
 				<DialogHeader>
