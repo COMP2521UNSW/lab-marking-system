@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 
-import { TIME_ZONE } from '@/lib/date';
+import { LOCAL_TIME_ZONE } from '@workspace/config';
+
 import { logger } from '@/lib/logger';
 
 import { getStats } from './cache';
@@ -21,7 +22,7 @@ function registerCronJob() {
 			logger.info(`Cache hit rates: ${JSON.stringify(summary)}`);
 		},
 		{
-			timezone: TIME_ZONE,
+			timezone: LOCAL_TIME_ZONE,
 		},
 	);
 }
