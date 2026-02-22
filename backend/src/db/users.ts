@@ -1,13 +1,13 @@
 import { and, eq, or } from 'drizzle-orm';
 
-import { get } from '@/lib/cache';
+import { get } from '@/cache/cache';
 
 import { db, ilike, usersTable } from './db';
 
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function getUserByZid(zid: string) {
-	return await get(`users?zid=${zid}`, () => dbGetUserByZid(zid));
+	return await get(`getUserByZid:${zid}`, () => dbGetUserByZid(zid));
 }
 
 async function dbGetUserByZid(zid: string) {
@@ -22,7 +22,7 @@ async function dbGetUserByZid(zid: string) {
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function getStudentByZid(zid: string) {
-	return await get(`students?zid=${zid}`, () => dbGetStudentByZid(zid));
+	return await get(`getStudentByZid:${zid}`, () => dbGetStudentByZid(zid));
 }
 
 async function dbGetStudentByZid(zid: string) {

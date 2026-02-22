@@ -3,7 +3,7 @@ import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 
 import type { Time } from '@/types/time';
 
-const TIME_ZONE = process.env.LOCAL_TIME_ZONE || 'Australia/Sydney';
+export const TIME_ZONE = process.env.LOCAL_TIME_ZONE || 'Australia/Sydney';
 
 function toLocalDayAndTime(date: Date, timeZone = TIME_ZONE) {
 	const zonedDate = toZonedTime(date, timeZone);
