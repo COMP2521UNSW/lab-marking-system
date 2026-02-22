@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 import { server } from './server';
 
-import './cron/cron';
+import './cron';
 
 const serverPort = Number(process.env.SERVER_PORT!);
 server.listen(serverPort, () => {

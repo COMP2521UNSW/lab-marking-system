@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 
-import { get } from '@/lib/cache';
+import { get } from '@/cache/cache';
 
 import { classesTable, db } from './db';
 
@@ -20,7 +20,7 @@ export async function getAllClasses() {
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function getClassesByDay(day: number) {
-	return await get(`classes?day=${day}`, () => dbGetClassesByDay(day));
+	return await get(`getClassesByDay:${day}`, () => dbGetClassesByDay(day));
 }
 
 async function dbGetClassesByDay(day: number) {
@@ -33,7 +33,7 @@ async function dbGetClassesByDay(day: number) {
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function getClassDetails(classCode: string) {
-	return await get(`classes?code=${classCode}`, () =>
+	return await get(`getClassDetails:${classCode}`, () =>
 		dbGetClassDetails(classCode),
 	);
 }

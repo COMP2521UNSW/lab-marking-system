@@ -159,6 +159,25 @@ export async function logManualRequestDenied(
 	});
 }
 
+export async function logMarksImportedFromSms(
+	marks: {
+		studentZid: string;
+		activityCode: string;
+		mark: number | null;
+	}[],
+	timestamp: Date,
+) {
+	await db.insert(logsTable).values(
+		marks.map((entry) => ({
+			studentZid: entry.studentZid,
+			event: 'mark-imported-from-sms' as const,
+			activityCode: entry.activityCode,
+			mark: entry.mark,
+			timestamp,
+		})),
+	);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function getStudentLogs(studentZid: string) {

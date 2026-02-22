@@ -1,6 +1,6 @@
 import { and, eq, gte, lte } from 'drizzle-orm';
 
-import { get } from '@/lib/cache';
+import { get } from '@/cache/cache';
 
 import { activitiesTable, db, marksTable } from './db';
 
@@ -48,7 +48,9 @@ export async function getActiveActivitiesAndMarksForUser(
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function getActivityByCode(code: string) {
-	return await get(`activity?code=${code}`, () => dbGetActivityByCode(code));
+	return await get(`getActivityByCode:${code}`, () =>
+		dbGetActivityByCode(code),
+	);
 }
 
 async function dbGetActivityByCode(code: string) {

@@ -1,11 +1,11 @@
-import { get } from '@/lib/cache';
+import { get } from '@/cache/cache';
 
 import { db, settingsTable } from './db';
 
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function getTermDates() {
-	return await get('settings/dates', dbGetTermDates);
+	return await get('getTermDates', dbGetTermDates);
 }
 
 async function dbGetTermDates() {
@@ -22,7 +22,7 @@ async function dbGetTermDates() {
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function getEarlyRequestMinutes() {
-	return await get('settings/early-request', dbGetEarlyRequestMinutes);
+	return await get('getEarlyRequestMinutes', dbGetEarlyRequestMinutes);
 }
 
 async function dbGetEarlyRequestMinutes() {

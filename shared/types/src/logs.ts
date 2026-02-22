@@ -9,7 +9,8 @@ export type EventType =
 	| 'mark-amended'
 	| 'manual-request-created'
 	| 'manual-request-approved'
-	| 'manual-request-denied';
+	| 'manual-request-denied'
+  | 'mark-imported-from-sms';
 
 export type RequestLogEvent =
 	| ClassChangedEvent
@@ -20,7 +21,8 @@ export type RequestLogEvent =
 	| MarkAmendedEvent
 	| ManualRequestCreatedEvent
 	| ManualRequestApprovedEvent
-	| ManualRequestDeniedEvent;
+	| ManualRequestDeniedEvent
+  | MarkImportedFromSmsEvent;
 
 interface BaseRequestLogEvent {
 	eventType: EventType;
@@ -88,4 +90,10 @@ export interface ManualRequestDeniedEvent extends BaseRequestLogEvent {
 	activity: ActivityAsTutor;
 	approverName: string;
 	reason: string;
+}
+
+export interface MarkImportedFromSmsEvent extends BaseRequestLogEvent {
+  eventType: 'mark-imported-from-sms';
+  activity: ActivityAsTutor;
+  mark: number | null;
 }
