@@ -59,15 +59,15 @@ export function MarkDialog({
 				.trim()
 				.min(1, 'Mark is required')
 				.regex(/^-?(\.\d+|\d+(\.\d*)?)$/, 'Not a valid number')
+				.refine((value) => {
+					const mark = Number(value);
+					return mark >= 0 && mark <= (activity?.maxMark ?? 0);
+				}, `Mark must be between 0 and ${activity?.maxMark}`)
 				.refine(
 					(value) => !/\.\d{3}/.test(value),
 					'Max. 2 decimal places allowed',
 				)
-				.transform(Number)
-				.refine(
-					(value) => value >= 0 && value <= (activity?.maxMark ?? 0),
-					`Mark must be between 0 and ${activity?.maxMark}`,
-				),
+				.transform(Number),
 		});
 	}, [activity]);
 
