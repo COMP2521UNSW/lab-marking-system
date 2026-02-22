@@ -1,7 +1,5 @@
 import { and, eq, or } from 'drizzle-orm';
 
-import type { NonNullableKeys } from '@workspace/types/utils';
-
 import { get } from '@/lib/cache';
 
 import { db, ilike, usersTable } from './db';
@@ -42,7 +40,7 @@ async function dbGetStudentByZid(zid: string) {
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function searchStudents(query: string) {
-	const rows = await db
+	return await db
 		.select({
 			zid: usersTable.zid,
 			name: usersTable.name,
@@ -59,9 +57,6 @@ export async function searchStudents(query: string) {
 				eq(usersTable.enrolled, true),
 			),
 		);
-
-	// classCode is guaranteed to be non-NULL for students due to CHECK constraint
-	return rows as NonNullableKeys<(typeof rows)[number], 'classCode'>[];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
