@@ -1,6 +1,15 @@
 'use client';
 
-import { ChevronDownIcon, LogInIcon, LogOutIcon, MenuIcon } from 'lucide-react';
+import { HandRaisedIcon } from '@heroicons/react/24/outline';
+import {
+	CheckSquareIcon,
+	ChevronDownIcon,
+	InfoIcon,
+	LogInIcon,
+	LogOutIcon,
+	MenuIcon,
+	SearchIcon,
+} from 'lucide-react';
 import * as React from 'react';
 
 import type { SessionUser } from '@workspace/types/users';
@@ -24,7 +33,7 @@ import { isAdmin, isTutor } from '@/lib/roles';
 import { cn } from '@/lib/utils';
 
 export type NavLink = {
-	icon?: React.ReactNode;
+	Icon?: React.ExoticComponent<React.SVGProps<SVGSVGElement>>;
 	label: string;
 	href: string;
 };
@@ -48,7 +57,7 @@ export function Navbar({ className }: { className?: string }) {
 				{/* Desktop */}
 				<div className="hidden sm:flex items-center gap-3">
 					{navLinks.length > 0 && <DesktopPagesMenu navLinks={navLinks} />}
-					<LogInOut loggedIn={loggedIn} />
+					<LogInOutButton loggedIn={loggedIn} />
 					<ThemeToggle />
 				</div>
 
@@ -67,23 +76,39 @@ function getNavLinks(user: SessionUser | null): NavLink[] {
 
 	if (user) {
 		if (isTutor(user.role)) {
-			links.push({ icon: '📝', label: 'Marking Requests', href: '/requests' });
+			links.push({
+				Icon: HandRaisedIcon,
+				label: 'Marking Requests',
+				href: '/requests',
+			});
 		} else {
-			links.push({ icon: '📝', label: 'Request Marking', href: '/requests' });
+			links.push({
+				Icon: HandRaisedIcon,
+				label: 'Request Marking',
+				href: '/requests',
+			});
 		}
 		if (isTutor(user.role)) {
-			links.push({ icon: '🔎', label: 'Student Search', href: '/students' });
+			links.push({
+				Icon: SearchIcon,
+				label: 'Student Search',
+				href: '/students',
+			});
 		}
 		if (isAdmin(user.role)) {
-			links.push({ icon: '✅', label: 'Mark Approvals', href: '/approvals' });
+			links.push({
+				Icon: CheckSquareIcon,
+				label: 'Mark Approvals',
+				href: '/approvals',
+			});
 		}
 	}
-	links.push({ icon: '⭐', label: 'About', href: '/about' });
+	links.push({ Icon: InfoIcon, label: 'About', href: '/about' });
 
 	return links;
 }
 
-////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 function Logo() {
 	return (
@@ -98,7 +123,7 @@ function Logo() {
 	);
 }
 
-////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 function DesktopPagesMenu({ navLinks }: { navLinks: NavLink[] }) {
 	return (
@@ -116,21 +141,11 @@ function DesktopPagesMenu({ navLinks }: { navLinks: NavLink[] }) {
 				alignOffset={0}
 				sideOffset={15}
 			>
-				<DropdownMenuGroup className="space-y-1">
-					{navLinks.map((link) => (
-						<DropdownMenuItem asChild key={link.label}>
-							<Link href={link.href} className="cursor-pointer">
-								{link.icon && link.icon} {link.label}
-							</Link>
-						</DropdownMenuItem>
-					))}
-				</DropdownMenuGroup>
+				<NavbarMenuLinkGroup navLinks={navLinks} />
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
 }
-
-////////////////////////////////////////////////////////////////////////
 
 function MobileNavMenu({
 	loggedIn,
@@ -145,7 +160,7 @@ function MobileNavMenu({
 		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
 				<Button variant="ghost" className="w-10 h-8">
-					<MenuIcon className="stroke-foreground size-5" />
+					<MenuIcon className="size-5" />
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
@@ -156,17 +171,7 @@ function MobileNavMenu({
 			>
 				{navLinks.length > 0 && (
 					<>
-						<DropdownMenuGroup className="space-y-1">
-							{navLinks.map((link) => (
-								<DropdownMenuItem asChild key={link.label}>
-									<Link href={link.href} className="cursor-pointer">
-										<Text>
-											{link.icon} {link.label}
-										</Text>
-									</Link>
-								</DropdownMenuItem>
-							))}
-						</DropdownMenuGroup>
+						<NavbarMenuLinkGroup navLinks={navLinks} />
 
 						<DropdownMenuSeparator />
 					</>
@@ -174,20 +179,14 @@ function MobileNavMenu({
 
 				<DropdownMenuGroup>
 					{loggedIn ? (
-						<DropdownMenuItem
-							className="gap-1 cursor-pointer [&_svg]:stroke-foreground focus:[&_svg]:stroke-white"
-							onSelect={logOut}
-						>
-							<LogOutIcon className="size-4.5" />
+						<DropdownMenuItem onSelect={logOut}>
+							<LogOutIcon className="size-5 stroke-2" />
 							<Text>Log Out</Text>
 						</DropdownMenuItem>
 					) : (
-						<DropdownMenuItem
-							asChild
-							className="gap-1 cursor-pointer [&_svg]:stroke-foreground focus:[&_svg]:stroke-white"
-						>
+						<DropdownMenuItem asChild>
 							<Link href="/login">
-								<LogInIcon className="size-4.5 me-0.5" />
+								<LogInIcon className="size-5 stroke-2" />
 								<Text>Log In</Text>
 							</Link>
 						</DropdownMenuItem>
@@ -198,9 +197,24 @@ function MobileNavMenu({
 	);
 }
 
-////////////////////////////////////////////////////////////////////////
+function NavbarMenuLinkGroup({ navLinks }: { navLinks: NavLink[] }) {
+	return (
+		<DropdownMenuGroup className="space-y-1">
+			{navLinks.map((link) => (
+				<DropdownMenuItem asChild key={link.label}>
+					<Link href={link.href}>
+						{link.Icon && <link.Icon className="size-5 stroke-2" />}{' '}
+						{link.label}
+					</Link>
+				</DropdownMenuItem>
+			))}
+		</DropdownMenuGroup>
+	);
+}
 
-function LogInOut({ loggedIn }: { loggedIn: boolean }) {
+////////////////////////////////////////////////////////////////////////////////
+
+function LogInOutButton({ loggedIn }: { loggedIn: boolean }) {
 	const { logOut } = useAuth();
 
 	return loggedIn ? (
@@ -213,3 +227,5 @@ function LogInOut({ loggedIn }: { loggedIn: boolean }) {
 		</LinkButton>
 	);
 }
+
+////////////////////////////////////////////////////////////////////////////////
