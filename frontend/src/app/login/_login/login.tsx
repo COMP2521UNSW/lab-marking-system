@@ -17,7 +17,7 @@ import { LoginForm } from './login-form';
 
 export function Login() {
 	return (
-		<div className="relative m-auto">
+		<div className="relative m-auto w-full max-w-90">
 			<BoxDecoration className="absolute top-0 -translate-y-1/2" />
 
 			<LoginBox />
@@ -51,7 +51,7 @@ function Star({ className }: { className?: string }) {
 
 function LoginBox() {
 	return (
-		<Card className="max-w-sm p-4">
+		<Card className="p-4">
 			<Text size="lg" className="text-center font-mono font-bold">
 				&gt; login
 			</Text>
