@@ -88,7 +88,7 @@ function TutorRequests() {
 	const { selectedClass, loadingRequests } = useTutorRequests();
 
 	return (
-		<Card className="flex flex-col items-center gap-6 py-6 px-4">
+		<Card className="flex flex-col items-center gap-6 min-h-full py-6 px-4">
 			<ClassSelector />
 
 			{selectedClass &&

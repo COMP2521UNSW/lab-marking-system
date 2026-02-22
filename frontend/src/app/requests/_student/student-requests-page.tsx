@@ -105,7 +105,7 @@ function StudentRequests() {
 	const { requests } = useStudentRequests();
 
 	return (
-		<Card className="py-6 px-4 space-y-6">
+		<Card className="min-h-full py-6 px-4 space-y-6">
 			{requests.length === 0 ? <NoRequests /> : <Requests />}
 		</Card>
 	);

@@ -42,8 +42,8 @@ const logOut: RequestHandler = (req, res) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-const getUser: RequestHandler = (req, res) => {
-	const user = authService.getUser(req.maybeUser);
+const getUser: RequestHandler = async (req, res) => {
+	const user = await authService.getUser(req.maybeUser);
 	res.status(200).json(user);
 };
 

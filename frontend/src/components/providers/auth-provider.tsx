@@ -3,12 +3,12 @@
 import { useRouter } from 'next/navigation';
 import * as React from 'react';
 
-import type { SessionUser } from '@workspace/types/users';
+import type { UserDetails } from '@workspace/types/users';
 
 import * as authService from '@/services/auth';
 
 interface AuthContextType {
-	user: SessionUser | null;
+	user: UserDetails | null;
 	loading: boolean;
 	logIn: (zid: string, zpass: string) => Promise<void>;
 	logOut: () => Promise<void>;
@@ -22,7 +22,7 @@ const AuthContext = React.createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-	const [user, setUser] = React.useState<SessionUser | null>(null);
+	const [user, setUser] = React.useState<UserDetails | null>(null);
 	const [loading, setLoading] = React.useState(true);
 
 	const router = useRouter();

@@ -1,10 +1,10 @@
-import type { SessionUser } from '../users';
+import type { UserDetails } from '../users';
 
 export type LogInRequestData = {
 	zid: string;
 	password: string;
 };
 
-export type LogInResponseData = SessionUser;
+export type LogInResponseData = UserDetails;
 
-export type GetUserResponseData = SessionUser | null;
+export type GetUserResponseData = UserDetails | null;

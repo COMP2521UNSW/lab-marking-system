@@ -19,5 +19,5 @@ export function LoginRequired({ children }: { children: React.ReactNode }) {
 		}
 	}, [router, user]);
 
-	return <div>{!user ? <Loading /> : children}</div>;
+	return !user ? <Loading /> : children;
 }
