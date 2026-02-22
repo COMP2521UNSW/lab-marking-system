@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/base/dialog';
@@ -129,12 +130,16 @@ export function MarkDialog({
 			<DialogContent
 				showCloseButton={false}
 				className="w-[calc(100%-32px)] max-w-90! bg-card shadow-regular"
-				aria-describedby={undefined}
 			>
 				<DialogHeader>
 					<DialogTitle className="text-center text-2xl font-light text-primary">
 						Manual marking request for {student.name} ({student.zid})
 					</DialogTitle>
+
+					<DialogDescription className="text-center">
+						A manual marking request should only be made if it is too late for a
+						student to request marking themselves.
+					</DialogDescription>
 				</DialogHeader>
 
 				<form
@@ -155,7 +160,7 @@ export function MarkDialog({
 										id="reason"
 										aria-invalid={fieldState.invalid}
 										maxLength={MAX_REASON_LEN}
-										placeholder="Reason"
+										placeholder="e.g., special consideration"
 									/>
 									{fieldState.invalid && (
 										<FieldError
