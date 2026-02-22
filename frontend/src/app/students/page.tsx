@@ -127,7 +127,7 @@ function StudentSearch() {
 	};
 
 	return (
-		<Card className="py-6 px-4 space-y-4">
+		<Card className="min-h-full py-6 px-4 space-y-4">
 			<div className="text-center space-y-4">
 				<Text>Search for student by name or zID</Text>
 

@@ -130,7 +130,7 @@ function MarkApprovals({
 	};
 
 	return (
-		<Card className="py-6 px-4">
+		<Card className="min-h-full py-6 px-4">
 			<div className="flex flex-col items-center gap-4">
 				<Text>Approve manual requests</Text>
 
