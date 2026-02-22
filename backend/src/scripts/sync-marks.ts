@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import { writeFileSync } from 'node:fs';
 
 import { eq, isNotNull, sql } from 'drizzle-orm';
@@ -103,7 +105,7 @@ async function getSmsMarks(activities: { code: string; smsName: string }[]) {
 		process.exit(1);
 	}
 
-	const lines = stdout.split('\n');
+	const lines = stdout.split('\n').filter((line) => line.length > 0);
 
 	const smsMarks = [];
 	for (const line of lines) {
@@ -201,7 +203,7 @@ async function saveDiffs(fromDb: Mark[], fromSms: Mark[]) {
 	const timestamp = new Date();
 
 	await insertMarksIntoSms(fromDb);
-	await updateMarksTable(fromSms);
+	await updateMarksTable(fromSms, timestamp);
 	await updateSyncedMarksTable([...fromDb, ...fromSms]);
 
 	await logMarksImportedFromSms(
@@ -228,9 +230,7 @@ async function insertMarksIntoSms(markEntries: Mark[]) {
 	await executeCommand('smsupdate lab_handmarking');
 }
 
-async function updateMarksTable(markEntries: Mark[]) {
-	const timestamp = new Date();
-
+async function updateMarksTable(markEntries: Mark[], timestamp: Date) {
 	await db
 		.insert(marksTable)
 		.values(
