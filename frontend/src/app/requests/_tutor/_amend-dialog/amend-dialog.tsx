@@ -34,8 +34,6 @@ export function AmendDialog({
 	student: Student;
 	request: MarkedRequest;
 }) {
-	console.log('AmendDialog');
-
 	const formSchema = React.useMemo(
 		() =>
 			z.object({
