@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import '@/../env.config';
 
 import { server } from './server';
 

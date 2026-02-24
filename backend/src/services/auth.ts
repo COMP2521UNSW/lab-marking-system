@@ -20,8 +20,6 @@ export async function logIn(
 ): Promise<LogInResponseData> {
 	const loggableData = { zid: req.zid };
 
-	info(undefined, 'Logging in', loggableData);
-
 	const { zid, password } = req;
 
 	// Checking password first prevents enumeration attack
@@ -38,6 +36,8 @@ export async function logIn(
 
 		throw new UnauthorizedError('Not enrolled in the course');
 	} else {
+		info(user, 'Logging in');
+
 		return {
 			zid: user.zid,
 			name: user.name,

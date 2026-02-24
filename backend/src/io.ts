@@ -15,6 +15,8 @@ import type {
 import type { SessionUser } from '@workspace/types/users';
 import type { EmptyObject } from '@workspace/types/utils';
 
+import { logger } from '@/lib/logger';
+
 const clientOrigin = process.env.CLIENT_URL!;
 
 type SocketIOMiddleware = Parameters<
@@ -54,12 +56,12 @@ function createServer(httpServer: HTTPServer) {
 
 	studentNamespace.on('connection', (socket) => {
 		const user = socket.data.user;
-		console.log(`student ${user.zid} connected`);
+		logger.info('Student connected', { user });
 
 		void socket.join(user.zid);
 
 		socket.on('disconnect', () => {
-			console.log(`student ${user.zid} disconnected`);
+			logger.info('Student disconnected', { user });
 		});
 	});
 
@@ -80,7 +82,7 @@ function createServer(httpServer: HTTPServer) {
 
 	tutorNamespace.on('connection', (socket) => {
 		const user = socket.data.user;
-		console.log(`tutor ${user.zid} connected`);
+		logger.info('Tutor connected', { user });
 
 		socket.on('viewClass', (classCode: string) => {
 			if (user.role === 'student') return;
@@ -93,7 +95,7 @@ function createServer(httpServer: HTTPServer) {
 		});
 
 		socket.on('disconnect', () => {
-			console.log(`tutor ${user.zid} disconnected`);
+			logger.info('Tutor disconnected', { user });
 		});
 	});
 

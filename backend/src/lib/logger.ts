@@ -1,24 +1,35 @@
 import path from 'path';
 
+import { format as formatDate } from 'date-fns';
 import { addColors, createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 
+import { rootDir } from '@workspace/backend/paths.config';
 import type { SessionUser } from '@workspace/types/users';
 
+import { toLocalDate } from '@/lib/date';
+
+const timestampFormatter = format.timestamp({
+	format: () => {
+		const date = toLocalDate(new Date());
+		return formatDate(date, 'yyyy-MM-dd HH:mm:ss');
+	},
+});
+
+const printfFormatter = format.printf((info) => {
+	const user = info.user as SessionUser | undefined;
+	const data = info.data as object | undefined;
+	return (
+		`[${info.timestamp as string}]` +
+		` ${info.level}: ` +
+		(user ? `[${user.zid}] ` : '') +
+		`${info.message as string}` +
+		(data ? ` (${JSON.stringify(data)})` : '')
+	);
+});
+
 const logger = createLogger({
-	format: format.combine(
-		format.timestamp(),
-		format.printf((info) => {
-			const user = info.user as SessionUser | undefined;
-			const data = info.data as object | undefined;
-			return (
-				`[${info.timestamp as string}]` +
-				(user ? `[${user.zid}]` : '') +
-				` ${info.level}: ${info.message as string}` +
-				(data ? ` (${JSON.stringify(data)})` : '')
-			);
-		}),
-	),
+	format: format.combine(timestampFormatter, printfFormatter),
 	transports: [
 		new transports.Console({
 			level: 'debug',
@@ -26,22 +37,13 @@ const logger = createLogger({
 				process.env.WINSTON_COLOUR !== 'false'
 					? format.colorize()
 					: format.simple(),
-				format.timestamp(),
-				format.printf((info) => {
-					const user = info.user as SessionUser | undefined;
-					const data = info.data as object | undefined;
-					return (
-						`[${info.timestamp as string}]` +
-						(user ? `[${user.zid}]` : '') +
-						` ${info.level}: ${info.message as string}` +
-						(data ? ` (${JSON.stringify(data)})` : '')
-					);
-				}),
+				timestampFormatter,
+				printfFormatter,
 			),
 		}),
 		new transports.DailyRotateFile({
 			level: 'info',
-			filename: path.join('instance', 'logs', 'app', '%DATE%.log'),
+			filename: path.join(rootDir, 'logs', '%DATE%.log'),
 			datePattern: 'YYYY-MM-DD',
 		}),
 	],

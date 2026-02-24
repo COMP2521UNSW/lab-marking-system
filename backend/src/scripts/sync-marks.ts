@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import '@/../env.config';
 
 import { writeFileSync } from 'node:fs';
 

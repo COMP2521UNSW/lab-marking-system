@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import '@/../env.config';
 
 import { parseArgs } from 'node:util';
 
@@ -15,7 +15,7 @@ type Student = {
 	zid: string;
 	name: string;
 	classCode: string | null;
-	enrolled?: boolean;
+	enrolled: boolean;
 };
 
 const ENROLLMENTS_FILE = `~teachadmin/lib/enrollments/${SESSION}_${COURSE_CODE.slice(0, 4)}`;
@@ -51,6 +51,7 @@ async function getDbStudents() {
 			zid: usersTable.zid,
 			name: usersTable.name,
 			classCode: usersTable.classCode,
+			enrolled: usersTable.enrolled,
 		})
 		.from(usersTable)
 		.where(eq(usersTable.role, 'student'))
@@ -98,6 +99,7 @@ async function parseEnrollments(
 					.filter((s) => s !== '.')
 					.join(' '),
 				classCode: classMap.get(cseClassCode) || null,
+				enrolled: true,
 			}));
 
 		return students;
@@ -113,22 +115,28 @@ function getDiffs(dbStudents: Student[], sourceStudents: Student[]) {
 	let i = 0;
 	let j = 0;
 	while (i < dbStudents.length || j < sourceStudents.length) {
-		if (i === dbStudents.length) {
-			diffs.push(sourceStudents[j]);
-			j++;
-		} else if (j === sourceStudents.length) {
+		if (j === sourceStudents.length) {
 			diffs.push({ ...dbStudents[i], enrolled: false });
 			i++;
+		} else if (i === dbStudents.length) {
+			diffs.push(sourceStudents[j]);
+			j++;
 		} else if (dbStudents[i].zid < sourceStudents[j].zid) {
 			diffs.push({ ...dbStudents[i], enrolled: false });
 			i++;
 		} else if (sourceStudents[j].zid < dbStudents[i].zid) {
 			diffs.push(sourceStudents[j]);
-		} else if (
-			dbStudents[i].name !== sourceStudents[j].name ||
-			dbStudents[i].classCode !== sourceStudents[j].classCode
-		) {
-			diffs.push(sourceStudents[j]);
+			j++;
+		} else {
+			if (
+				dbStudents[i].name !== sourceStudents[j].name ||
+				dbStudents[i].classCode !== sourceStudents[j].classCode ||
+				dbStudents[i].enrolled !== sourceStudents[j].enrolled
+			) {
+				diffs.push(sourceStudents[j]);
+			}
+			i++;
+			j++;
 		}
 	}
 

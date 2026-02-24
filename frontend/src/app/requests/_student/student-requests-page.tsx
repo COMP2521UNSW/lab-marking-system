@@ -150,7 +150,9 @@ function Requests() {
 		<div className="flex flex-col items-center gap-4">
 			{numPendingRequests === 0 ? (
 				<>
-					<Text>All of your requests have been marked!</Text>
+					<Text className="text-center">
+						All of your requests have been marked!
+					</Text>
 
 					<Button
 						onClick={() => updateRequests('create', attendedClass, requests)}

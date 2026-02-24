@@ -5,6 +5,10 @@ import { LOCAL_TIME_ZONE } from '@workspace/config';
 
 import type { Time } from '@/types/time';
 
+function toLocalDate(date: Date, timeZone: string = LOCAL_TIME_ZONE) {
+	return toZonedTime(date, timeZone);
+}
+
 function toLocalDayAndTime(date: Date, timeZone: string = LOCAL_TIME_ZONE) {
 	const zonedDate = toZonedTime(date, timeZone);
 	return {
@@ -17,4 +21,4 @@ function toLocalStartOfDay(date: Date, timeZone: string = LOCAL_TIME_ZONE) {
 	return fromZonedTime(startOfDay(toZonedTime(date, timeZone)), timeZone);
 }
 
-export { toLocalDayAndTime, toLocalStartOfDay };
+export { toLocalDate, toLocalDayAndTime, toLocalStartOfDay };

@@ -5,6 +5,6 @@ import { createServer as createIOServer } from './io';
 
 const server = createHTTPServer(app);
 
-const { studentSocket, tutorSocket } = createIOServer(server);
+const { io, studentSocket, tutorSocket } = createIOServer(server);
 
-export { server, studentSocket, tutorSocket };
+export { io, server, studentSocket, tutorSocket };

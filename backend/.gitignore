@@ -6,6 +6,12 @@
 # production
 /dist
 
+# test
+/test.db
+
+# debug
+/logs
+
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
