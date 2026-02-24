@@ -1,4 +1,4 @@
-import '@/../env.config';
+import '@@/env-config';
 
 import chalk from 'chalk';
 

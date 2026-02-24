@@ -11,9 +11,6 @@ importers:
       '@libsql/client':
         specifier: ^0.15.15
         version: 0.15.15
-      '@workspace/backend':
-        specifier: workspace:*
-        version: 'link:'
       '@workspace/config':
         specifier: workspace:*
         version: link:../shared/config

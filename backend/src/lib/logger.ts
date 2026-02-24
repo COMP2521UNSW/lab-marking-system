@@ -4,10 +4,10 @@ import { format as formatDate } from 'date-fns';
 import { addColors, createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 
-import { rootDir } from '@workspace/backend/paths.config';
 import type { SessionUser } from '@workspace/types/users';
 
 import { toLocalDate } from '@/lib/date';
+import { rootDir } from '@@/path-config';
 
 const timestampFormatter = format.timestamp({
 	format: () => {

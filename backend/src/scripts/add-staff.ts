@@ -1,4 +1,4 @@
-import '@/../env.config';
+import '@@/env-config';
 
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';

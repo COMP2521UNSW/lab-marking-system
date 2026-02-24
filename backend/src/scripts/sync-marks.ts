@@ -1,4 +1,4 @@
-import '@/../env.config';
+import '@@/env-config';
 
 import { writeFileSync } from 'node:fs';
 

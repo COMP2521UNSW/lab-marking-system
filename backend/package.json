@@ -1,5 +1,5 @@
 {
-	"name": "@workspace/backend",
+	"name": "backend",
 	"version": "0.1.0",
 	"description": "",
 	"main": "src/index.ts",
@@ -16,7 +16,6 @@
 	"packageManager": "pnpm@10.29.3",
 	"dependencies": {
 		"@libsql/client": "^0.15.15",
-		"@workspace/backend": "workspace:*",
 		"@workspace/config": "workspace:*",
 		"@workspace/types": "workspace:*",
 		"bcrypt": "^6.0.0",
