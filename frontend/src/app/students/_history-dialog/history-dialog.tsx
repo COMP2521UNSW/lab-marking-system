@@ -8,6 +8,7 @@ import type { ActivityAsTutor } from '@workspace/types/activities';
 import type { RequestLogEvent } from '@workspace/types/logs';
 import type { Student } from '@workspace/types/users';
 
+import { MIN_WIDTH } from '@/app/layout';
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -73,6 +74,7 @@ export function HistoryDialog({
 			<DialogContent
 				showCloseButton={false}
 				className="w-[calc(100%-32px)] max-w-4xl! bg-card shadow-regular"
+				style={{ minWidth: `${MIN_WIDTH - 32}px` }}
 				aria-describedby={undefined}
 			>
 				<DialogHeader>
@@ -234,5 +236,14 @@ function eventToRowData(event: RequestLogEvent): [
         'Manual request denied',
         event.activity, null, null, event.approverName, event.reason,
       ];
+    case 'mark-imported-from-sms':
+      return [
+        'Mark imported from SMS',
+        event.activity, null,
+        event.mark === null
+          ? `./${event.activity.maxMark}`
+          : `${Math.round(100 * event.mark) / 100}/${event.activity.maxMark}`,
+        null, null,
+      ]
 	}
 }

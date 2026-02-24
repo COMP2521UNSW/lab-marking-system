@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 
+import { MIN_WIDTH } from '@/app/layout';
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -60,7 +61,8 @@ export function DenyDialog({
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogContent
 				showCloseButton={false}
-				className="w-[calc(100%-32px)] !max-w-84 bg-card shadow-regular"
+				className="w-[calc(100%-32px)] max-w-90! bg-card shadow-regular"
+				style={{ minWidth: `${MIN_WIDTH - 32}px` }}
 				aria-describedby={undefined}
 			>
 				<DialogHeader>

@@ -18,7 +18,16 @@ paths:
       security: []
       responses:
         "200":
-          $ref: "#/components/responses/200LogIn"
+          description: "OK"
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: token=abcde12345; Path=/; HttpOnly; Secure; SameSite=Lax
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDetails"
         "401":
           $ref: "#/components/responses/401Credentials"
 
@@ -30,7 +39,12 @@ paths:
       operationId: logOut
       responses:
         "200":
-          $ref: "#/components/responses/200LogOut"
+          description: "OK"
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: token=; Path=/; HttpOnly; Secure; SameSite=Lax
         "401":
           $ref: "#/components/responses/401Error"
 
@@ -42,7 +56,13 @@ paths:
       operationId: getUser
       responses:
         "200":
-          $ref: "#/components/responses/200SessionUser"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UserDetails"
+                  - $ref: "#/components/schemas/null"
 
   /activities/all:
     get:
@@ -60,17 +80,17 @@ paths:
 
   /activities/active:
     get:
-      summary: Get active activities
+      summary: Get active activities and the current user's status for each activity
       tags:
         - Activities
-      operationId: getActiveActivities
+      operationId: getActiveActivitiesForUser
       responses:
         "200":
           description: "OK"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ActivityAsStudent[]"
+                $ref: "#/components/schemas/ActivityWithStatus[]"
 
   /classes/all:
     get:
@@ -84,7 +104,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Classes"
+                $ref: "#/components/schemas/Class[]"
 
   /classes/active:
     get:
@@ -98,7 +118,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Classes"
+                $ref: "#/components/schemas/ActiveClasses"
 
   /requests/self:
     get:
@@ -108,7 +128,13 @@ paths:
       operationId: getActiveRequestsForSelf
       responses:
         "200":
-          $ref: "#/components/responses/200RequestDetails"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/RequestDetails"
+                  - $ref: "#/components/schemas/RequestDetailsNone"
   
   /requests:
     get:
@@ -120,7 +146,11 @@ paths:
         - $ref: "#/components/parameters/ClassCode"
       responses:
         "200":
-          $ref: "#/components/responses/200ClassRequests"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentWithRequests[]"
         "401":
           $ref: "#/components/responses/401Error"
         "403":
@@ -217,7 +247,11 @@ paths:
       operationId: getAllManualRequests
       responses:
         "200":
-          $ref: "#/components/responses/200ManualRequests"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManualRequest[]"
         "401":
           $ref: "#/components/responses/401Error"
         "403":
@@ -248,7 +282,7 @@ paths:
         - $ref: "#/components/parameters/RequestId"
       responses:
         "200":
-          $ref: "#/components/responses/200Empty"
+          $ref: "#/components/responses/200ManualRequest"
         "401":
           $ref: "#/components/responses/401Error"
         "403":
@@ -266,7 +300,7 @@ paths:
         - $ref: "#/components/requestBodies/DenyManualRequest"
       responses:
         "200":
-          $ref: "#/components/responses/200Empty"
+          $ref: "#/components/responses/200ManualRequest"
         "401":
           $ref: "#/components/responses/401Error"
         "403":
@@ -282,7 +316,11 @@ paths:
         - $ref: "#/components/parameters/Search"
       responses:
         "200":
-          $ref: "#/components/responses/200Students"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentSearchResult[]"
         "401":
           $ref: "#/components/responses/401Error"
         "403":
@@ -298,7 +336,11 @@ paths:
         - $ref: "#/components/parameters/Zid"
       responses:
         "200":
-          $ref: "#/components/responses/200StudentMarks"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentMark[]"
         "401":
           $ref: "#/components/responses/401Error"
         "403":
@@ -314,7 +356,11 @@ paths:
         - $ref: "#/components/parameters/Zid"
       responses:
         "200":
-          $ref: "#/components/responses/200StudentLogs"
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentLog[]"
         "401":
           $ref: "#/components/responses/401Error"
         "403":
@@ -355,6 +401,9 @@ components:
     name:
       type: string
       default: "Andrew Taylor"
+    null:
+      type: null
+      default: null
     password:
       type: string
       default: "password"
@@ -377,6 +426,15 @@ components:
       type: string
       default: "z1234567"
 
+    ActiveClasses:
+      type: object
+      properties:
+        current:
+          $ref: "#/components/schemas/Class[]"
+        upcoming:
+          $ref: "#/components/schemas/Class[]"
+        recent:
+          $ref: "#/components/schemas/Class[]"
     ActivityAsStudent:
       type: object
       properties:
@@ -393,6 +451,13 @@ components:
           $ref: "#/components/schemas/activityName"
         maxMark:
           $ref: "#/components/schemas/mark"
+    ActivityWithStatus:
+      type: object
+      properties:
+        activity:
+          $ref: "#/components/schemas/ActivityAsStudent"
+        marked:
+          $ref: "#/components/schemas/bool"
     Class:
       type: object
       properties:
@@ -494,16 +559,23 @@ components:
       type: object
       properties:
         class:
-          $ref: "#/components/schemas/LabClass"
+          $ref: "#/components/schemas/Class"
         requests:
-          $ref: "#/components/schemas/MarkingRequestsAsStudent"
+          $ref: "#/components/schemas/MarkingRequestAsStudent[]"
+    RequestDetailsNone:
+      type: object
+      properties:
+        class:
+          $ref: "#/components/schemas/null"
+        requests:
+          $ref: "#/components/schemas/EmptyArray"
     RequestDetailsInput:
       type: object
       properties:
         classCode:
           $ref: "#/components/schemas/classCode"
         activityCodes:
-          $ref: "#/components/schemas/ActivityCodes"
+          $ref: "#/components/schemas/ActivityCode[]"
     SessionUser:
       properties:
         zid:
@@ -555,7 +627,19 @@ components:
         student:
           $ref: "#/components/schemas/Student"
         requests:
-          $ref: "#/components/schemas/MarkingRequestsAsTutor"
+          $ref: "#/components/schemas/MarkingRequestAsTutor[]"
+    UserDetails:
+      properties:
+        zid:
+          $ref: "#/components/schemas/zid"
+        name:
+          $ref: "#/components/schemas/name"
+        role:
+          $ref: "#/components/schemas/role"
+        classCode:
+          oneOf:
+            - $ref: "#/components/schemas/classCode"
+            - $ref: "#/components/schemas/null"
     WithdrawRequest:
       type: object
       properties:
@@ -570,43 +654,48 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/ActivityAsTutor"
-    ActivityCodes:
+    ActivityCode[]:
       type: array
       items:
         $ref: "#/components/schemas/activityCode"
-    Classes:
+    ActivityWithStatus[]:
+      type: array
+      items:
+        $ref: "#/components/schemas/ActivityWithStatus"
+    Class[]:
       type: array
       items:
         $ref: "#/components/schemas/Class"
-    ManualRequests:
+    EmptyArray:
+      type: array
+      items:
+        type: string
+      maxItems: 0
+    ManualRequest[]:
       type: array
       items:
         $ref: "#/components/schemas/ManualRequest"
-    MarkingRequestsAsStudent:
+    MarkingRequestAsStudent[]:
       type: array
       items:
         $ref: "#/components/schemas/MarkingRequestAsStudent"
-    MarkingRequestsAsTutor:
+    MarkingRequestAsTutor[]:
       type: array
       items:
         $ref: "#/components/schemas/MarkingRequestAsTutor"
-    StudentLogs:
+    StudentLog[]:
       type: array
       items:
         $ref: "#/components/schemas/StudentLog"
-    StudentMarks:
+    StudentMark[]:
       type: array
       items:
         $ref: "#/components/schemas/StudentMark"
-    StudentSearchResults:
+    StudentSearchResult[]:
       type: array
       items:
         $ref: "#/components/schemas/StudentSearchResult"
-    Students:
-      type: array
-      items:
-        $ref: "#/components/schemas/Student"
-    StudentsWithRequests:
+    StudentWithRequests[]:
       type: array
       items:
         $ref: "#/components/schemas/StudentWithRequests"
@@ -688,72 +777,18 @@ components:
             $ref: "#/components/schemas/WithdrawRequest"
 
   responses:
-    200ClassRequests:
-      description: "OK"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/StudentsWithRequests"
     200Empty:
       description: "OK"
       content:
         application/json:
           schema:
             type: object
-    200LogIn:
-      description: "OK"
-      headers:
-        Set-Cookie:
-          schema:
-            type: string
-            example: token=abcde12345; Path=/; HttpOnly; Secure; SameSite=Lax
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/SessionUser"
-    200LogOut:
-      description: "OK"
-      headers:
-        Set-Cookie:
-          schema:
-            type: string
-            example: token=; Path=/; HttpOnly; Secure; SameSite=Lax
-    200ManualRequests:
+    200ManualRequest:
       description: "OK"
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ManualRequests"
-    200RequestDetails:
-      description: "OK"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/RequestDetails"
-    200SessionUser:
-      description: "OK"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/SessionUser"
-    200StudentLogs:
-      description: "OK"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/StudentLogs"
-    200StudentMarks:
-      description: "OK"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/StudentMarks"
-    200Students:
-      description: "OK"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Students"
+            $ref: "#/components/schemas/ManualRequest"
     401Credentials:
       description: "Unauthorized - Invalid credentials"
       content:

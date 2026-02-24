@@ -1,6 +1,7 @@
+import type { Server as HTTPServer } from 'node:http';
+
 import * as cookie from 'cookie';
 import jwt from 'jsonwebtoken';
-import type { Server as HttpServer } from 'node:http';
 import type { Namespace } from 'socket.io';
 import { Server } from 'socket.io';
 
@@ -14,6 +15,8 @@ import type {
 import type { SessionUser } from '@workspace/types/users';
 import type { EmptyObject } from '@workspace/types/utils';
 
+import { logger } from '@/lib/logger';
+
 const clientOrigin = process.env.CLIENT_URL!;
 
 type SocketIOMiddleware = Parameters<
@@ -21,7 +24,7 @@ type SocketIOMiddleware = Parameters<
 	Server<any, any, any, SocketData>['use']
 >[number];
 
-function createServer(httpServer: HttpServer) {
+function createServer(httpServer: HTTPServer) {
 	const io = new Server<EmptyObject, EmptyObject, EmptyObject, SocketData>(
 		httpServer,
 		{
@@ -53,12 +56,12 @@ function createServer(httpServer: HttpServer) {
 
 	studentNamespace.on('connection', (socket) => {
 		const user = socket.data.user;
-		console.log(`student ${user.zid} connected`);
+		logger.info('Student connected', { user });
 
 		void socket.join(user.zid);
 
 		socket.on('disconnect', () => {
-			console.log(`student ${user.zid} disconnected`);
+			logger.info('Student disconnected', { user });
 		});
 	});
 
@@ -79,7 +82,7 @@ function createServer(httpServer: HttpServer) {
 
 	tutorNamespace.on('connection', (socket) => {
 		const user = socket.data.user;
-		console.log(`tutor ${user.zid} connected`);
+		logger.info('Tutor connected', { user });
 
 		socket.on('viewClass', (classCode: string) => {
 			if (user.role === 'student') return;
@@ -92,7 +95,7 @@ function createServer(httpServer: HttpServer) {
 		});
 
 		socket.on('disconnect', () => {
-			console.log(`tutor ${user.zid} disconnected`);
+			logger.info('Tutor disconnected', { user });
 		});
 	});
 

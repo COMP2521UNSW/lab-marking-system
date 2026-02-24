@@ -1,10 +1,15 @@
-import { eq, isNotNull, sql } from 'drizzle-orm';
-import { execSync } from 'node:child_process';
+import '@@/env-config';
+
 import { writeFileSync } from 'node:fs';
+
+import { eq, isNotNull, sql } from 'drizzle-orm';
 
 import type { NonNullableKeys } from '@workspace/types/utils';
 
 import { activitiesTable, db, marksTable, syncedMarksTable } from '@/db/db';
+import { logMarksImportedFromSms } from '@/db/logs';
+
+import { executeCommand } from './utils';
 
 type Mark = {
 	zid: string;
@@ -19,11 +24,11 @@ async function main() {
 	const activities = await getAllActivities();
 
 	const dbMarks = await getDbMarks();
-	const syncedMarks = await getSyncedMarks();
-	const smsMarks = getSmsMarks(activities);
+	const dbSyncedMarks = await getDbSyncedMarks();
+	const smsMarks = await getSmsMarks(activities);
 
-	const dbDiffs = getDiffs(syncedMarks, dbMarks);
-	const smsDiffs = getDiffs(syncedMarks, smsMarks);
+	const dbDiffs = getDiffs(dbSyncedMarks, dbMarks);
+	const smsDiffs = getDiffs(dbSyncedMarks, smsMarks);
 	const { fromDb, fromSms } = mergeDiffs(dbDiffs, smsDiffs);
 
 	await saveDiffs(fromDb, fromSms);
@@ -68,7 +73,7 @@ async function getDbMarks() {
 	return marks as NonNullableKeys<(typeof marks)[number], 'smsName'>[];
 }
 
-async function getSyncedMarks() {
+async function getDbSyncedMarks() {
 	const marks = await db
 		.select({
 			zid: syncedMarksTable.studentZid,
@@ -88,12 +93,19 @@ async function getSyncedMarks() {
 	return marks as NonNullableKeys<(typeof marks)[number], 'smsName'>[];
 }
 
-function getSmsMarks(activities: { code: string; smsName: string }[]) {
+async function getSmsMarks(activities: { code: string; smsName: string }[]) {
 	const smsNames = activities.map((activity) => activity.smsName);
-	const cmd = `name -p ${smsNames.join(' ')} | cut -f1,4- | sort`;
-	const output = execSync(cmd, { encoding: 'utf-8' });
 
-	const lines = output.split('\n');
+	let stdout: string;
+	try {
+		stdout = await executeCommand(
+			`name -p ${smsNames.join(' ')} | cut -f1,4- | sort`,
+		);
+	} catch {
+		process.exit(1);
+	}
+
+	const lines = stdout.split('\n').filter((line) => line.length > 0);
 
 	const smsMarks = [];
 	for (const line of lines) {
@@ -104,7 +116,7 @@ function getSmsMarks(activities: { code: string; smsName: string }[]) {
 				zid: `z${zid}`,
 				code: activities[i].code,
 				smsName: activities[i].smsName,
-				mark: marks[i] === '.' ? null : Number(marks[i]),
+				mark: marks[i] === '.' || marks[i] === '?' ? null : Number(marks[i]),
 			});
 		}
 	}
@@ -188,12 +200,23 @@ function lessThan(a: Mark, b: Mark) {
 ////////////////////////////////////////////////////////////////////////////////
 
 async function saveDiffs(fromDb: Mark[], fromSms: Mark[]) {
-	insertMarksIntoSms(fromDb);
-	await updateMarksTable(fromSms);
+	const timestamp = new Date();
+
+	await insertMarksIntoSms(fromDb);
+	await updateMarksTable(fromSms, timestamp);
 	await updateSyncedMarksTable([...fromDb, ...fromSms]);
+
+	await logMarksImportedFromSms(
+		fromSms.map((entry) => ({
+			studentZid: entry.zid,
+			activityCode: entry.code,
+			mark: entry.mark,
+		})),
+		timestamp,
+	);
 }
 
-function insertMarksIntoSms(markEntries: Mark[]) {
+async function insertMarksIntoSms(markEntries: Mark[]) {
 	const data = markEntries
 		.map((entry) => {
 			const zid = entry.zid.slice(1);
@@ -204,12 +227,10 @@ function insertMarksIntoSms(markEntries: Mark[]) {
 	const smsPath = process.env.SMSDB!;
 	writeFileSync(`${smsPath}/update_recs/lab_handmarking.upd`, data);
 
-	execSync('smsupdate lab_handmarking');
+	await executeCommand('smsupdate lab_handmarking');
 }
 
-async function updateMarksTable(markEntries: Mark[]) {
-	const timestamp = new Date();
-
+async function updateMarksTable(markEntries: Mark[], timestamp: Date) {
 	await db
 		.insert(marksTable)
 		.values(

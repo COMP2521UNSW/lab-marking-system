@@ -8,10 +8,12 @@ import z from 'zod';
 import type { ActivityAsTutor } from '@workspace/types/activities';
 import type { Student } from '@workspace/types/users';
 
+import { MIN_WIDTH } from '@/app/layout';
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/base/dialog';
@@ -58,15 +60,15 @@ export function MarkDialog({
 				.trim()
 				.min(1, 'Mark is required')
 				.regex(/^-?(\.\d+|\d+(\.\d*)?)$/, 'Not a valid number')
+				.refine((value) => {
+					const mark = Number(value);
+					return mark >= 0 && mark <= (activity?.maxMark ?? 0);
+				}, `Mark must be between 0 and ${activity?.maxMark}`)
 				.refine(
 					(value) => !/\.\d{3}/.test(value),
 					'Max. 2 decimal places allowed',
 				)
-				.transform(Number)
-				.refine(
-					(value) => value >= 0 && value <= (activity?.maxMark ?? 0),
-					`Mark must be between 0 and ${activity?.maxMark}`,
-				),
+				.transform(Number),
 		});
 	}, [activity]);
 
@@ -129,12 +131,17 @@ export function MarkDialog({
 			<DialogContent
 				showCloseButton={false}
 				className="w-[calc(100%-32px)] max-w-90! bg-card shadow-regular"
-				aria-describedby={undefined}
+				style={{ minWidth: `${MIN_WIDTH - 32}px` }}
 			>
 				<DialogHeader>
 					<DialogTitle className="text-center text-2xl font-light text-primary">
 						Manual marking request for {student.name} ({student.zid})
 					</DialogTitle>
+
+					<DialogDescription className="text-center">
+						A manual marking request should only be made if it is too late for a
+						student to request marking themselves.
+					</DialogDescription>
 				</DialogHeader>
 
 				<form
@@ -155,7 +162,7 @@ export function MarkDialog({
 										id="reason"
 										aria-invalid={fieldState.invalid}
 										maxLength={MAX_REASON_LEN}
-										placeholder="Reason"
+										placeholder="e.g., special consideration"
 									/>
 									{fieldState.invalid && (
 										<FieldError

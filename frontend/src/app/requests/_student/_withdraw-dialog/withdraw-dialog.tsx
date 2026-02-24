@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
+import { MIN_WIDTH } from '@/app/layout';
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -33,8 +34,6 @@ export function WithdrawDialog({
 	setOpen: (open: boolean) => void;
 	request: MarkingRequestAsStudent;
 }) {
-	console.log('WithdrawDialog');
-
 	const [reason, setReason] = React.useState({ value: '', text: '' });
 
 	const [loading, setLoading] = React.useState(false);
@@ -86,6 +85,7 @@ export function WithdrawDialog({
 			<DialogContent
 				showCloseButton={false}
 				className="w-[calc(100%-32px)] max-w-90! bg-card shadow-regular"
+				style={{ minWidth: `${MIN_WIDTH - 32}px` }}
 				aria-describedby={undefined}
 			>
 				<DialogHeader>

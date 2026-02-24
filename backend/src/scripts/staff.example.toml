@@ -1,0 +1,8 @@
+
+admins = [
+  { zid = 'z0000001', name = "John Doe" },
+]
+
+tutors = [
+  { zid = 'z0000002', name = "Jane Doe" },
+]

@@ -12,6 +12,9 @@ const nextConfig = (
 			...defaultConfig,
 			output: 'export',
 			trailingSlash: true,
+			images: {
+				unoptimized: true,
+			},
 		};
 	}
 

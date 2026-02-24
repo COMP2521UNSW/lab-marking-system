@@ -42,12 +42,17 @@ export const activitiesTable = pgTable(
 		startWeek: integer().notNull(),
 		endWeek: integer().notNull(),
 	},
+	(table) => [
+		check('maxMark_check', sql`${table.maxMark} >= 0`),
+		check('week_check', sql`${table.startWeek} <= ${table.endWeek}`),
+	],
 );
 
 export const classesTable = pgTable(
 	'classes', //
 	{
 		code: text().primaryKey(),
+		cseCode: text().unique(),
 		dayOfWeek: integer().notNull(), // 1 = Monday, 7 = Sunday
 		labStartTime: time().notNull(),
 		labEndTime: time().notNull(),
@@ -70,13 +75,6 @@ export const usersTable = pgTable(
 	},
 	(table) => [
 		check('role_check', sql`${table.role} in ('student', 'tutor', 'admin')`),
-		check(
-			'classCode_check',
-			sql`
-        (${table.role} = 'student' AND ${table.classCode} IS NOT NULL)
-        OR (${table.role} <> 'student' AND ${table.classCode} IS NULL)
-      `,
-		),
 	],
 );
 

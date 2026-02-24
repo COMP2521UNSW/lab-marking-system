@@ -10,10 +10,17 @@ export type User = {
 	name: string;
 };
 
+export type UserDetails = {
+  zid: string;
+  name: string;
+  role: UserRole;
+  classCode: string | null;
+};
+
 export type Student = User;
 
 export type StudentDetails = {
 	zid: string;
 	name: string;
-	classCode: string;
+	classCode: string | null;
 };

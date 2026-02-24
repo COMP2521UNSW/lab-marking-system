@@ -11,7 +11,7 @@ import * as dbUsers from '@/db/users';
 import { authenticate } from '@/lib/auth';
 import { UnauthorizedError } from '@/lib/errors';
 
-import { info } from './utils';
+import { info, internalServerError } from './utils';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -19,8 +19,6 @@ export async function logIn(
 	req: LogInRequestData, //
 ): Promise<LogInResponseData> {
 	const loggableData = { zid: req.zid };
-
-	info(undefined, 'Logging in', loggableData);
 
 	const { zid, password } = req;
 
@@ -38,9 +36,13 @@ export async function logIn(
 
 		throw new UnauthorizedError('Not enrolled in the course');
 	} else {
+		info(user, 'Logging in');
+
 		return {
 			zid: user.zid,
+			name: user.name,
 			role: user.role,
+			classCode: user.classCode,
 		};
 	}
 }
@@ -70,10 +72,28 @@ export function logOut(
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export function getUser(
-	user: SessionUser | null, //
-): GetUserResponseData {
-	return user;
+export async function getUser(
+	maybeUser: SessionUser | null, //
+): Promise<GetUserResponseData> {
+	if (maybeUser === null) {
+		return null;
+	}
+
+	const user = await dbUsers.getUserByZid(maybeUser.zid);
+
+	if (user === null) {
+		internalServerError(
+			maybeUser,
+			`Couldn't find user with zid ${maybeUser.zid}`,
+		);
+	}
+
+	return {
+		zid: user.zid,
+		name: user.name,
+		role: user.role,
+		classCode: user.classCode,
+	};
 }
 
 ////////////////////////////////////////////////////////////////////////////////

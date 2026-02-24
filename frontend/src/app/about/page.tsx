@@ -11,7 +11,7 @@ export default function Page() {
 		<>
 			<Helmet title="About" />
 
-			<Card className="flex flex-col items-center gap-4 p-6">
+			<Card className="flex flex-col items-center min-h-full gap-4 p-6">
 				<LogoImage height={0} width={0} className="w-24" />
 
 				<LogoText className="text-center text-xl" />

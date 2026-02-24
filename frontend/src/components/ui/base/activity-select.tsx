@@ -58,7 +58,7 @@ export function ActivitySelect({
 		<DropdownMenu open={open} modal={true}>
 			<DropdownMenuTrigger
 				className={cn(
-					'flex items-center justify-between gap-2 h-9 rounded-weak border border-outline px-3 whitespace-nowrap focus-ring',
+					'flex items-center justify-between gap-2 rounded-weak border border-outline py-[5px] px-3 whitespace-nowrap focus-ring',
 					className,
 				)}
 				onPointerDown={(e) => {
@@ -117,29 +117,30 @@ function SelectedActivities({
 	className?: string;
 }) {
 	return (
-		<div ref={ref} className={cn('flex items-center gap-2', className)}>
+		<div
+			ref={ref}
+			className={cn('flex items-center gap-2 flex-wrap', className)}
+		>
 			{preselected.map((value) => {
 				const option = options.find((opt) => opt.value === value);
 				return option && <Tag key={value} label={option.label} />;
 			})}
 
-			{selected.length > 0 ? (
-				selected.map((value) => {
-					const option = options.find((opt) => opt.value === value);
-					return (
-						option && (
-							<Tag
-								key={option.value}
-								label={option.label}
-								onDeleteClick={() => onDeleteClick(option.value)}
-							/>
-						)
-					);
-				})
-			) : (
-				<Text className="text-placeholder overflow-hidden text-ellipsis">
-					{placeholder}
-				</Text>
+			{selected.map((value) => {
+				const option = options.find((opt) => opt.value === value);
+				return (
+					option && (
+						<Tag
+							key={option.value}
+							label={option.label}
+							onDeleteClick={() => onDeleteClick(option.value)}
+						/>
+					)
+				);
+			})}
+
+			{preselected.length === 0 && selected.length === 0 && (
+				<Text className="text-placeholder truncate">{placeholder}</Text>
 			)}
 		</div>
 	);

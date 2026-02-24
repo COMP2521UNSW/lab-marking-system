@@ -3,12 +3,13 @@
 import { Helmet, HelmetProvider } from '@dr.pogodin/react-helmet';
 import { Inclusive_Sans, Inconsolata } from 'next/font/google';
 
+import { COURSE_CODE } from '@workspace/config';
+
 import { AuthProvider, useAuth } from '@/components/providers/auth-provider';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Loading } from '@/components/ui/base/loading';
 import { Toaster } from '@/components/ui/base/toast';
 import { Navbar } from '@/components/ui/navbar/navbar';
-import { COURSE_CODE } from '@/lib/constants';
 
 import './globals.css';
 
@@ -20,6 +21,9 @@ const inclusiveSans = Inclusive_Sans({
 const inconsolata = Inconsolata({
 	variable: '--font-inconsolata',
 });
+
+export const MIN_WIDTH = 320;
+export const MAX_WIDTH = 896;
 
 export default function RootLayout({
 	children,
@@ -57,7 +61,10 @@ function AppLayout({
 	const { loading } = useAuth();
 
 	return (
-		<div className="grid grid-flow-col grid-rows-[auto_1fr] mx-auto min-h-screen w-full max-w-4xl min-w-[360px] px-4 pb-4">
+		<div
+			className="grid grid-flow-col grid-rows-[auto_1fr] mx-auto min-h-screen w-full px-4 pb-4"
+			style={{ minWidth: `${MIN_WIDTH}px`, maxWidth: `${MAX_WIDTH}px` }}
+		>
 			<Helmet
 				defaultTitle={`${COURSE_CODE} Lab Marking`}
 				titleTemplate={`%s | ${COURSE_CODE} Lab Marking`}

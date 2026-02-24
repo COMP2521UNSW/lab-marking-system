@@ -6,9 +6,9 @@ import type {
 } from '@workspace/types/services/classes';
 import type { SessionUser } from '@workspace/types/users';
 
+import { get } from '@/cache/cache';
 import * as dbClasses from '@/db/classes';
 import * as dbSettings from '@/db/settings';
-import { get } from '@/lib/cache';
 import { toLocalDayAndTime } from '@/lib/date';
 import '@/lib/polyfills/group-by';
 import { addMinutes, subtractMinutes } from '@/lib/time';
@@ -61,13 +61,13 @@ async function getAllActiveClasses() {
 	const { day, time } = toLocalDayAndTime(date);
 
 	return await get(
-		`classes?day=${day}&time=${time}`,
-		() => getClassesByDate(date, day, time),
+		`getClassesByTime:${day}:${time}`,
+		() => getClassesByTime(date, day, time),
 		60,
 	);
 }
 
-async function getClassesByDate(date: Date, localDay: number, localTime: Time) {
+async function getClassesByTime(date: Date, localDay: number, localTime: Time) {
 	if (!(await termInProgress(date))) {
 		return {
 			current: [],

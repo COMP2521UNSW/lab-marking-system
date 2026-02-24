@@ -7,6 +7,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import type { ActivityAsTutor } from '@workspace/types/activities';
 import type { StudentDetails } from '@workspace/types/users';
 
+import { MAX_WIDTH, MIN_WIDTH } from '@/app/layout';
 import { LoginRequired } from '@/components/guards/login-required';
 import { TutorRequired } from '@/components/guards/role-required';
 import { Button } from '@/components/ui/base/button';
@@ -127,7 +128,7 @@ function StudentSearch() {
 	};
 
 	return (
-		<Card className="py-6 px-4 space-y-4">
+		<Card className="min-h-full py-6 px-4 space-y-4">
 			<div className="text-center space-y-4">
 				<Text>Search for student by name or zID</Text>
 
@@ -153,14 +154,19 @@ function SearchResults({ students }: { students: StudentDetails[] }) {
 	const { viewHistory } = useHistoryDialog();
 
 	return (
-		<div className="space-y-2">
+		<div className="space-y-4">
 			<Text>
 				{students.length === 0 ? 'No' : students.length} result
 				{students.length === 1 ? '' : 's'} found.
 			</Text>
 
-			{/* TODO: stop hardcoding widths */}
-			<div className="rounded-strong border w-[calc(100vw-66px)] min-w-[296px] max-w-[calc(896px-66px)] overflow-x-auto">
+			<div
+				className="rounded-strong border w-[calc(100vw-66px)] overflow-x-auto"
+				style={{
+					minWidth: `${MIN_WIDTH - 66}px`,
+					maxWidth: `${MAX_WIDTH - 66}px`,
+				}}
+			>
 				<ScrollArea>
 					<Table>
 						<TableHeader className="font-semibold">

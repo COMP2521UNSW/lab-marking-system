@@ -7,11 +7,12 @@ import * as React from 'react';
 
 import type { ManualRequest } from '@workspace/types/requests';
 
+import { MAX_WIDTH, MIN_WIDTH } from '@/app/layout';
 import { LoginRequired } from '@/components/guards/login-required';
 import { AdminRequired } from '@/components/guards/role-required';
 import { Button } from '@/components/ui/base/button';
 import { Card } from '@/components/ui/base/card';
-import { Image } from '@/components/ui/base/image';
+import { Image, preloadImage } from '@/components/ui/base/image';
 import { Loading } from '@/components/ui/base/loading';
 import { ScrollArea, ScrollBar } from '@/components/ui/base/scroll-area';
 import {
@@ -43,6 +44,8 @@ type LoadingState =
 	  };
 
 export default function Page() {
+	preloadImage('/sleeping-fish.png');
+
 	return (
 		<>
 			<LoginRequired>
@@ -128,7 +131,7 @@ function MarkApprovals({
 	};
 
 	return (
-		<Card className="py-6 px-4">
+		<Card className="min-h-full py-6 px-4">
 			<div className="flex flex-col items-center gap-4">
 				<Text>Approve manual requests</Text>
 
@@ -195,8 +198,13 @@ function RequestList({
 	}
 
 	return (
-		// TODO: stop hardcoding widths
-		<div className="rounded-strong border w-[calc(100vw-66px)] min-w-[294px] max-w-[calc(896px-66px)] overflow-x-auto">
+		<div
+			className="rounded-strong border w-[calc(100vw-66px)] overflow-x-auto"
+			style={{
+				minWidth: `${MIN_WIDTH - 66}px`,
+				maxWidth: `${MAX_WIDTH - 66}px`,
+			}}
+		>
 			<ScrollArea>
 				<Table>
 					<TableHeader className="font-semibold">

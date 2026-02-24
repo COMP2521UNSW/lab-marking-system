@@ -1,15 +1,13 @@
-import { and, eq, like, or } from 'drizzle-orm';
+import { and, eq, or } from 'drizzle-orm';
 
-import type { NonNullableKeys } from '@workspace/types/utils';
+import { get } from '@/cache/cache';
 
-import { get } from '@/lib/cache';
-
-import { db, usersTable } from './db';
+import { db, ilike, usersTable } from './db';
 
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function getUserByZid(zid: string) {
-	return await get(`users?zid=${zid}`, () => dbGetUserByZid(zid));
+	return await get(`getUserByZid:${zid}`, () => dbGetUserByZid(zid));
 }
 
 async function dbGetUserByZid(zid: string) {
@@ -24,7 +22,7 @@ async function dbGetUserByZid(zid: string) {
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function getStudentByZid(zid: string) {
-	return await get(`students?zid=${zid}`, () => dbGetStudentByZid(zid));
+	return await get(`getStudentByZid:${zid}`, () => dbGetStudentByZid(zid));
 }
 
 async function dbGetStudentByZid(zid: string) {
@@ -42,7 +40,7 @@ async function dbGetStudentByZid(zid: string) {
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function searchStudents(query: string) {
-	const rows = await db
+	return await db
 		.select({
 			zid: usersTable.zid,
 			name: usersTable.name,
@@ -53,15 +51,12 @@ export async function searchStudents(query: string) {
 			and(
 				eq(usersTable.role, 'student'),
 				or(
-					like(usersTable.zid, '%' + query + '%'),
-					like(usersTable.name, '%' + query + '%'),
+					ilike(usersTable.zid, '%' + query + '%'),
+					ilike(usersTable.name, '%' + query + '%'),
 				),
 				eq(usersTable.enrolled, true),
 			),
 		);
-
-	// classCode is guaranteed to be non-NULL for students due to CHECK constraint
-	return rows as NonNullableKeys<(typeof rows)[number], 'classCode'>[];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
