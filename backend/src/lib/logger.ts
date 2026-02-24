@@ -4,6 +4,7 @@ import { format as formatDate } from 'date-fns';
 import { addColors, createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 
+import { rootDir } from '@workspace/backend/paths.config';
 import type { SessionUser } from '@workspace/types/users';
 
 import { toLocalDate } from '@/lib/date';
@@ -42,7 +43,7 @@ const logger = createLogger({
 		}),
 		new transports.DailyRotateFile({
 			level: 'info',
-			filename: path.join('instance', 'logs', 'app', '%DATE%.log'),
+			filename: path.join(rootDir, 'logs', '%DATE%.log'),
 			datePattern: 'YYYY-MM-DD',
 		}),
 	],

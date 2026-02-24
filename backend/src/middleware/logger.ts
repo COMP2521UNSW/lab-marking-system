@@ -5,10 +5,12 @@ import { format } from 'date-fns';
 import type { Request } from 'express';
 import morgan from 'morgan';
 
+import { rootDir } from '@workspace/backend/paths.config';
+
 import { toLocalDate } from '@/lib/date';
 
 const logStream = fs.createWriteStream(
-	path.join('instance', 'logs', 'requests.log'),
+	path.join(rootDir, 'logs', 'access.log'),
 	{
 		flags: 'a',
 	},
