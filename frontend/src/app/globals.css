@@ -102,7 +102,7 @@
 	--tag-background: #91b9ff;
 	--placeholder: #afafaf;
 	--diagonal: #aaa;
-	--drop-shadow-regular: 2px 2px 2px 0px rgba(84, 84, 84, 50%);
+	--drop-shadow-regular: 3px 3px 0px 0px rgba(164, 164, 164);
 	--page-background:
 		linear-gradient(135deg, #d2e2ff7f 0%, #efefef7f 50%, #d2e2ff7f 100%),
 		radial-gradient(farthest-side, #efefef00, #efefef 100%, #efefef),
@@ -156,7 +156,7 @@
 	--tag-background: #3c65ac3f;
 	--placeholder: #636363;
 	--diagonal: #b7b7b7;
-	--drop-shadow-regular: 2px 2px 2px 0px rgba(163, 163, 163, 50%);
+	--drop-shadow-regular: 3px 3px 0px 0px rgb(64, 64, 64);
 	--page-background:
 		linear-gradient(135deg, #1c2026 0%, #2323237f 50%, #1c2026 100%),
 		radial-gradient(farthest-side, #23232300, #232323 100%, #232323),
