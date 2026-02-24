@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 
-import { studentSocket, tutorSocket } from '@/server';
+import { logger } from '@/lib/logger';
+import { io, studentSocket, tutorSocket } from '@/server';
 import * as classesService from '@/services/classes';
 
 function registerCronJob() {
@@ -11,6 +12,10 @@ function registerCronJob() {
 
 		studentSocket.emit('activeClasses', studentClasses);
 		tutorSocket.emit('activeClasses', tutorClasses);
+	});
+
+	cron.schedule('* * * * *', () => {
+		logger.info(`Connected clients: ${io.engine.clientsCount}`);
 	});
 }
 
