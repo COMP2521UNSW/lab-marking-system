@@ -73,7 +73,7 @@ export const fakeUsers: (typeof usersTable.$inferInsert)[] = [
   { zid: 'z7000001', name: 'Ray Miles', role: 'tutor' },
   { zid: 'z7000002', name: 'Michelle Wong', role: 'tutor' },
   { zid: 'z7000003', name: 'Nic Furst', role: 'tutor' },
-	{ zid: 'z8386903', name: 'Ashlee Buckridge', role: 'student', classCode: 'W17A' },
+	{ zid: 'z8386903', name: 'Ashlee Buckridge', role: 'student', classCode: 'H14B' },
 	{ zid: 'z8325533', name: 'Destiney Bayer', role: 'student', classCode: 'F16A' },
 	{ zid: 'z8662539', name: 'Colleen Cremin', role: 'student', classCode: 'H12B' },
 	{ zid: 'z8051457', name: 'Mac Dietrich-Bechtelar', role: 'student', classCode: 'T17A' },

@@ -6,9 +6,9 @@ import * as React from 'react';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
 	DropdownMenuLabel,
-	DropdownMenuRadioGroup,
-	DropdownMenuRadioItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/base/dropdown-menu';
 import { Text } from '@/components/ui/base/typography';
@@ -22,7 +22,6 @@ export type SelectOption = {
 export function Select({
 	id,
 	options,
-	value,
 	placeholder = 'Select an option...',
 	emptyText = 'No options',
 	className,
@@ -30,25 +29,19 @@ export function Select({
 }: {
 	id?: string;
 	options: SelectOption[];
-	value?: string;
 	emptyText?: string;
 	placeholder?: string;
 	className?: string;
 	onValueChange?: (value: string) => void;
 }) {
-	const [selected, setSelected] = React.useState<string | undefined>(value);
+	const [selected, setSelected] = React.useState<SelectOption>();
 
-	const handleChange = (value: string) => {
-		setSelected(value);
-		if (value !== selected) {
-			onValueChange?.(value);
+	const handleSelect = (option: SelectOption) => {
+		setSelected(option);
+		if (option.value !== selected?.value) {
+			onValueChange?.(option.value);
 		}
 	};
-
-	const selectedOption =
-		selected === undefined
-			? undefined
-			: options.find((opt) => opt.value === selected)!;
 
 	return (
 		<DropdownMenu modal={false}>
@@ -59,8 +52,8 @@ export function Select({
 					className,
 				)}
 			>
-				{selectedOption ? (
-					<Text>{selectedOption.label}</Text>
+				{selected ? (
+					<Text>{selected.label}</Text>
 				) : (
 					<Text className="text-placeholder overflow-hidden whitespace-nowrap text-ellipsis">
 						{placeholder}
@@ -72,20 +65,16 @@ export function Select({
 				{options.length === 0 ? (
 					<DropdownMenuLabel className="p-2">{emptyText}</DropdownMenuLabel>
 				) : (
-					<DropdownMenuRadioGroup
-						value={selectedOption?.value}
-						onValueChange={handleChange}
-					>
+					<DropdownMenuGroup>
 						{options.map((option) => (
-							<DropdownMenuRadioItem
+							<DropdownMenuItem
 								key={option.value}
-								value={option.value}
-								className="text-base"
+								onSelect={() => handleSelect(option)}
 							>
-								<Text>{option.label}</Text>
-							</DropdownMenuRadioItem>
+								{option.label}
+							</DropdownMenuItem>
 						))}
-					</DropdownMenuRadioGroup>
+					</DropdownMenuGroup>
 				)}
 			</DropdownMenuContent>
 		</DropdownMenu>

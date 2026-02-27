@@ -10,7 +10,7 @@ export default defineConfig(
 				schema: './src/db/dialects/sqlite/schema.ts',
 				out: './drizzle',
 				dbCredentials: {
-					url: process.env.DB_FILE_NAME,
+					url: `file:${process.env.DB_FILE_NAME}`,
 				},
 			}
 		: // PostgreSQL

@@ -6,7 +6,7 @@ import type { Class } from '@workspace/types/classes';
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
 import { MIN_WIDTH } from '@/app/layout';
-import { ActivitySelect } from '@/components/ui/base/activity-select';
+import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/base/dialog';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
+import { ActivitySelect } from '@/components/ui/requests/activity-select';
 import { ClassSelect } from '@/components/ui/requests/class-select';
 import { ApiError } from '@/lib/errors';
 import * as requestsService from '@/services/requests';
@@ -27,14 +28,16 @@ export function UpdateRequestsDialog({
 	setOpen,
 	mode = 'create',
 	attendedClass,
-	currentRequests,
+	pendingRequests,
 }: {
 	open: boolean;
 	setOpen: (open: boolean) => void;
 	mode: 'create' | 'edit';
 	attendedClass: Class | null;
-	currentRequests: MarkingRequestAsStudent[];
+	pendingRequests: MarkingRequestAsStudent[];
 }) {
+	const { user } = useAuth();
+
 	const { activeClasses, activeActivities } = useStudentRequests();
 
 	const [selectedClass, setSelectedClass] = React.useState(attendedClass);
@@ -44,6 +47,13 @@ export function UpdateRequestsDialog({
 	);
 
 	const [loading, setLoading] = React.useState(false);
+
+	const enrolledClass = React.useMemo(
+		() =>
+			activeClasses.current.find((cls) => cls.code === user?.classCode) ||
+			activeClasses.upcoming.find((cls) => cls.code === user?.classCode),
+		[activeClasses],
+	);
 
 	React.useEffect(() => {
 		if (open) {
@@ -74,9 +84,11 @@ export function UpdateRequestsDialog({
 			});
 
 			if (mode === 'create') {
-				toast('Request created');
+				toast(`Request${selectedActivities.length > 1 ? 's' : ''} created`);
 			} else {
-				toast('Request edited');
+				toast(
+					`Request${pendingRequests.length + selectedActivities.length > 1 ? 's' : ''} edited`,
+				);
 			}
 			setOpen(false);
 		} catch (err) {
@@ -106,30 +118,49 @@ export function UpdateRequestsDialog({
 
 				<div className="space-y-6">
 					<div className="flex flex-col items-center gap-4 w-full">
-						<Text className="text-center">
-							Which lab class are you currently attending?
-						</Text>
+						<div className="space-y-2">
+							<Text id="class-desc-1" className="text-center">
+								Which class are you currently attending?
+							</Text>
+
+							{enrolledClass && (
+								<Text
+									id="class-desc-2"
+									className="text-center text-muted-foreground"
+								>
+									Your enrolled class: {enrolledClass.code} (
+									{enrolledClass.labLocation})
+								</Text>
+							)}
+						</div>
 
 						<ClassSelect
-							className="w-full max-w-84"
 							classes={activeClasses}
-							value={selectedClass ?? undefined}
+							selectedClass={selectedClass ?? undefined}
+							className="w-full max-w-84"
+							enrolledClassCode={user?.classCode}
 							onValueChange={(cls) => {
 								setSelectedClass(cls);
 							}}
+							aria-describedby="class-desc-1 class-desc-2"
 						/>
 					</div>
 
 					<div className="flex flex-col items-center gap-4 w-full">
 						<div className="space-y-2">
-							<Text className="text-center">
+							<Text id="activities-desc-1" className="text-center">
 								Which activities would you like to get marked?
 							</Text>
-							<Text className="text-center text-muted-foreground">
+
+							<Text
+								id="activities-desc-2"
+								className="text-center text-muted-foreground"
+							>
 								To cancel a request, you must go back to the list of requests
 								and withdraw it.
 							</Text>
 						</div>
+
 						<ActivitySelect
 							className="w-full max-w-84"
 							options={activeActivities.map((activeActivity) => ({
@@ -137,10 +168,11 @@ export function UpdateRequestsDialog({
 								label: activeActivity.activity.name,
 								marked: activeActivity.marked,
 							}))}
-							preselected={currentRequests
-								.filter((req) => req.status === 'pending')
-								.map((req) => req.activity.code)}
-							onChange={(ids) => setSelectedActivities(ids)}
+							preselected={pendingRequests.map(
+								(request) => request.activity.code,
+							)}
+							onValueChange={(ids) => setSelectedActivities(ids)}
+							aria-describedby="activities-desc-1 activities-desc-2"
 						/>
 					</div>
 

@@ -186,7 +186,6 @@ export function MarkDialog({
 											value: activity.code,
 											label: activity.name,
 										}))}
-										value={field.value}
 										className="w-full"
 										placeholder="Select an activity..."
 										onValueChange={(value) => {

@@ -1,6 +1,5 @@
 'use client';
 
-import { format } from 'date-fns';
 import { ChevronRightIcon } from 'lucide-react';
 import * as React from 'react';
 
@@ -16,6 +15,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/base/dialog';
+import { Mark } from '@/components/ui/base/mark';
 import { ScrollArea, ScrollBar } from '@/components/ui/base/scroll-area';
 import { Spinner } from '@/components/ui/base/spinner';
 import {
@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/base/table';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
+import { formatDate } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import * as studentsService from '@/services/students';
 
@@ -98,7 +99,7 @@ export function HistoryDialog({
 										<TableHead>Mark</TableHead>
 										<TableHead>Marker/Approver</TableHead>
 										<TableHead>Timestamp</TableHead>
-										<TableHead></TableHead>
+										<TableHead aria-hidden />
 									</TableRow>
 								</TableHeader>
 
@@ -141,14 +142,24 @@ function LogTableRow({ event }: { event: RequestLogEvent }) {
 		<>
 			<TableRow className={cn(expanded && 'bg-muted')}>
 				<TableCell>{eventType}</TableCell>
-				<TableCell>{activity?.name ?? '.'}</TableCell>
-				<TableCell>{classCode ?? '.'}</TableCell>
-				<TableCell>{mark ?? '.'}</TableCell>
-				<TableCell>{staffName ?? '.'}</TableCell>
-				<TableCell>{format(event.timestamp, 'EEE do MMM h:mmaaa')}</TableCell>
-				<TableCell className="flex items-center">
+				<TableCell>
+					<LogData>{activity?.name}</LogData>
+				</TableCell>
+				<TableCell>
+					<LogData>{classCode}</LogData>
+				</TableCell>
+				<TableCell>
+					<LogData>{mark}</LogData>
+				</TableCell>
+				<TableCell>
+					<LogData>{staffName}</LogData>
+				</TableCell>
+				<TableCell>{formatDate(event.timestamp)}</TableCell>
+				<TableCell className="flex items-center" aria-hidden={reason === null}>
 					{reason !== null && (
 						<button
+							aria-label="Expand row"
+							aria-expanded={expanded}
 							className="rounded-full focus-ring cursor-pointer"
 							onClick={() => setExpanded((expanded) => !expanded)}
 						>
@@ -163,7 +174,7 @@ function LogTableRow({ event }: { event: RequestLogEvent }) {
 				</TableCell>
 			</TableRow>
 			{expanded && (
-				<TableRow>
+				<TableRow data-state={expanded ? 'expanded' : 'collapsed'}>
 					<TableCell colSpan={7}>
 						<Text>
 							<span className="font-semibold">Reason:</span> {reason}
@@ -175,12 +186,25 @@ function LogTableRow({ event }: { event: RequestLogEvent }) {
 	);
 }
 
+function LogData({ children }: { children: React.ReactNode }) {
+	return (
+		children ?? (
+			<>
+				<span aria-hidden>.</span>
+				<span className="sr-only" role="text">
+					Blank
+				</span>
+			</>
+		)
+	);
+}
+
 // prettier-ignore
 function eventToRowData(event: RequestLogEvent): [
   eventType: string,
   activity: ActivityAsTutor | null,
   classCode: string | null,
-  markStr: string | null,
+  markStr: React.ReactNode,
   staffName: string | null,
   reason: string | null,
 ] {
@@ -209,21 +233,21 @@ function eventToRowData(event: RequestLogEvent): [
       return [
         'Request marked',
         event.activity, event.classCode,
-        `${Math.round(100 * event.mark) / 100}/${event.activity.maxMark}`,
+        <Mark mark={event.mark} outOf={event.activity.maxMark} />,
         event.markerName, null,
       ];
     case 'mark-amended':
       return [
         'Mark amended',
         event.activity, event.classCode,
-        `${Math.round(100 * event.mark) / 100}/${event.activity.maxMark}`,
+        <Mark mark={event.mark} outOf={event.activity.maxMark} />,
         event.markerName, null,
       ];
     case 'manual-request-created':
       return [
         'Manual request created',
         event.activity, null,
-        `${Math.round(100 * event.mark) / 100}/${event.activity.maxMark}`,
+        <Mark mark={event.mark} outOf={event.activity.maxMark} />,
         event.markerName, event.reason,
       ];
     case 'manual-request-approved':
@@ -240,9 +264,7 @@ function eventToRowData(event: RequestLogEvent): [
       return [
         'Mark imported from SMS',
         event.activity, null,
-        event.mark === null
-          ? `./${event.activity.maxMark}`
-          : `${Math.round(100 * event.mark) / 100}/${event.activity.maxMark}`,
+        <Mark mark={event.mark} outOf={event.activity.maxMark} />,
         null, null,
       ]
 	}

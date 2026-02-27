@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/base/dialog';
 import { Field, FieldError } from '@/components/ui/base/field';
 import { TextInput } from '@/components/ui/base/input';
+import { Mark } from '@/components/ui/base/mark';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
 import { ApiError } from '@/lib/errors';
@@ -115,7 +116,8 @@ export function AmendDialog({
 				</DialogHeader>
 
 				<Text>
-					<b>Previous mark:</b> {request.mark}/{request.activity.maxMark}{' '}
+					<b>Previous mark:</b>{' '}
+					<Mark mark={request.mark} outOf={request.activity.maxMark} />{' '}
 					<i>(by {request.markerName})</i>
 				</Text>
 

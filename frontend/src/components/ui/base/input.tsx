@@ -7,6 +7,11 @@ import {
 	InputGroupButton,
 	InputGroupInput,
 } from '@/components/ui/base/input-group';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from '@/components/ui/base/tooltip';
 import { cn } from '@/lib/utils';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,18 +49,27 @@ function PasswordInput({
 		<InputGroup className="border-outline">
 			<InputGroupInput type={showPassword ? 'text' : 'password'} {...props} />
 			<InputGroupAddon align="inline-end">
-				<InputGroupButton
-					className="rounded-md -ms-1 -me-1"
-					size="icon-sm"
-					title={showPassword ? 'Hide password' : 'Show password'}
-					onClick={() => setShowPassword(!showPassword)}
-				>
-					{showPassword ? (
-						<EyeOffIcon className="size-5 stroke-[1.25] stroke-placeholder" />
-					) : (
-						<EyeIcon className="size-5 stroke-[1.25] stroke-placeholder" />
-					)}
-				</InputGroupButton>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<InputGroupButton
+							className="rounded-md -ms-1 -me-1"
+							size="icon-sm"
+							role="checkbox"
+							aria-label="Show password"
+							aria-checked={showPassword}
+							onClick={() => setShowPassword(!showPassword)}
+						>
+							{showPassword ? (
+								<EyeIcon className="size-5 stroke-[1.25] stroke-placeholder" />
+							) : (
+								<EyeOffIcon className="size-5 stroke-[1.25] stroke-placeholder" />
+							)}
+						</InputGroupButton>
+					</TooltipTrigger>
+					<TooltipContent>
+						{showPassword ? 'Hide password' : 'Show password'}
+					</TooltipContent>
+				</Tooltip>
 			</InputGroupAddon>
 		</InputGroup>
 	);

@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/base/button';
 import { Card } from '@/components/ui/base/card';
 import { Image } from '@/components/ui/base/image';
-import { Link } from '@/components/ui/base/link';
 import { Separator } from '@/components/ui/base/separator';
 import {
 	Tooltip,
@@ -41,7 +40,7 @@ function Star({ className }: { className?: string }) {
 	return (
 		<Image
 			src="/star.svg"
-			alt="star"
+			alt=""
 			width={0}
 			height={0}
 			className={cn('size-6', className)}
@@ -53,26 +52,13 @@ function LoginBox() {
 	return (
 		<Card className="p-4">
 			<Text size="lg" className="text-center font-mono font-bold">
-				&gt; login
+				<span aria-hidden>&gt;</span> login
 			</Text>
 
 			<Separator className="my-4" />
 
 			<div className="space-y-4">
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<div tabIndex={0} className="outline-none">
-							<Button disabled variant="primary" className="w-full py-4">
-								<Text>Log in with zID@ad.unsw.edu.au</Text>
-							</Button>
-						</div>
-					</TooltipTrigger>
-					<TooltipContent className="text-center">
-						This is currently unavailable,
-						<br />
-						please log in with your zID and zPass.
-					</TooltipContent>
-				</Tooltip>
+				<LogInWithSSOButton />
 
 				<Text
 					size="lg"
@@ -82,19 +68,38 @@ function LoginBox() {
 				</Text>
 
 				<LoginForm />
-
-				<Text size="sm" className="text-center text-primary">
-					Trouble logging in? Visit{' '}
-					<Link
-						href="https://iam.unsw.edu.au/"
-						target="_blank"
-						className="underline outline-none focus:text-primary/80 hover:text-primary/80"
-					>
-						UNSW Identity Manager
-					</Link>
-					.
-				</Text>
 			</div>
 		</Card>
+	);
+}
+
+function LogInWithSSOButton() {
+	return (
+		// https://ui.shadcn.com/docs/components/radix/tooltip - Disabled Button
+		<Tooltip>
+			<TooltipTrigger asChild>
+				<span
+					className="inline-block w-full outline-none"
+					tabIndex={0}
+					role="button"
+					aria-label="Log in with zID @ a d . u n s w . e d u . a u"
+					aria-description="This is currently unavailable, please log in with your zID and zPass"
+					aria-disabled
+				>
+					<Button
+						disabled
+						variant="primary"
+						className="w-full py-4 outline-none"
+					>
+						<Text>Log in with zID@ad.unsw.edu.au</Text>
+					</Button>
+				</span>
+			</TooltipTrigger>
+			<TooltipContent className="text-center">
+				This is currently unavailable,
+				<br />
+				please log in with your zID and zPass.
+			</TooltipContent>
+		</Tooltip>
 	);
 }

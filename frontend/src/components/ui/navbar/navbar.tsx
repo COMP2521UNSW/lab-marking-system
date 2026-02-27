@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import * as React from 'react';
 
-import type { UserDetails } from '@workspace/types/users';
+import type { UserDetails, UserRole } from '@workspace/types/users';
 
 import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/base/button';
@@ -30,6 +30,11 @@ import {
 import { Link } from '@/components/ui/base/link';
 import { LogoImage, LogoText } from '@/components/ui/base/logo';
 import { ThemeToggle } from '@/components/ui/base/theme-toggle';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from '@/components/ui/base/tooltip';
 import { Text } from '@/components/ui/base/typography';
 import { isAdmin, isTutor } from '@/lib/roles';
 import { cn } from '@/lib/utils';
@@ -65,13 +70,10 @@ export function Navbar({ className }: { className?: string }) {
 							user={user}
 							contentClassName="hidden sm:block"
 							sideOffset={15}
+							ariaLabel="User"
 						/>
 					) : (
-						<Button asChild variant="ghost" size="icon">
-							<Link href="/login">
-								<LogInIcon className="size-6" />
-							</Link>
-						</Button>
+						<DesktopLoginButton />
 					)}
 				</div>
 
@@ -84,6 +86,7 @@ export function Navbar({ className }: { className?: string }) {
 						navLinks={navLinks}
 						contentClassName="block sm:hidden"
 						sideOffset={12}
+						ariaLabel="Navigation menu"
 					/>
 				</div>
 			</div>
@@ -165,6 +168,23 @@ function DesktopPagesMenu({ navLinks }: { navLinks: NavLink[] }) {
 	);
 }
 
+function DesktopLoginButton() {
+	return (
+		<Tooltip>
+			<TooltipTrigger asChild>
+				<Button asChild variant="ghost" size="icon">
+					<Link href="/login" aria-label="Log in">
+						<LogInIcon className="size-6" />
+					</Link>
+				</Button>
+			</TooltipTrigger>
+			<TooltipContent>
+				<span aria-hidden>Log in</span>
+			</TooltipContent>
+		</Tooltip>
+	);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 function NavDropdownMenu({
@@ -173,17 +193,23 @@ function NavDropdownMenu({
 	navLinks,
 	contentClassName,
 	sideOffset,
+	ariaLabel,
 }: {
 	MenuIcon: React.ReactNode;
 	user: UserDetails | null;
 	navLinks?: NavLink[];
 	contentClassName?: string;
 	sideOffset?: number;
+	ariaLabel?: string;
 }) {
 	return (
 		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
-				<Button variant="ghost" className="size-8 sm:size-9">
+				<Button
+					variant="ghost"
+					className="size-8 sm:size-9"
+					aria-label={ariaLabel}
+				>
 					{MenuIcon}
 				</Button>
 			</DropdownMenuTrigger>
@@ -217,11 +243,22 @@ function NavbarMenuUserCard({ user }: { user: UserDetails }) {
 	return (
 		user && (
 			<DropdownMenuLabel className="space-y-1">
-				<Text>{user.zid}</Text>
-				<Text className="italic text-wrap">{user.name}</Text>
+				<Text className="text-wrap">{user.name}</Text>
+				<Text className="text-xs">{roleToLabel(user.role)}</Text>
 			</DropdownMenuLabel>
 		)
 	);
+}
+
+function roleToLabel(role: UserRole): string {
+	switch (role) {
+		case 'student':
+			return 'Student';
+		case 'tutor':
+			return 'Tutor';
+		case 'admin':
+			return 'Admin';
+	}
 }
 
 function NavbarMenuLinkGroup({ navLinks }: { navLinks: NavLink[] }) {
@@ -229,7 +266,7 @@ function NavbarMenuLinkGroup({ navLinks }: { navLinks: NavLink[] }) {
 		<DropdownMenuGroup className="space-y-1">
 			{navLinks.map((link) => (
 				<DropdownMenuItem asChild key={link.label}>
-					<Link href={link.href}>
+					<Link href={link.href} role="link">
 						{link.Icon && <link.Icon className="size-5 stroke-2" />}{' '}
 						{link.label}
 					</Link>
@@ -245,13 +282,13 @@ function NavbarMenuLogInOut({ loggedIn }: { loggedIn: boolean }) {
 	return (
 		<DropdownMenuGroup>
 			{loggedIn ? (
-				<DropdownMenuItem onSelect={logOut}>
+				<DropdownMenuItem role="button" onSelect={logOut}>
 					<LogOutIcon className="size-5" />
 					<Text>Log Out</Text>
 				</DropdownMenuItem>
 			) : (
 				<DropdownMenuItem asChild>
-					<Link href="/login">
+					<Link href="/login" role="link">
 						<LogInIcon className="size-5" />
 						<Text>Log In</Text>
 					</Link>

@@ -1,6 +1,5 @@
 'use client';
 
-import { format } from 'date-fns';
 import * as React from 'react';
 
 import type { Student } from '@workspace/types/users';
@@ -13,6 +12,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/base/dialog';
+import { Mark } from '@/components/ui/base/mark';
+import { NotApplicable } from '@/components/ui/base/not-applicable';
 import { ScrollArea, ScrollBar } from '@/components/ui/base/scroll-area';
 import { Spinner } from '@/components/ui/base/spinner';
 import {
@@ -25,6 +26,7 @@ import {
 } from '@/components/ui/base/table';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
+import { formatDate } from '@/lib/date';
 import * as studentsService from '@/services/students';
 
 type DataState =
@@ -106,18 +108,17 @@ export function ViewDialog({
 											<TableRow key={result.activity.code}>
 												<TableCell>{result.activity.name}</TableCell>
 												<TableCell>
-													{result.mark === null
-														? '.'
-														: Math.round(result.mark * 100) / 100}
-													/{result.activity.maxMark}
+													<Mark
+														mark={result.mark}
+														outOf={result.activity.maxMark}
+													/>
 												</TableCell>
 												<TableCell>
-													{result.markedAt === null
-														? 'N/A'
-														: format(
-																new Date(result.markedAt),
-																'EEEE do MMMM h:mmaaa',
-															)}
+													{result.markedAt === null ? (
+														<NotApplicable />
+													) : (
+														formatDate(result.markedAt)
+													)}
 												</TableCell>
 											</TableRow>
 										))

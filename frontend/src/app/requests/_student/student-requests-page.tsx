@@ -112,7 +112,7 @@ function StudentRequests() {
 }
 
 function NoRequests() {
-	const { attendedClass, requests } = useStudentRequests();
+	const { attendedClass } = useStudentRequests();
 
 	const { updateRequests } = useUpdateRequestsDialog();
 
@@ -121,12 +121,12 @@ function NoRequests() {
 			<Text className="text-center">
 				You don&rsquo;t have any open marking requests.
 			</Text>
-			<Button onClick={() => updateRequests('create', attendedClass, requests)}>
+			<Button onClick={() => updateRequests('create', attendedClass, [])}>
 				<Text>Request Marking</Text>
 			</Button>
 			<Image
 				src="/sleeping.gif"
-				alt="Sleeping"
+				alt=""
 				height={0}
 				width={0}
 				loading="eager"
@@ -142,9 +142,10 @@ function Requests() {
 	const { updateRequests } = useUpdateRequestsDialog();
 	const { withdraw } = useWithdrawDialog();
 
-	const numPendingRequests = requests.filter(
-		(req) => req.status === 'pending',
-	).length;
+	const pendingRequests = requests.filter(
+		(request) => request.status === 'pending',
+	);
+	const numPendingRequests = pendingRequests.length;
 
 	return (
 		<div className="flex flex-col items-center gap-4">
@@ -155,7 +156,9 @@ function Requests() {
 					</Text>
 
 					<Button
-						onClick={() => updateRequests('create', attendedClass, requests)}
+						onClick={() =>
+							updateRequests('create', attendedClass, pendingRequests)
+						}
 					>
 						<Text>Request Marking</Text>
 					</Button>
