@@ -9,6 +9,7 @@ import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/base/button';
 import { Field, FieldError, FieldGroup } from '@/components/ui/base/field';
 import { PasswordInput, TextInput } from '@/components/ui/base/input';
+import { Link } from '@/components/ui/base/link';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
 import { ApiError } from '@/lib/errors';
@@ -87,6 +88,18 @@ export function LoginForm() {
 			<Button loading={loading} className="w-full">
 				<Text>Log In</Text>
 			</Button>
+
+			<Text size="sm" className="text-center text-primary">
+				Trouble logging in? Visit{' '}
+				<Link
+					href="https://iam.unsw.edu.au/"
+					target="_blank"
+					className="underline outline-none focus:text-primary/80 hover:text-primary/80"
+				>
+					UNSW Identity Manager
+				</Link>
+				.
+			</Text>
 		</form>
 	);
 }

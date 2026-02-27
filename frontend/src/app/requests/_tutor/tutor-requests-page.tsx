@@ -105,9 +105,9 @@ function ClassSelector() {
 			<Text>Select a class to view requests</Text>
 
 			<ClassSelect
-				className="w-full max-w-84"
 				classes={activeClasses}
-				value={selectedClass}
+				selectedClass={selectedClass}
+				className="w-full max-w-84"
 				onValueChange={(value) => changeClass(value)}
 			/>
 		</div>
@@ -162,7 +162,7 @@ function RequestList({
 				<Text>No {mode} requests</Text>
 				<Image
 					src="/sleeping.gif"
-					alt="Sleeping"
+					alt=""
 					height={0}
 					width={0}
 					loading="eager"

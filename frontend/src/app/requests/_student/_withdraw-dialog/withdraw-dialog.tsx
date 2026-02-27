@@ -107,7 +107,6 @@ export function WithdrawDialog({
 							})),
 							{ value: 'other', label: 'Other' },
 						]}
-						value={reason.value}
 						className="w-full"
 						placeholder="Select a reason..."
 						onValueChange={handleReasonSelect}

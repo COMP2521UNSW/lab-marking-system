@@ -24,14 +24,15 @@ export function ActivitySelect({
 	preselected = [],
 	placeholder = 'Select activities...',
 	className,
-	onChange,
+	onValueChange,
+	...props
 }: {
 	options: SelectOption[];
 	preselected?: string[];
 	placeholder?: string;
 	className?: string;
-	onChange?: (ids: string[]) => void;
-}) {
+	onValueChange?: (ids: string[]) => void;
+} & React.ComponentProps<typeof DropdownMenuTrigger>) {
 	const ref = React.useRef<HTMLDivElement | null>(null);
 	const [open, setOpen] = React.useState(false);
 	const [selected, setSelected] = React.useState<string[]>([]);
@@ -41,13 +42,13 @@ export function ActivitySelect({
 			? selected.filter((val) => val !== value)
 			: [...selected, value];
 		setSelected(newSelected);
-		onChange?.(newSelected);
+		onValueChange?.(newSelected);
 	};
 
 	const handleDeleteClick = (value: string) => {
 		const newSelected = selected.filter((val) => val !== value);
 		setSelected(newSelected);
-		onChange?.(newSelected);
+		onValueChange?.(newSelected);
 	};
 
 	const isInCloseButton = (target: EventTarget | null) => {
@@ -69,6 +70,7 @@ export function ActivitySelect({
 						setOpen(true);
 					}
 				}}
+				{...props}
 			>
 				<SelectedActivities
 					ref={ref}
@@ -133,7 +135,7 @@ function SelectedActivities({
 						<Tag
 							key={option.value}
 							label={option.label}
-							onDeleteClick={() => onDeleteClick(option.value)}
+							// onDeleteClick={() => onDeleteClick(option.value)}
 						/>
 					)
 				);

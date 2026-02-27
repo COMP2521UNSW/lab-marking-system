@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 
-import { ActivitySelect } from '@/components/ui/base/activity-select';
 import { Button } from '@/components/ui/base/button';
 import { PasswordInput, TextInput } from '@/components/ui/base/input';
 import { ScrollArea } from '@/components/ui/base/scroll-area';
@@ -12,6 +11,7 @@ import { Separator } from '@/components/ui/base/separator';
 import { Tag } from '@/components/ui/base/tag';
 import { Toggle } from '@/components/ui/base/toggle';
 import { H1, H2, Text } from '@/components/ui/base/typography';
+import { ActivitySelect } from '@/components/ui/requests/activity-select';
 import { StudentRequestCard } from '@/components/ui/requests/student-request-card';
 import { TutorRequestCard } from '@/components/ui/requests/tutor-request-card';
 

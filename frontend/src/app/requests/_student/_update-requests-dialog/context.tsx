@@ -13,7 +13,7 @@ interface UpdateRequestsDialogContextValue {
 	updateRequests: (
 		mode: Mode,
 		attendedClass: Class | null,
-		requests: MarkingRequestAsStudent[],
+		pendingRequests: MarkingRequestAsStudent[],
 	) => void;
 }
 
@@ -30,18 +30,18 @@ export function UpdateRequestsDialogProvider({
 
 	const [mode, setMode] = React.useState<Mode>('create');
 	const [attendedClass, setAttendedClass] = React.useState<Class | null>(null);
-	const [currentRequests, setCurrentRequests] = React.useState<
+	const [pendingRequests, setPendingRequests] = React.useState<
 		MarkingRequestAsStudent[]
 	>([]);
 
 	const updateRequests = (
 		mode: Mode,
 		attendedClass: Class | null,
-		currentRequests: MarkingRequestAsStudent[],
+		pendingRequests: MarkingRequestAsStudent[],
 	) => {
 		setMode(mode);
 		setAttendedClass(attendedClass);
-		setCurrentRequests(currentRequests);
+		setPendingRequests(pendingRequests);
 		setOpen(true);
 	};
 
@@ -54,7 +54,7 @@ export function UpdateRequestsDialogProvider({
 				setOpen={setOpen}
 				mode={mode}
 				attendedClass={attendedClass}
-				currentRequests={currentRequests}
+				pendingRequests={pendingRequests}
 			/>
 		</UpdateRequestsDialogContext.Provider>
 	);

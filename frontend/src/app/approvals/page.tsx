@@ -1,7 +1,6 @@
 'use client';
 
 import { Helmet } from '@dr.pogodin/react-helmet';
-import { format } from 'date-fns';
 import { ChevronRightIcon } from 'lucide-react';
 import * as React from 'react';
 
@@ -14,6 +13,7 @@ import { Button } from '@/components/ui/base/button';
 import { Card } from '@/components/ui/base/card';
 import { Image, preloadImage } from '@/components/ui/base/image';
 import { Loading } from '@/components/ui/base/loading';
+import { Mark } from '@/components/ui/base/mark';
 import { ScrollArea, ScrollBar } from '@/components/ui/base/scroll-area';
 import {
 	Table,
@@ -26,6 +26,7 @@ import {
 import { toast } from '@/components/ui/base/toast';
 import { Toggle } from '@/components/ui/base/toggle';
 import { Text } from '@/components/ui/base/typography';
+import { formatDate } from '@/lib/date';
 import { ApiError } from '@/lib/errors';
 import { cn } from '@/lib/utils';
 import * as requestsService from '@/services/requests';
@@ -188,7 +189,7 @@ function RequestList({
 
 				<Image
 					src="/sleeping-fish.png"
-					alt="Sleeping"
+					alt=""
 					height={240}
 					width={240}
 					className="w-48 rounded-strong"
@@ -214,7 +215,7 @@ function RequestList({
 							{mode === 'closed' && (
 								<TableHead className="text-center">Status</TableHead>
 							)}
-							<TableHead className="w-8">
+							<TableHead className="w-8" aria-hidden>
 								<ChevronRightIcon />
 							</TableHead>
 						</TableRow>
@@ -300,28 +301,44 @@ function RequestRow({
 	return (
 		<>
 			<TableRow
-				className={cn(expanded && 'bg-muted')}
+				data-state={expanded ? 'expanded' : 'collapsed'}
 				onClick={() => setExpanded((expanded) => !expanded)}
 			>
 				<TableCell>
-					<Text className="inline" onClick={(e) => e.stopPropagation()}>
+					<Text
+						className="inline"
+						onClick={(e) => e.stopPropagation()}
+						role="presentation"
+					>
 						{request.student.name} ({request.student.zid})
 					</Text>
 				</TableCell>
 				<TableCell className="text-center">
-					<Text className="inline" onClick={(e) => e.stopPropagation()}>
+					<Text
+						className="inline"
+						onClick={(e) => e.stopPropagation()}
+						role="presentation"
+					>
 						{request.activity.name}
 					</Text>
 				</TableCell>
 				{mode === 'closed' && (
 					<TableCell className="text-center">
-						<Text className="inline" onClick={(e) => e.stopPropagation()}>
+						<Text
+							className="inline"
+							onClick={(e) => e.stopPropagation()}
+							role="presentation"
+						>
 							{request.status}
 						</Text>
 					</TableCell>
 				)}
 				<TableCell className="flex items-center">
-					<button className="rounded-full focus-ring cursor-pointer">
+					<button
+						aria-label="Expand row"
+						aria-expanded={expanded}
+						className="rounded-full focus-ring cursor-pointer"
+					>
 						<ChevronRightIcon
 							className={cn(
 								'transition-all',
@@ -341,15 +358,15 @@ function RequestRow({
 								{request.markerName}
 							</Text>
 							<Text>
-								<span className="font-semibold">Mark:</span> {request.mark}/
-								{request.activity.maxMark}
+								<span className="font-semibold">Mark:</span>{' '}
+								<Mark mark={request.mark} outOf={request.activity.maxMark} />
 							</Text>
 							<Text className="text-wrap">
 								<span className="font-semibold">Reason:</span> {request.reason}
 							</Text>
 							<Text className="text-wrap">
 								<span className="font-semibold">Date requested:</span>{' '}
-								{format(new Date(request.markedAt), 'EEEE do MMMM h:mmaaa')}
+								{formatDate(request.markedAt)}
 							</Text>
 							{request.status !== 'pending' && (
 								<>

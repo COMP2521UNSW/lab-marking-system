@@ -1,7 +1,6 @@
 'use client';
 
-import { COURSE_CODE } from '@workspace/config';
-
+import { CourseCode } from '@/components/ui/base/course-code';
 import { Image } from '@/components/ui/base/image';
 import { Text } from '@/components/ui/base/typography';
 import { cn } from '@/lib/utils';
@@ -29,7 +28,11 @@ function LogoImage({
 function LogoText({ className, ...props }: React.ComponentProps<typeof Text>) {
 	return (
 		<Text className={cn('font-mono font-bold', className)} {...props}>
-			<span className="text-primary">~/{COURSE_CODE}</span>/marking
+			<span className="text-primary">
+				~<span aria-hidden="true">/</span>
+				<CourseCode />
+			</span>
+			<span aria-hidden="true">/</span>marking
 		</Text>
 	);
 }

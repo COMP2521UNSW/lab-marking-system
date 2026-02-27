@@ -107,7 +107,6 @@ export function DeclineDialog({
 							})),
 							{ value: 'other', label: 'Other' },
 						]}
-						value={reason.value}
 						className="w-full"
 						placeholder="Select a reason..."
 						onValueChange={handleReasonSelect}
