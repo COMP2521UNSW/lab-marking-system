@@ -53,7 +53,8 @@
 	--color-placeholder: var(--placeholder);
 	--shadow-regular: var(--drop-shadow-regular);
 
-	--breakpoint-xs: 400px;
+	--breakpoint-xs: 500px;
+	--breakpoint-xxs: 400px;
 }
 
 :root {
