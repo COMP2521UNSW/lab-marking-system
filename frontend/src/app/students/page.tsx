@@ -27,6 +27,7 @@ import {
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
 import { ApiError } from '@/lib/errors';
+import { cn } from '@/lib/utils';
 import * as activitiesService from '@/services/activities';
 import * as studentsService from '@/services/students';
 
@@ -116,7 +117,7 @@ function StudentSearch() {
 		setLoading(true);
 		const students = await studentsService.searchStudents({ q: query });
 		if (query === queryRef.current) {
-			setResults(students);
+			setResults(students.sort((a, b) => a.name.localeCompare(b.name)));
 			setLoading(false);
 		}
 	}, 500);
@@ -149,10 +150,6 @@ function StudentSearch() {
 }
 
 function SearchResults({ students }: { students: StudentDetails[] }) {
-	const { markStudent } = useMarkDialog();
-	const { viewMarks } = useViewDialog();
-	const { viewHistory } = useHistoryDialog();
-
 	return (
 		<div className="space-y-4">
 			<Text>
@@ -160,42 +157,63 @@ function SearchResults({ students }: { students: StudentDetails[] }) {
 				{students.length === 1 ? '' : 's'} found.
 			</Text>
 
-			<div
-				className="rounded-strong border w-[calc(100vw-66px)] overflow-x-auto"
-				style={{
-					minWidth: `${MIN_WIDTH - 66}px`,
-					maxWidth: `${MAX_WIDTH - 66}px`,
-				}}
-			>
-				<ScrollArea>
-					<Table>
-						<TableHeader className="font-semibold">
-							<TableRow>
-								<TableHead>
-									<Text>zID</Text>
-								</TableHead>
-								<TableHead>
-									<Text>Name</Text>
-								</TableHead>
-								<TableHead className="text-center w-56">
-									<Text>Actions</Text>
-								</TableHead>
-							</TableRow>
-						</TableHeader>
+			<ResultsTable students={students} />
+		</div>
+	);
+}
 
-						<TableBody>
-							{students.length === 0 ? (
-								<TableRow>
-									<TableCell colSpan={3} className="py-6">
-										<Text className="text-center">No students</Text>
+function ResultsTable({
+	students,
+	className,
+}: {
+	students: StudentDetails[];
+	className?: string;
+}) {
+	const { markStudent } = useMarkDialog();
+	const { viewMarks } = useViewDialog();
+	const { viewHistory } = useHistoryDialog();
+
+	return (
+		<div
+			className={cn(
+				'rounded-strong border w-[calc(100vw-66px)] overflow-x-auto',
+				className,
+			)}
+			style={{
+				minWidth: `${MIN_WIDTH - 66}px`,
+				maxWidth: `${MAX_WIDTH - 66}px`,
+			}}
+		>
+			<ScrollArea>
+				<Table>
+					<TableHeader className="font-semibold">
+						<TableRow className="block xxs:table-row">
+							<TableHead className="w-20 xxs:w-auto">zID</TableHead>
+							<TableHead>Name</TableHead>
+							<TableHead className="sr-only xxs:not-sr-only w-0 text-center">
+								Actions
+							</TableHead>
+						</TableRow>
+					</TableHeader>
+
+					<TableBody>
+						{students.length === 0 ? (
+							<TableRow>
+								<TableCell colSpan={3} className="py-6">
+									<Text className="text-center">No students</Text>
+								</TableCell>
+							</TableRow>
+						) : (
+							students.map((student) => (
+								<TableRow key={student.zid} className="block xxs:table-row">
+									<TableCell className="w-20 xxs:w-auto">
+										{student.zid}
 									</TableCell>
-								</TableRow>
-							) : (
-								students.map((student) => (
-									<TableRow key={student.zid}>
-										<TableCell>{student.zid}</TableCell>
-										<TableCell>{student.name}</TableCell>
-										<TableCell className="text-center space-x-2">
+									<TableCell>
+										<Text className="text-wrap">{student.name}</Text>
+									</TableCell>
+									<TableCell className="block xxs:table-cell w-full xxs:w-0 pt-1 xxs:pt-2">
+										<div className="flex xxs:flex-col xs:flex-row justify-start gap-2">
 											<Button size="sm" onClick={() => markStudent(student)}>
 												<Text>Mark</Text>
 											</Button>
@@ -205,15 +223,15 @@ function SearchResults({ students }: { students: StudentDetails[] }) {
 											<Button size="sm" onClick={() => viewHistory(student)}>
 												<Text>History</Text>
 											</Button>
-										</TableCell>
-									</TableRow>
-								))
-							)}
-						</TableBody>
-					</Table>
-					<ScrollBar orientation="horizontal" />
-				</ScrollArea>
-			</div>
+										</div>
+									</TableCell>
+								</TableRow>
+							))
+						)}
+					</TableBody>
+				</Table>
+				<ScrollBar orientation="horizontal" />
+			</ScrollArea>
 		</div>
 	);
 }

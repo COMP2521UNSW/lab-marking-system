@@ -1,7 +1,7 @@
 'use client';
 
 import { Helmet } from '@dr.pogodin/react-helmet';
-import { ChevronRightIcon } from 'lucide-react';
+import { CheckIcon, ChevronRightIcon, XIcon } from 'lucide-react';
 import * as React from 'react';
 
 import type { ManualRequest } from '@workspace/types/requests';
@@ -199,6 +199,20 @@ function RequestList({
 	}
 
 	return (
+		<RequestTable mode={mode} requests={requests} closeRequest={closeRequest} />
+	);
+}
+
+function RequestTable({
+	mode,
+	requests,
+	closeRequest,
+}: {
+	mode: 'open' | 'closed';
+	requests: ManualRequest[];
+	closeRequest: (request: ManualRequest) => void;
+}) {
+	return (
 		<div
 			className="rounded-strong border w-[calc(100vw-66px)] overflow-x-auto"
 			style={{
@@ -213,7 +227,9 @@ function RequestList({
 							<TableHead>Student</TableHead>
 							<TableHead className="text-center">Activity</TableHead>
 							{mode === 'closed' && (
-								<TableHead className="text-center">Status</TableHead>
+								<TableHead className="hidden xxs:table-cell text-center">
+									Status
+								</TableHead>
 							)}
 							<TableHead className="w-8" aria-hidden>
 								<ChevronRightIcon />
@@ -306,7 +322,7 @@ function RequestRow({
 			>
 				<TableCell>
 					<Text
-						className="inline"
+						className="inline text-wrap"
 						onClick={(e) => e.stopPropagation()}
 						role="presentation"
 					>
@@ -323,21 +339,27 @@ function RequestRow({
 					</Text>
 				</TableCell>
 				{mode === 'closed' && (
-					<TableCell className="text-center">
-						<Text
-							className="inline"
-							onClick={(e) => e.stopPropagation()}
-							role="presentation"
-						>
-							{request.status}
-						</Text>
+					<TableCell className="hidden xxs:table-cell">
+						<div className="flex justify-center size-full">
+							{request.status === 'approved' ? (
+								<div title="Approved">
+									<CheckIcon className="size-5 stroke-[2.5] stroke-green-600 dark:stroke-green-500" />
+									<span className="sr-only">Approved</span>
+								</div>
+							) : (
+								<div title="Denied">
+									<XIcon className="size-5 stroke-[2.5] stroke-red-600 dark:stroke-red-400" />
+									<span className="sr-only">Denied</span>
+								</div>
+							)}
+						</div>
 					</TableCell>
 				)}
-				<TableCell className="flex items-center">
+				<TableCell>
 					<button
 						aria-label="Expand row"
 						aria-expanded={expanded}
-						className="rounded-full focus-ring cursor-pointer"
+						className="align-middle rounded-full focus-ring cursor-pointer"
 					>
 						<ChevronRightIcon
 							className={cn(
@@ -351,9 +373,9 @@ function RequestRow({
 
 			{expanded && (
 				<TableRow>
-					<TableCell colSpan={3} className="space-y-2">
+					<TableCell colSpan={mode === 'open' ? 3 : 4} className="space-y-2">
 						<div className="space-y-1">
-							<Text>
+							<Text className="text-wrap">
 								<span className="font-semibold">Requested by:</span>{' '}
 								{request.markerName}
 							</Text>
@@ -370,13 +392,13 @@ function RequestRow({
 							</Text>
 							{request.status !== 'pending' && (
 								<>
-									<Text>
+									<Text className="text-wrap">
 										<span className="font-semibold">Status:</span>{' '}
 										{request.status === 'approved' ? 'Approved' : 'Denied'} by{' '}
 										{request.approverName} on {formatDate(request.closedAt)}
 									</Text>
 									{request.status === 'denied' && (
-										<Text>
+										<Text className="text-wrap">
 											<span className="font-semibold">Deny reason:</span>{' '}
 											{request.denyReason}
 										</Text>
