@@ -93,11 +93,13 @@ export interface PendingManualRequest extends BaseManualRequest {
 export interface ApprovedManualRequest extends BaseManualRequest {
 	status: 'approved';
 	approverName: string;
+	closedAt: Date;
 }
 
 export interface DeniedManualRequest extends BaseManualRequest {
 	status: 'denied';
 	approverName: string;
+	closedAt: Date;
 	denyReason: string;
 }
 

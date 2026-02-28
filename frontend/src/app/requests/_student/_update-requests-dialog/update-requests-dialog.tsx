@@ -5,7 +5,6 @@ import * as React from 'react';
 import type { Class } from '@workspace/types/classes';
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
-import { MIN_WIDTH } from '@/app/layout';
 import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/base/button';
 import {
@@ -104,15 +103,10 @@ export function UpdateRequestsDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogContent
-				showCloseButton={false}
-				className="w-[calc(100%-32px)] max-w-96! bg-card shadow-regular"
-				style={{ minWidth: `${MIN_WIDTH - 32}px` }}
-				aria-describedby={undefined}
-			>
+			<DialogContent className="max-w-96" aria-describedby={undefined}>
 				<DialogHeader>
-					<DialogTitle className="text-center text-2xl font-light text-primary">
-						{mode === 'create' ? 'Create' : 'Edit'} Request
+					<DialogTitle variant="lg">
+						{mode === 'create' ? 'Create' : 'Edit'} Requests
 					</DialogTitle>
 				</DialogHeader>
 

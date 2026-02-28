@@ -150,7 +150,7 @@ function Logo() {
 
 function DesktopPagesMenu({ navLinks }: { navLinks: NavLink[] }) {
 	return (
-		<DropdownMenu modal={false}>
+		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="ghost" className="font-mono font-bold">
 					<ChevronDownIcon className="size-6" /> pages
@@ -203,7 +203,7 @@ function NavDropdownMenu({
 	ariaLabel?: string;
 }) {
 	return (
-		<DropdownMenu modal={false}>
+		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button
 					variant="ghost"
@@ -243,7 +243,7 @@ function NavbarMenuUserCard({ user }: { user: UserDetails }) {
 	return (
 		user && (
 			<DropdownMenuLabel className="space-y-1">
-				<Text className="text-wrap">{user.name}</Text>
+				<Text className="font-semibold text-wrap">{user.name}</Text>
 				<Text className="text-xs">{roleToLabel(user.role)}</Text>
 			</DropdownMenuLabel>
 		)

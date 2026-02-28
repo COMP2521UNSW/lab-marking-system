@@ -56,7 +56,7 @@ export function ActivitySelect({
 	};
 
 	return (
-		<DropdownMenu open={open} modal={true}>
+		<DropdownMenu open={open}>
 			<DropdownMenuTrigger
 				className={cn(
 					'flex items-center justify-between gap-2 rounded-weak border border-outline py-[5px] px-3 whitespace-nowrap focus-ring',

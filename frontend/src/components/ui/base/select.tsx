@@ -44,7 +44,7 @@ export function Select({
 	};
 
 	return (
-		<DropdownMenu modal={false}>
+		<DropdownMenu>
 			<DropdownMenuTrigger
 				id={id}
 				className={cn(
