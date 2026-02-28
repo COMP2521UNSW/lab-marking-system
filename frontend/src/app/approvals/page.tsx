@@ -373,7 +373,7 @@ function RequestRow({
 									<Text>
 										<span className="font-semibold">Status:</span>{' '}
 										{request.status === 'approved' ? 'Approved' : 'Denied'} by{' '}
-										{request.approverName}
+										{request.approverName} on {formatDate(request.closedAt)}
 									</Text>
 									{request.status === 'denied' && (
 										<Text>

@@ -336,6 +336,7 @@ export async function getManualRequests(ids?: number[]) {
 			markedAt: manualRequestsTable.createdAt,
 			status: manualRequestsTable.status,
 			approverName: adminsTable.name,
+			closedAt: manualRequestsTable.closedAt,
 			denyReason: manualRequestsTable.denyReason,
 		})
 		.from(manualRequestsTable)
