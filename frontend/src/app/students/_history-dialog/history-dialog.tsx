@@ -134,7 +134,7 @@ function LogTableRow({ event }: { event: RequestLogEvent }) {
 
 	return (
 		<>
-			<TableRow className={cn(expanded && 'bg-muted')}>
+			<TableRow data-state={expanded ? 'expanded' : 'collapsed'}>
 				<TableCell>{eventType}</TableCell>
 				<TableCell>
 					<LogData>{activity?.name}</LogData>
@@ -167,8 +167,9 @@ function LogTableRow({ event }: { event: RequestLogEvent }) {
 					)}
 				</TableCell>
 			</TableRow>
+
 			{expanded && (
-				<TableRow data-state={expanded ? 'expanded' : 'collapsed'}>
+				<TableRow>
 					<TableCell colSpan={7}>
 						<Text>
 							<span className="font-semibold">Reason:</span> {reason}

@@ -243,7 +243,7 @@ function NavbarMenuUserCard({ user }: { user: UserDetails }) {
 	return (
 		user && (
 			<DropdownMenuLabel className="space-y-1">
-				<Text className="text-wrap">{user.name}</Text>
+				<Text className="font-semibold text-wrap">{user.name}</Text>
 				<Text className="text-xs">{roleToLabel(user.role)}</Text>
 			</DropdownMenuLabel>
 		)

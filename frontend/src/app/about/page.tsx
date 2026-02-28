@@ -12,12 +12,12 @@ export default function Page() {
 		<>
 			<Helmet title="About" />
 
-			<Card className="flex flex-col items-center min-h-full gap-4 p-6">
+			<Card className="flex flex-col items-center gap-4 min-h-full p-6 text-center">
 				<LogoImage height={0} width={0} className="w-24" />
 
-				<LogoText className="text-center text-xl" />
+				<LogoText className="text-xl" />
 
-				<Text className="text-center text-xl font-mono">
+				<Text className="text-xl font-mono">
 					created by <CourseCode code={'COMP2521'} /> staff in 2026!
 				</Text>
 			</Card>
