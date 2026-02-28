@@ -4,7 +4,6 @@ import * as React from 'react';
 
 import type { Student } from '@workspace/types/users';
 
-import { MIN_WIDTH } from '@/app/layout';
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -69,14 +68,9 @@ export function ViewDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogContent
-				showCloseButton={false}
-				className="w-[calc(100%-32px)] bg-card shadow-regular"
-				style={{ minWidth: `${MIN_WIDTH - 32}px` }}
-				aria-describedby={undefined}
-			>
+			<DialogContent className="max-w-max" aria-describedby={undefined}>
 				<DialogHeader>
-					<DialogTitle className="text-lg font-light">
+					<DialogTitle variant="sm">
 						<span className="text-primary">Marks</span> for {student.name} (
 						{student.zid})
 					</DialogTitle>

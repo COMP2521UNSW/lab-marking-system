@@ -4,7 +4,6 @@ import * as React from 'react';
 
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
-import { MIN_WIDTH } from '@/app/layout';
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -32,16 +31,9 @@ export function DeclinedDialog({
 
 	return (
 		<Dialog open={open}>
-			<DialogContent
-				showCloseButton={false}
-				className="w-[calc(100%-32px)] max-w-90! bg-card shadow-regular"
-				style={{ minWidth: `${MIN_WIDTH - 32}px` }}
-				aria-describedby={undefined}
-			>
+			<DialogContent aria-describedby={undefined}>
 				<DialogHeader>
-					<DialogTitle className="text-center text-2xl font-light text-primary">
-						Marking Request Declined
-					</DialogTitle>
+					<DialogTitle variant="lg">Marking Request Declined</DialogTitle>
 				</DialogHeader>
 
 				<Text>

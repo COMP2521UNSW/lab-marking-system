@@ -7,7 +7,6 @@ import type { ActivityAsTutor } from '@workspace/types/activities';
 import type { RequestLogEvent } from '@workspace/types/logs';
 import type { Student } from '@workspace/types/users';
 
-import { MIN_WIDTH } from '@/app/layout';
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -72,14 +71,9 @@ export function HistoryDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogContent
-				showCloseButton={false}
-				className="w-[calc(100%-32px)] max-w-4xl! bg-card shadow-regular"
-				style={{ minWidth: `${MIN_WIDTH - 32}px` }}
-				aria-describedby={undefined}
-			>
+			<DialogContent className="max-w-4xl" aria-describedby={undefined}>
 				<DialogHeader>
-					<DialogTitle className="text-lg font-light">
+					<DialogTitle variant="sm">
 						<span className="text-primary">Request log</span> for {student.name}{' '}
 						({student.zid})
 					</DialogTitle>
