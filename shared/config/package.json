@@ -2,17 +2,15 @@
 	"name": "@workspace/config",
 	"version": "0.1.0",
 	"description": "Shared config",
+	"keywords": [],
+	"license": "ISC",
+	"author": "",
 	"main": "src/index.ts",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
 	"devDependencies": {
 		"eslint": "catalog:",
-		"prettier": "catalog:",
-		"prettier-plugin-organize-imports": "catalog:",
 		"typescript": "catalog:",
 		"typescript-eslint": "catalog:"
 	}
