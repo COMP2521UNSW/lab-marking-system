@@ -1,3 +1,5 @@
+import '@/lib/polyfills/group-by';
+
 import { addDays } from 'date-fns';
 
 import type {
@@ -10,7 +12,6 @@ import { get } from '@/cache/cache';
 import * as dbClasses from '@/db/classes';
 import * as dbSettings from '@/db/settings';
 import { toLocalDayAndTime } from '@/lib/date';
-import '@/lib/polyfills/group-by';
 import { addMinutes, subtractMinutes } from '@/lib/time';
 import type { Time } from '@/types/time';
 

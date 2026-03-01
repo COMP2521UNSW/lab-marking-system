@@ -1,3 +1,5 @@
+import '@/lib/polyfills/group-by';
+
 import { addMinutes, format, getDay, isSameDay } from 'date-fns';
 
 import type { ActivityAsTutor } from '@workspace/types/activities';
@@ -33,7 +35,6 @@ import * as dbUsers from '@/db/users';
 import { MAX_REASON_LEN } from '@/lib/constants';
 import { toLocalStartOfDay } from '@/lib/date';
 import { BadRequestError } from '@/lib/errors';
-import '@/lib/polyfills/group-by';
 import * as activitiesService from '@/services/activities';
 import * as studentMessages from '@/sockets/student-messages';
 import * as tutorMessages from '@/sockets/tutor-messages';

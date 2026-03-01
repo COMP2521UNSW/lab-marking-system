@@ -2,8 +2,8 @@
 	"name": "@workspace/types",
 	"version": "0.1.0",
 	"description": "Shared type definitions",
-	"author": "",
 	"license": "ISC",
+	"author": "",
 	"exports": {
 		"./*": {
 			"types": "./src/*.ts",
@@ -12,8 +12,6 @@
 	},
 	"devDependencies": {
 		"eslint": "catalog:",
-		"prettier": "catalog:",
-		"prettier-plugin-organize-imports": "catalog:",
 		"typescript": "catalog:",
 		"typescript-eslint": "catalog:"
 	}

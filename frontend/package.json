@@ -1,16 +1,16 @@
 {
 	"name": "frontend",
 	"version": "0.1.0",
-	"description": "",
 	"private": true,
-	"scripts": {
-		"dev": "next dev --turbopack",
-		"build": "next build",
-		"start": "next start",
-		"lint": "next lint"
-	},
-	"author": "",
+	"description": "",
 	"license": "ISC",
+	"author": "",
+	"scripts": {
+		"build": "next build",
+		"dev": "next dev --turbopack",
+		"lint": "next lint",
+		"start": "next start"
+	},
 	"dependencies": {
 		"@dr.pogodin/react-helmet": "catalog:",
 		"@heroicons/react": "catalog:",
@@ -53,8 +53,6 @@
 		"@types/react-dom": "catalog:",
 		"eslint": "catalog:",
 		"eslint-config-next": "catalog:",
-		"prettier": "catalog:",
-		"prettier-plugin-organize-imports": "catalog:",
 		"tailwindcss": "catalog:",
 		"tw-animate-css": "catalog:",
 		"typescript": "catalog:",

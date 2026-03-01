@@ -2,17 +2,17 @@
 	"name": "backend",
 	"version": "0.1.0",
 	"description": "",
+	"license": "ISC",
+	"author": "",
 	"main": "src/index.ts",
 	"scripts": {
 		"build": "tsc && tsc-alias",
-		"start": "node dist/src/index.js",
-		"dev": "cross-env NODE_ENV=development tsx watch src/index.ts",
-		"test": "jest",
 		"db:push": "drizzle-kit push",
-		"db:seed": "tsx src/db/seed/index.ts"
+		"db:seed": "tsx src/db/seed/index.ts",
+		"dev": "cross-env NODE_ENV=development tsx watch src/index.ts",
+		"start": "node dist/src/index.js",
+		"test": "jest"
 	},
-	"author": "",
-	"license": "ISC",
 	"dependencies": {
 		"@libsql/client": "catalog:",
 		"@workspace/config": "workspace:*",
@@ -63,8 +63,6 @@
 		"globals": "catalog:",
 		"jest": "catalog:",
 		"jiti": "catalog:",
-		"prettier": "catalog:",
-		"prettier-plugin-organize-imports": "catalog:",
 		"ts-node": "catalog:",
 		"tsc-alias": "catalog:",
 		"tsx": "catalog:",
