@@ -18,7 +18,7 @@ From the `backend` directory:
    cp .env.example .env
    ```
 
-   Then generate a secret for the `JWT_SECRET` environment variable.
+   Then set values for `JWT_SECRET` and `MASTER_PASSWORD_HASH` in `.env`.
 
 2. Initialise and seed the database
 
@@ -27,7 +27,7 @@ From the `backend` directory:
    pnpm db:seed
    ```
 
-This will create an SQLite database in the `instance` directory.
+   This will create an SQLite database in `test.db`.
 
 3. Run the server
 
