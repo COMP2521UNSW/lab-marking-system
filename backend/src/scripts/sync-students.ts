@@ -2,7 +2,7 @@ import '@@/env-config';
 
 import { parseArgs } from 'node:util';
 
-import { eq, isNotNull, sql } from 'drizzle-orm';
+import { and, eq, isNotNull, sql } from 'drizzle-orm';
 
 import { COURSE_CODE, SESSION } from '@workspace/config';
 
@@ -31,12 +31,12 @@ async function main() {
 		},
 	});
 
-	const dbStudents = await getDbStudents();
+	const dbStudents = await getDbEnrolledStudents();
 
 	const classMap = await getClassMap();
-	const officialStudents = await parseEnrollments(ENROLLMENTS_FILE, classMap);
+	const sourceStudents = await parseEnrollments(ENROLLMENTS_FILE, classMap);
 
-	const diffs = getDiffs(dbStudents, officialStudents);
+	const diffs = getDiffs(dbStudents, sourceStudents);
 
 	if (dryrun) {
 		console.log(diffs);
@@ -45,7 +45,7 @@ async function main() {
 	}
 }
 
-async function getDbStudents() {
+async function getDbEnrolledStudents() {
 	return await db
 		.select({
 			zid: usersTable.zid,
@@ -54,7 +54,7 @@ async function getDbStudents() {
 			enrolled: usersTable.enrolled,
 		})
 		.from(usersTable)
-		.where(eq(usersTable.role, 'student'))
+		.where(and(eq(usersTable.role, 'student'), eq(usersTable.enrolled, true)))
 		.orderBy(usersTable.zid);
 }
 
@@ -130,8 +130,7 @@ function getDiffs(dbStudents: Student[], sourceStudents: Student[]) {
 		} else {
 			if (
 				dbStudents[i].name !== sourceStudents[j].name ||
-				dbStudents[i].classCode !== sourceStudents[j].classCode ||
-				dbStudents[i].enrolled !== sourceStudents[j].enrolled
+				dbStudents[i].classCode !== sourceStudents[j].classCode
 			) {
 				diffs.push(sourceStudents[j]);
 			}
