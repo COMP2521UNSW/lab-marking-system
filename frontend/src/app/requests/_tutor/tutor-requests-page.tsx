@@ -166,6 +166,7 @@ function RequestList({
 					height={0}
 					width={0}
 					loading="eager"
+					unoptimized
 					className="w-42 rounded-strong"
 				/>
 			</div>
