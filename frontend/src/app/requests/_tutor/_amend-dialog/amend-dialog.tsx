@@ -1,0 +1,162 @@
+'use client';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as React from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import z from 'zod';
+
+import type { MarkedRequest } from '@workspace/types/requests';
+import type { Student } from '@workspace/types/users';
+
+import { Button } from '@/components/ui/base/button';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/base/dialog';
+import { Field, FieldError } from '@/components/ui/base/field';
+import { TextInput } from '@/components/ui/base/input';
+import { Mark } from '@/components/ui/base/mark';
+import { toast } from '@/components/ui/base/toast';
+import { Text } from '@/components/ui/base/typography';
+import { ApiError } from '@/lib/errors';
+import * as requestsService from '@/services/requests';
+
+export function AmendDialog({
+	open,
+	setOpen,
+	student,
+	request,
+}: {
+	open: boolean;
+	setOpen: (open: boolean) => void;
+	student: Student;
+	request: MarkedRequest;
+}) {
+	const formSchema = React.useMemo(
+		() =>
+			z.object({
+				mark: z
+					.string()
+					.trim()
+					.min(1, 'Mark is required')
+					.regex(/^-?(\.\d+|\d+(\.\d*)?)$/, 'Not a valid number')
+					.refine((value) => {
+						const mark = Number(value);
+						return mark >= 0 && mark <= request.activity.maxMark;
+					}, `Mark must be between 0 and ${request.activity.maxMark}`)
+					.refine(
+						(value) => !/\.\d{3}/.test(value),
+						'Max. 2 decimal places allowed',
+					)
+					.transform(Number)
+					.refine(
+						(mark) => mark !== request.mark,
+						'New mark must be different from previous mark',
+					),
+			}),
+		[request],
+	);
+
+	const form = useForm<
+		z.input<typeof formSchema>,
+		unknown,
+		z.infer<typeof formSchema>
+	>({
+		resolver: zodResolver(formSchema),
+		mode: 'onChange',
+		defaultValues: {
+			mark: '',
+		},
+	});
+
+	const [loading, setLoading] = React.useState(false);
+
+	React.useEffect(() => {
+		if (open) {
+			form.reset();
+			setLoading(false);
+		}
+	}, [form, open]);
+
+	const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+		setLoading(true);
+
+		try {
+			await requestsService.amendMark({ id: request.id, mark: values.mark });
+
+			toast('Mark amended');
+			setOpen(false);
+		} catch (err) {
+			if (err instanceof ApiError) {
+				toast(err.message);
+			} else {
+				toast('Something went wrong, please try again');
+			}
+
+			setLoading(false);
+		}
+	};
+
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogContent aria-describedby={undefined}>
+				<DialogHeader>
+					<DialogTitle variant="lg">
+						Amend marking of <span>{request.activity.name}</span> for{' '}
+						{student.name} ({student.zid})
+					</DialogTitle>
+				</DialogHeader>
+
+				<Text>
+					<b>Previous mark:</b>{' '}
+					<Mark mark={request.mark} outOf={request.activity.maxMark} />{' '}
+					<i>(by {request.markerName})</i>
+				</Text>
+
+				<form
+					className="flex flex-col gap-4"
+					onSubmit={form.handleSubmit(handleSubmit)}
+				>
+					<Controller
+						name="mark"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<Field className="gap-1.5" data-invalid={fieldState.invalid}>
+								<TextInput
+									{...field}
+									id="mark"
+									aria-invalid={fieldState.invalid}
+									placeholder={`New mark (out of ${request.activity.maxMark})`}
+								/>
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} className="text-xs" />
+								)}
+							</Field>
+						)}
+					/>
+
+					<div className="flex gap-4">
+						<Button
+							type="submit"
+							className="flex-1"
+							disabled={!form.formState.isValid || loading}
+							loading={loading}
+						>
+							<Text>Amend Mark</Text>
+						</Button>
+						<Button
+							type="button"
+							variant="danger"
+							className="flex-1"
+							onClick={() => setOpen(false)}
+						>
+							<Text>Cancel</Text>
+						</Button>
+					</div>
+				</form>
+			</DialogContent>
+		</Dialog>
+	);
+}

@@ -1,0 +1,29 @@
+import type {
+	GetUserResponseData,
+	LogInRequestData,
+	LogInResponseData,
+} from '@workspace/types/services/auth';
+
+import { api } from '@/api/api';
+
+////////////////////////////////////////////////////////////////////////////////
+
+export async function logIn(req: LogInRequestData) {
+	const res = await api.post<LogInResponseData>('/login', req);
+	return res.data;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export async function logOut() {
+	await api.post('/logout');
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export async function getUser() {
+	const res = await api.get<GetUserResponseData>('/user');
+	return res.data;
+}
+
+////////////////////////////////////////////////////////////////////////////////

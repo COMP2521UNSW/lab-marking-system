@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"target": "ES2024",
+		"lib": ["ES2024"],
+		"skipLibCheck": true,
+		"strict": true,
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"esModuleInterop": true,
+		"outDir": "./dist",
+		"paths": {
+			"@@/*": ["./*"],
+			"@/*": ["./src/*"]
+		}
+	},
+	"include": ["**/*.ts", "**/*.mts"]
+}
