@@ -2,7 +2,7 @@
 	"name": "lab-marking-system",
 	"version": "0.1.0",
 	"devDependencies": {
-		"@trivago/prettier-plugin-sort-imports": "^6.0.2",
+		"@trivago/prettier-plugin-sort-imports": "catalog:",
 		"prettier": "catalog:",
 		"prettier-plugin-packagejson": "catalog:"
 	},
