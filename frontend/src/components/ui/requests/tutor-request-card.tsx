@@ -72,6 +72,7 @@ export function TutorRequestCard({
 										variant="primary"
 										className="px-2 h-8 xxs:h-9"
 										disabled={request.status !== 'pending'}
+										aria-label={`Mark ${request.activity.name}`}
 										onClick={() => onMarkClick(request)}
 									>
 										<Text>Mark</Text>
@@ -80,6 +81,7 @@ export function TutorRequestCard({
 										variant="danger"
 										className="px-2 h-8 xxs:h-9"
 										disabled={request.status !== 'pending'}
+										aria-label={`Decline ${request.activity.name}`}
 										onClick={() => onDeclineClick(request)}
 									>
 										<Text>Decline</Text>
@@ -90,6 +92,7 @@ export function TutorRequestCard({
 									variant="primary"
 									className="px-2"
 									disabled={request.status !== 'marked'}
+									aria-label={`Amend ${request.activity.name} mark`}
 									onClick={() => handleAmendClick(request)}
 								>
 									<Text>Amend</Text>
