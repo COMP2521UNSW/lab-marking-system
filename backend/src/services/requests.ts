@@ -33,7 +33,7 @@ import * as dbRequests from '@/db/requests';
 import * as dbSettings from '@/db/settings';
 import * as dbUsers from '@/db/users';
 import { MAX_REASON_LEN } from '@/lib/constants';
-import { toLocalStartOfDay } from '@/lib/date';
+import { toLocalDate, toLocalStartOfDay } from '@/lib/date';
 import { BadRequestError } from '@/lib/errors';
 import * as activitiesService from '@/services/activities';
 import * as studentMessages from '@/sockets/student-messages';
@@ -168,7 +168,7 @@ async function validateSelectedClass(user: SessionUser, classCode: string) {
 
 	const earlyRequestMinutes = await dbSettings.getEarlyRequestMinutes();
 
-	const now = getCurrentTime();
+	const now = toLocalDate(getCurrentTime());
 
 	const day = getDay(now);
 	const time = format(now, 'HH:mm');
