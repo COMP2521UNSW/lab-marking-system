@@ -167,6 +167,8 @@ export async function logMarksImportedFromSms(
 	}[],
 	timestamp: Date,
 ) {
+	if (marks.length === 0) return;
+
 	await db.insert(logsTable).values(
 		marks.map((entry) => ({
 			studentZid: entry.studentZid,
