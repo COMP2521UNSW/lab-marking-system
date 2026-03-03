@@ -38,6 +38,7 @@ export function StudentRequestCard({
 					variant="danger"
 					className="px-2"
 					disabled={request.status !== 'pending'}
+					aria-label={`Withdraw ${request.activity.name}`}
 					onClick={onWithdrawClick}
 				>
 					<Text>Withdraw</Text>

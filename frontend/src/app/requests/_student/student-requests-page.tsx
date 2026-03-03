@@ -190,6 +190,7 @@ function Requests() {
 						</div>
 
 						<Button
+							aria-label="Edit requests"
 							onClick={() => updateRequests('edit', attendedClass, requests)}
 						>
 							<Text>Edit</Text>

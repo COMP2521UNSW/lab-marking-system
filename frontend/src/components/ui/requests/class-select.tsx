@@ -70,18 +70,21 @@ export function ClassSelect({
 					<DropdownMenuGroup className="space-y-1">
 						<ClassSelectGroup
 							classes={classes.current}
+							id="current"
 							label="Current"
 							enrolledClassCode={enrolledClassCode}
 							handleSelect={handleSelect}
 						/>
 						<ClassSelectGroup
 							classes={classes.upcoming}
+							id="upcoming"
 							label="Starting soon"
 							enrolledClassCode={enrolledClassCode}
 							handleSelect={handleSelect}
 						/>
 						<ClassSelectGroup
 							classes={classes.recent}
+							id="recent"
 							label="Recently ended"
 							enrolledClassCode={enrolledClassCode}
 							handleSelect={handleSelect}
@@ -95,20 +98,22 @@ export function ClassSelect({
 
 function ClassSelectGroup({
 	classes,
+	id,
 	label,
 	enrolledClassCode,
 	handleSelect,
 }: {
 	classes: Class[];
+	id: string;
 	label: string;
 	enrolledClassCode?: string | null;
 	handleSelect: (cls: Class) => void;
 }) {
 	return (
 		classes.length > 0 && (
-			<div>
+			<DropdownMenuGroup>
 				<DropdownMenuLabel
-					aria-label=""
+					id={id}
 					className="text-muted-foreground px-2 py-1.5 text-xs"
 				>
 					{label}
@@ -117,6 +122,7 @@ function ClassSelectGroup({
 					<DropdownMenuItem
 						key={cls.code}
 						className="flex justify-between"
+						aria-describedby={id}
 						onSelect={() => handleSelect(cls)}
 					>
 						{cls.code} ({cls.labLocation})
@@ -125,7 +131,7 @@ function ClassSelectGroup({
 						)}
 					</DropdownMenuItem>
 				))}
-			</div>
+			</DropdownMenuGroup>
 		)
 	);
 }
