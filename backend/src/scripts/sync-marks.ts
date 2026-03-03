@@ -1,6 +1,7 @@
 import '@@/env-config';
 
 import { writeFileSync } from 'node:fs';
+import { parseArgs } from 'node:util';
 
 import { eq, isNotNull, sql } from 'drizzle-orm';
 
@@ -8,6 +9,7 @@ import type { NonNullableKeys } from '@workspace/types/utils';
 
 import { activitiesTable, db, marksTable, syncedMarksTable } from '@/db/db';
 import { logMarksImportedFromSms } from '@/db/logs';
+import { logger } from '@/lib/logger';
 
 import { executeCommand } from './utils';
 
@@ -21,6 +23,14 @@ type Mark = {
 ////////////////////////////////////////////////////////////////////////////////
 
 async function main() {
+	const {
+		values: { dryrun },
+	} = parseArgs({
+		options: {
+			dryrun: { type: 'boolean' as const, default: false },
+		},
+	});
+
 	const activities = await getAllActivities();
 
 	const dbMarks = await getDbMarks();
@@ -31,7 +41,14 @@ async function main() {
 	const smsDiffs = getDiffs(dbSyncedMarks, smsMarks);
 	const { fromDb, fromSms } = mergeDiffs(dbDiffs, smsDiffs);
 
-	await saveDiffs(fromDb, fromSms);
+	if (dryrun) {
+		console.log('Marks copied from DB to SMS:');
+		console.log(fromDb);
+		console.log('Marks copied from SMS to DB:');
+		console.log(fromSms);
+	} else {
+		await saveDiffs(fromDb, fromSms);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -217,6 +234,13 @@ async function saveDiffs(fromDb: Mark[], fromSms: Mark[]) {
 }
 
 async function insertMarksIntoSms(markEntries: Mark[]) {
+	if (markEntries.length === 0) {
+		logger.info('No marks to copy from DB to SMS');
+		return;
+	}
+
+	logger.info(`Copying ${markEntries.length} marks from DB to SMS`);
+
 	const data = markEntries
 		.map((entry) => {
 			const zid = entry.zid.slice(1);
@@ -227,10 +251,17 @@ async function insertMarksIntoSms(markEntries: Mark[]) {
 	const smsPath = process.env.SMSDB!;
 	writeFileSync(`${smsPath}/update_recs/lab_handmarking.upd`, data);
 
-	await executeCommand('smsupdate lab_handmarking');
+	await executeCommand('smsupdate lab_handmarking.upd');
 }
 
 async function updateMarksTable(markEntries: Mark[], timestamp: Date) {
+	if (markEntries.length === 0) {
+		logger.info('No marks to copy from SMS to DB');
+		return;
+	}
+
+	logger.info(`Copying ${markEntries.length} marks from SMS to DB`);
+
 	await db
 		.insert(marksTable)
 		.values(
@@ -248,6 +279,8 @@ async function updateMarksTable(markEntries: Mark[], timestamp: Date) {
 }
 
 async function updateSyncedMarksTable(markEntries: Mark[]) {
+	if (markEntries.length === 0) return;
+
 	await db
 		.insert(syncedMarksTable)
 		.values(
