@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import z from 'zod';
 
+import { MAX_REASON_LEN } from '@workspace/lib/constants';
 import type { ActivityAsTutor } from '@workspace/types/activities';
 import type { Student } from '@workspace/types/users';
 
@@ -26,7 +27,6 @@ import { TextInput } from '@/components/ui/base/input';
 import { Select } from '@/components/ui/base/select';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
-import { MAX_REASON_LEN } from '@/lib/constants';
 import { ApiError } from '@/lib/errors';
 import * as requestsService from '@/services/requests';
 

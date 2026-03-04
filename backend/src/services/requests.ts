@@ -2,6 +2,7 @@ import '@/lib/polyfills/group-by';
 
 import { addMinutes, format, getDay, isSameDay } from 'date-fns';
 
+import { MAX_REASON_LEN } from '@workspace/lib/constants';
 import type { ActivityAsTutor } from '@workspace/types/activities';
 import type {
 	ManualRequest,
@@ -32,7 +33,6 @@ import * as dbMarks from '@/db/marks';
 import * as dbRequests from '@/db/requests';
 import * as dbSettings from '@/db/settings';
 import * as dbUsers from '@/db/users';
-import { MAX_REASON_LEN } from '@/lib/constants';
 import { toLocalDate, toLocalStartOfDay } from '@/lib/date';
 import { BadRequestError } from '@/lib/errors';
 import * as activitiesService from '@/services/activities';

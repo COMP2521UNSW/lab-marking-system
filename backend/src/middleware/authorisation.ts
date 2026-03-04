@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
 
-import { isAdmin, isTutor } from '@/lib/roles';
+import { isAdmin, isTutor } from '@workspace/lib/roles';
 
 const requireAdmin: RequestHandler = (req, res, next) => {
 	if (!isAdmin(req.user.role)) {

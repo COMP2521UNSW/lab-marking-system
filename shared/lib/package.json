@@ -11,6 +11,9 @@
 			"default": "./src/*.ts"
 		}
 	},
+	"dependencies": {
+		"@workspace/types": "workspace:"
+	},
 	"devDependencies": {
 		"eslint": "catalog:",
 		"typescript": "catalog:",
