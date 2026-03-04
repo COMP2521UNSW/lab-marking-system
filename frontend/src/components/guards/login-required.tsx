@@ -3,9 +3,10 @@
 import { useRouter } from 'next/navigation';
 import * as React from 'react';
 
+import { removePrefix } from '@workspace/lib/string';
+
 import { useAuth } from '@/components/providers/auth-provider';
 import { Loading } from '@/components/ui/base/loading';
-import { removePrefix } from '@/lib/string';
 
 export function LoginRequired({ children }: { children: React.ReactNode }) {
 	const router = useRouter();

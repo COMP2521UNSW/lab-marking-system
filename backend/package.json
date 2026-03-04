@@ -17,6 +17,7 @@
 	"dependencies": {
 		"@libsql/client": "catalog:",
 		"@workspace/config": "workspace:*",
+		"@workspace/lib": "workspace:*",
 		"@workspace/types": "workspace:*",
 		"bcrypt": "catalog:",
 		"chalk": "catalog:",

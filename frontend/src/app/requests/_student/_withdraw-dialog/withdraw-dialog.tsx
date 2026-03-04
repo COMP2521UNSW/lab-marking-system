@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 
+import { MAX_REASON_LEN } from '@workspace/lib/constants';
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
 import { Button } from '@/components/ui/base/button';
@@ -15,7 +16,6 @@ import { TextInput } from '@/components/ui/base/input';
 import { Select } from '@/components/ui/base/select';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
-import { MAX_REASON_LEN } from '@/lib/constants';
 import { ApiError } from '@/lib/errors';
 import * as requestsService from '@/services/requests';
 

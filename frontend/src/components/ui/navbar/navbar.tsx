@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import * as React from 'react';
 
+import { isAdmin, isTutor } from '@workspace/lib/roles';
 import type { UserDetails, UserRole } from '@workspace/types/users';
 
 import { useAuth } from '@/components/providers/auth-provider';
@@ -36,7 +37,6 @@ import {
 	TooltipTrigger,
 } from '@/components/ui/base/tooltip';
 import { Text } from '@/components/ui/base/typography';
-import { isAdmin, isTutor } from '@/lib/roles';
 import { cn } from '@/lib/utils';
 
 export type NavLink = {

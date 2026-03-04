@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 
+import { MAX_REASON_LEN } from '@workspace/lib/constants';
+
 import { Button } from '@/components/ui/base/button';
 import {
 	Dialog,
@@ -12,7 +14,6 @@ import {
 import { TextInput } from '@/components/ui/base/input';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
-import { MAX_REASON_LEN } from '@/lib/constants';
 import { ApiError } from '@/lib/errors';
 
 export function DenyDialog({

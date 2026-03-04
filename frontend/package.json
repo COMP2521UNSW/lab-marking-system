@@ -24,6 +24,7 @@
 		"@radix-ui/react-tabs": "catalog:",
 		"@radix-ui/react-tooltip": "catalog:",
 		"@workspace/config": "workspace:*",
+		"@workspace/lib": "workspace:*",
 		"@workspace/types": "workspace:*",
 		"axios": "catalog:",
 		"class-variance-authority": "catalog:",
