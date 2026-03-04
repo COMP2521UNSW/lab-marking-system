@@ -1,5 +1,6 @@
 'use client';
 
+import { toast } from '../base/toast';
 import * as React from 'react';
 
 import type {
@@ -8,33 +9,30 @@ import type {
 } from '@workspace/types/requests';
 import type { Student } from '@workspace/types/users';
 
+import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/base/button';
-import { RequestStatus } from '@/components/ui/base/request-status';
 import { Separator } from '@/components/ui/base/separator';
 import { Text } from '@/components/ui/base/typography';
+import { TutorRequestStatus } from '@/components/ui/requests/request-status';
+import { ApiError } from '@/lib/errors';
 import { cn } from '@/lib/utils';
+import * as requestsService from '@/services/requests';
 
 export function TutorRequestCard({
 	student,
 	requests,
 	className,
-	onMarkClick,
 	onDeclineClick,
+	onMarkClick,
 	onAmendClick,
 }: {
 	student: Student;
 	requests: MarkingRequestAsTutor[];
 	className?: string;
-	onMarkClick: (request: MarkingRequestAsTutor) => void;
 	onDeclineClick: (request: MarkingRequestAsTutor) => void;
+	onMarkClick: (request: MarkingRequestAsTutor) => void;
 	onAmendClick: (request: MarkedRequest) => void;
 }) {
-	const handleAmendClick = (request: MarkingRequestAsTutor) => {
-		if (request.status === 'marked') {
-			onAmendClick(request);
-		}
-	};
-
 	return (
 		<div
 			className={cn(
@@ -51,57 +49,114 @@ export function TutorRequestCard({
 
 			<div className="grid grid-cols-[1fr_1fr_1fr] items-center gap-x-4 gap-y-2 p-2">
 				{requests.map((request) => (
-					<React.Fragment key={request.id}>
-						<Text className="wrap-anywhere">{request.activity.name}</Text>
-
-						<Text className="text-center text-muted-foreground leading-4.5">
-							<RequestStatus
-								status={request.status}
-								when={
-									request.status === 'pending'
-										? request.createdAt
-										: request.closedAt
-								}
-							/>
-						</Text>
-
-						<div className="flex flex-col xxs:flex-row gap-2 justify-self-end whitespace-nowrap">
-							{request.closedAt === null ? (
-								<React.Fragment>
-									<Button
-										variant="primary"
-										className="px-2 h-8 xxs:h-9"
-										disabled={request.status !== 'pending'}
-										aria-label={`Mark ${request.activity.name}`}
-										onClick={() => onMarkClick(request)}
-									>
-										<Text>Mark</Text>
-									</Button>
-									<Button
-										variant="danger"
-										className="px-2 h-8 xxs:h-9"
-										disabled={request.status !== 'pending'}
-										aria-label={`Decline ${request.activity.name}`}
-										onClick={() => onDeclineClick(request)}
-									>
-										<Text>Decline</Text>
-									</Button>
-								</React.Fragment>
-							) : (
-								<Button
-									variant="primary"
-									className="px-2"
-									disabled={request.status !== 'marked'}
-									aria-label={`Amend ${request.activity.name} mark`}
-									onClick={() => handleAmendClick(request)}
-								>
-									<Text>Amend</Text>
-								</Button>
-							)}
-						</div>
-					</React.Fragment>
+					<RequestRow
+						key={request.id}
+						request={request}
+						onDeclineClick={onDeclineClick}
+						onMarkClick={onMarkClick}
+						onAmendClick={onAmendClick}
+					/>
 				))}
 			</div>
 		</div>
+	);
+}
+
+function RequestRow({
+	request,
+	onDeclineClick,
+	onMarkClick,
+	onAmendClick,
+}: {
+	request: MarkingRequestAsTutor;
+	onDeclineClick: (request: MarkingRequestAsTutor) => void;
+	onMarkClick: (request: MarkingRequestAsTutor) => void;
+	onAmendClick: (request: MarkedRequest) => void;
+}) {
+	const { user } = useAuth();
+
+	const claimedBySelf =
+		request.status === 'pending' && request.claimer?.zid === user?.zid;
+
+	const [loading, setLoading] = React.useState(false);
+
+	const handleClaimClick = async () => {
+		if (request.status !== 'pending') return;
+
+		setLoading(true);
+		try {
+			if (!claimedBySelf) {
+				await requestsService.claimRequest({ id: request.id });
+			} else {
+				await requestsService.unclaimRequest({ id: request.id });
+			}
+		} catch (err) {
+			toast(
+				err instanceof ApiError
+					? err.message
+					: 'Something went wrong, please try again',
+			);
+		}
+		setLoading(false);
+	};
+
+	const handleAmendClick = () => {
+		if (request.status === 'marked') {
+			onAmendClick(request);
+		}
+	};
+
+	return (
+		<>
+			<Text className="wrap-anywhere">{request.activity.name}</Text>
+
+			<Text className="text-center text-muted-foreground leading-4.5">
+				<TutorRequestStatus request={request} claimedBySelf={claimedBySelf} />
+			</Text>
+
+			{request.closedAt === null ? (
+				<div className="flex flex-col xxs:flex-row xxs:flex-wrap xs:flex-nowrap gap-2 items-end xxs:justify-center xs:justify-self-end xxs:w-38 xs:w-auto  whitespace-nowrap">
+					<Button
+						variant="outline"
+						className="px-2 h-8 w-18"
+						disabled={request.status !== 'pending'}
+						loading={loading}
+						aria-label={`${!claimedBySelf ? 'Claim' : 'Unclaim'} ${request.activity.name}`}
+						onClick={handleClaimClick}
+					>
+						<Text>{!claimedBySelf ? 'Claim' : 'Unclaim'}</Text>
+					</Button>
+					<Button
+						variant="primary"
+						className="px-2 h-8 w-18"
+						aria-label={`Mark ${request.activity.name}`}
+						onClick={() => onMarkClick(request)}
+					>
+						<Text>Mark</Text>
+					</Button>
+					<Button
+						variant="danger"
+						className="px-2 h-8 w-18"
+						aria-label={`Decline ${request.activity.name}`}
+						onClick={() => onDeclineClick(request)}
+					>
+						<Text>Decline</Text>
+					</Button>
+				</div>
+			) : (
+				<div className="flex justify-end">
+					<Button
+						variant="primary"
+						size="sm"
+						className="px-2"
+						disabled={request.status !== 'marked'}
+						aria-label={`Amend ${request.activity.name} mark`}
+						onClick={handleAmendClick}
+					>
+						<Text>Amend</Text>
+					</Button>
+				</div>
+			)}
+		</>
 	);
 }

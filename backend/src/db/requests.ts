@@ -48,6 +48,10 @@ export async function getOpenRequestsByUser(
 			},
 			createdAt: requestsTable.requestedAt,
 			status: requestsTable.status,
+			marker: {
+				zid: usersTable.zid,
+				name: usersTable.name,
+			},
 			closedAt: requestsTable.closedAt,
 		})
 		.from(requestsTable)
@@ -55,6 +59,7 @@ export async function getOpenRequestsByUser(
 			activitiesTable,
 			eq(activitiesTable.code, requestsTable.activityCode),
 		)
+		.leftJoin(usersTable, eq(usersTable.zid, requestsTable.markerZid))
 		.where(
 			and(
 				eq(requestsTable.studentZid, zid),
@@ -117,7 +122,12 @@ export async function withdrawRequest(
 ) {
 	const rows = await db
 		.update(requestsTable)
-		.set({ status: 'withdrawn', closedAt: timestamp, withdrawReason: reason })
+		.set({
+			status: 'withdrawn',
+			markerZid: null,
+			closedAt: timestamp,
+			withdrawReason: reason,
+		})
 		.where(
 			and(
 				eq(requestsTable.id, id),
@@ -154,7 +164,10 @@ export async function getActiveOrRecentRequestsByClass(
 			},
 			createdAt: requestsTable.requestedAt,
 			status: requestsTable.status,
-			markerName: markersTable.name,
+			marker: {
+				zid: markersTable.zid,
+				name: markersTable.name,
+			},
 			mark: requestsTable.mark,
 			closedAt: requestsTable.closedAt,
 		})
@@ -175,6 +188,49 @@ export async function getActiveOrRecentRequestsByClass(
 			),
 		)
 		.orderBy(requestsTable.requestedAt, activitiesTable.ordering);
+}
+
+export async function claimRequest(id: number, tutorZid: string) {
+	const rows = await db
+		.update(requestsTable)
+		.set({
+			markerZid: tutorZid,
+		})
+		.where(
+			and(
+				eq(requestsTable.id, id),
+				eq(requestsTable.status, 'pending'),
+				isNull(requestsTable.closedAt),
+			),
+		)
+		.returning({
+			id: requestsTable.id,
+			classCode: requestsTable.classCode,
+		});
+
+	return rows.length > 0 ? rows[0] : null;
+}
+
+export async function unclaimRequest(id: number, tutorZid: string) {
+	const rows = await db
+		.update(requestsTable)
+		.set({
+			markerZid: null,
+		})
+		.where(
+			and(
+				eq(requestsTable.id, id),
+				eq(requestsTable.status, 'pending'),
+				eq(requestsTable.markerZid, tutorZid),
+				isNull(requestsTable.closedAt),
+			),
+		)
+		.returning({
+			id: requestsTable.id,
+			classCode: requestsTable.classCode,
+		});
+
+	return rows.length > 0 ? rows[0] : null;
 }
 
 export async function declineRequest(

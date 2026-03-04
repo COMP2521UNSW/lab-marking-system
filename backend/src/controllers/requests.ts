@@ -71,6 +71,32 @@ const getRequestsByClass: RequestHandler = async (req, res) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+const claimRequestSchema = z
+	.object({
+		params: z.object({
+			id: z.string().regex(/\d+/).transform(Number),
+		}),
+	})
+	.transform((data) => data.params);
+
+const claimRequest: RequestHandler = async (req, res) => {
+	const reqData = claimRequestSchema.parse(req);
+	await requestsService.claimRequest(req.user, reqData);
+	res.sendStatus(200);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+const unclaimRequestSchema = claimRequestSchema;
+
+const unclaimRequest: RequestHandler = async (req, res) => {
+	const reqData = unclaimRequestSchema.parse(req);
+	await requestsService.unclaimRequest(req.user, reqData);
+	res.sendStatus(200);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
 const declineRequestSchema = z
 	.object({
 		params: z.object({
@@ -212,6 +238,7 @@ const denyManualRequest: RequestHandler = async (req, res) => {
 export {
 	amendMark,
 	approveManualRequest,
+	claimRequest,
 	createManualRequest,
 	declineRequest,
 	denyManualRequest,
@@ -219,6 +246,7 @@ export {
 	getAllManualRequests,
 	getRequestsByClass,
 	markRequest,
+	unclaimRequest,
 	updateRequests,
 	withdrawRequest,
 };

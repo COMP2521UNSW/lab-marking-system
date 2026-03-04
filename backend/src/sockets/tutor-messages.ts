@@ -27,6 +27,14 @@ function requestWithdrawn(classCode: string, id: number, time: Date) {
 	tutorSocket.to(classCode).emit('requestWithdrawn', id, time);
 }
 
+function requestClaimed(classCode: string, id: number, claimer: User) {
+	tutorSocket.to(classCode).emit('requestClaimed', id, claimer);
+}
+
+function requestUnclaimed(classCode: string, id: number) {
+	tutorSocket.to(classCode).emit('requestUnclaimed', id);
+}
+
 function requestDeclined(classCode: string, id: number, time: Date) {
 	tutorSocket.to(classCode).emit('requestDeclined', id, time);
 }
@@ -52,10 +60,12 @@ function markAmended(
 
 export {
 	markAmended,
+	requestClaimed,
 	requestDeclined,
 	requestMarked,
-	requestsCreated,
+	requestUnclaimed,
 	requestWithdrawn,
+	requestsCreated,
 	studentJoined,
 	studentLeft,
 };
