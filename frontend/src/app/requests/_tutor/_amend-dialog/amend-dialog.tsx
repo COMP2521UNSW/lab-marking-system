@@ -20,6 +20,7 @@ import { TextInput } from '@/components/ui/base/input';
 import { Mark } from '@/components/ui/base/mark';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
+import { SubmissionLink } from '@/components/ui/requests/submission-link';
 import { ApiError } from '@/lib/errors';
 import * as requestsService from '@/services/requests';
 
@@ -108,6 +109,11 @@ export function AmendDialog({
 						{student.name} ({student.zid})
 					</DialogTitle>
 				</DialogHeader>
+
+				<SubmissionLink
+					zid={student.zid}
+					activityCode={request.activity.code}
+				/>
 
 				<Text>
 					<b>Previous mark:</b>{' '}

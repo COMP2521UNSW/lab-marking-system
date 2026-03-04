@@ -1,0 +1,19 @@
+{
+	"name": "@workspace/lib",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Shared library code",
+	"license": "ISC",
+	"author": "",
+	"exports": {
+		"./*": {
+			"types": "./src/*.ts",
+			"default": "./src/*.ts"
+		}
+	},
+	"devDependencies": {
+		"eslint": "catalog:",
+		"typescript": "catalog:",
+		"typescript-eslint": "catalog:"
+	}
+}

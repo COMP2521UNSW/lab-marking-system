@@ -10,6 +10,9 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
+	"dependencies": {
+		"@workspace/lib": "workspace:*"
+	},
 	"devDependencies": {
 		"eslint": "catalog:",
 		"typescript": "catalog:",

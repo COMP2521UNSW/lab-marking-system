@@ -19,6 +19,7 @@ import { Field, FieldError } from '@/components/ui/base/field';
 import { TextInput } from '@/components/ui/base/input';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
+import { SubmissionLink } from '@/components/ui/requests/submission-link';
 import { ApiError } from '@/lib/errors';
 import * as requestsService from '@/services/requests';
 
@@ -103,6 +104,11 @@ export function MarkDialog({
 						{student.zid})
 					</DialogTitle>
 				</DialogHeader>
+
+				<SubmissionLink
+					zid={student.zid}
+					activityCode={request.activity.code}
+				/>
 
 				<form
 					className="flex flex-col gap-4"
