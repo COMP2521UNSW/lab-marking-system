@@ -6,12 +6,14 @@ import { MAX_REASON_LEN } from '@workspace/lib/constants';
 import type { ActivityAsTutor } from '@workspace/types/activities';
 import type {
 	ManualRequest,
+	MarkingRequestAsStudent,
 	MarkingRequestAsTutor,
 } from '@workspace/types/requests';
 import type {
 	AmendMarkRequestData,
 	ApproveManualRequestRequestData,
 	ApproveManualRequestResponseData,
+	ClaimRequestRequestData,
 	CreateManualRequestRequestData,
 	DeclineRequestRequestData,
 	DenyManualRequestRequestData,
@@ -21,6 +23,7 @@ import type {
 	GetRequestsByClassRequestData,
 	GetRequestsByClassResponseData,
 	MarkRequestRequestData,
+	UnclaimRequestRequestData,
 	UpdateRequestsRequestData,
 	WithdrawRequestRequestData,
 } from '@workspace/types/services/requests';
@@ -63,7 +66,7 @@ export async function getActiveRequestsForCurrentUser(
 	const requests = await dbRequests.getOpenRequestsByUser(user.zid);
 	return {
 		class: currClass,
-		requests: mapRequests(requests),
+		requests: toStudentRequests(requests),
 	};
 }
 
@@ -131,14 +134,7 @@ export async function updateRequests(
 
 	const { class: cls, requests } = await getRequestDetails(user, user.zid, req);
 
-	studentMessages.requestsUpdated(
-		user.zid,
-		cls,
-		requests.map((req) => ({
-			...req,
-			activity: { code: req.activity.code, name: req.activity.name },
-		})),
-	);
+	studentMessages.requestsUpdated(user.zid, cls, toStudentRequests(requests));
 
 	// class changed
 	if (currClass !== null && req.classCode !== currClass.code) {
@@ -146,7 +142,7 @@ export async function updateRequests(
 		tutorMessages.studentLeft(currClass.code, user.zid);
 		tutorMessages.studentJoined(req.classCode, student, requests);
 	} else {
-		tutorMessages.requestsCreated(cls.code, student, requests);
+		tutorMessages.requestsCreated(cls.code, student, toTutorRequests(requests));
 	}
 }
 
@@ -304,9 +300,16 @@ export async function getRequestsByClass(
 	return Array.from(groupedRequests.entries()).map(([zid, requests]) => {
 		return {
 			student: requests[0].student,
-			requests: requests.map(({ student, ...request }) => {
+			requests: requests.map(({ student, marker, ...request }) => {
 				// request is expected to satisfy the MarkingRequestAsTutor union type
-				return request as MarkingRequestAsTutor;
+				return (
+					request.status === 'pending'
+						? { ...request, claimer: marker }
+						: {
+								...request,
+								markerName: marker !== null ? marker.name : null,
+							}
+				) as MarkingRequestAsTutor;
 			}),
 		};
 	});
@@ -321,6 +324,54 @@ async function validateGetRequestsByClass(
 	if (cls === null) {
 		throw new BadRequestError('Invalid class');
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export async function claimRequest(
+	user: SessionUser,
+	req: ClaimRequestRequestData,
+) {
+	info(user, 'Claiming request', req);
+
+	const res = await dbRequests.claimRequest(req.id, user.zid);
+
+	if (res === null) {
+		badRequestError(user, "Can't claim this request");
+	}
+
+	info(user, 'Request successfully claimed');
+
+	const marker = await dbUsers.getUserByZid(user.zid);
+	if (marker === null) {
+		internalServerError(user, `Couldn't find user with zid ${user.zid}`);
+	}
+
+	// Socket messages
+	tutorMessages.requestClaimed(res.classCode, req.id, {
+		zid: marker.zid,
+		name: marker.name,
+	});
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export async function unclaimRequest(
+	user: SessionUser,
+	req: UnclaimRequestRequestData,
+) {
+	info(user, 'Unclaiming request', req);
+
+	const res = await dbRequests.unclaimRequest(req.id, user.zid);
+
+	if (res === null) {
+		badRequestError(user, "Can't unclaim this request");
+	}
+
+	info(user, 'Request successfully unclaimed');
+
+	// Socket messages
+	tutorMessages.requestUnclaimed(res.classCode, req.id);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -716,7 +767,7 @@ type RequestDetails = {
 async function getOpenRequests(zid: string, activityCodes?: string[]) {
 	const requests = await dbRequests.getOpenRequestsByUser(zid, activityCodes);
 
-	return mapRequests(requests);
+	return toTutorRequests(requests);
 }
 
 async function getRequestDetails(
@@ -742,15 +793,42 @@ async function getRequestDetails(
 			code: cls.code,
 			labLocation: cls.labLocation,
 		},
-		requests: mapRequests(requests),
+		requests,
 	};
 }
 
-function mapRequests(
+function toStudentRequests(
 	requests: Awaited<ReturnType<typeof dbRequests.getOpenRequestsByUser>>,
 ) {
-	// requests are expected to satisfy the MarkingRequestAsTutor union type
-	return requests as MarkingRequestAsTutor[];
+	return requests.map(
+		(request) =>
+			({
+				id: request.id,
+				activity: {
+					code: request.activity.code,
+					name: request.activity.name,
+				},
+				createdAt: request.createdAt,
+				status: request.status,
+				closedAt: request.closedAt,
+			}) as MarkingRequestAsStudent,
+	);
+}
+
+function toTutorRequests(
+	requests: Awaited<ReturnType<typeof dbRequests.getOpenRequestsByUser>>,
+) {
+	return requests.map(
+		(request) =>
+			({
+				id: request.id,
+				activity: request.activity,
+				createdAt: request.createdAt,
+				status: request.status,
+				closedAt: request.closedAt,
+				claimer: request.marker,
+			}) as MarkingRequestAsTutor,
+	);
 }
 
 function validateActivityMark(

@@ -26,6 +26,8 @@ interface TutorServerToClientEvents {
 	studentJoined: (student: User, requests: MarkingRequestAsTutor[]) => void;
 	studentLeft: (studentZid: string) => void;
 	requestWithdrawn: (id: number, time: Date) => void;
+	requestClaimed: (id: number, tutor: User) => void;
+	requestUnclaimed: (id: number) => void;
 	requestDeclined: (id: number, time: Date) => void;
 	requestMarked: (
 		id: number,

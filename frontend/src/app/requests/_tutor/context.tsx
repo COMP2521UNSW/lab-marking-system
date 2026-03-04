@@ -6,7 +6,7 @@ import type {
 	MarkingRequestAsTutor,
 	StudentWithRequests,
 } from '@workspace/types/requests';
-import type { Student } from '@workspace/types/users';
+import type { Student, User } from '@workspace/types/users';
 
 import * as requestsService from '@/services/requests';
 import { tutorSocket as socket } from '@/sockets/sockets';
@@ -103,6 +103,27 @@ export function TutorRequestsProvider({
 			},
 		);
 
+		socket.on('requestClaimed', (id: number, tutor: User) => {
+			updateRequests((draft) =>
+				updateRequest(draft.open, id, (req) => ({
+					...req,
+					claimer: tutor,
+				})),
+			);
+		});
+
+		socket.on('requestUnclaimed', (id: number) => {
+			updateRequests((draft) =>
+				updateRequest(draft.open, id, (req) => {
+					if (req.status === 'pending') {
+						return { ...req, claimer: null };
+					} else {
+						return req;
+					}
+				}),
+			);
+		});
+
 		socket.on(
 			'requestDeclined', //
 			(id: number, time: Date) => {
@@ -134,17 +155,13 @@ export function TutorRequestsProvider({
 		socket.on(
 			'markAmended', //
 			(id: number, markerName: string, mark: number) => {
-				updateRequests((draft) => {
-					const { studentIndex, requestIndex } = findRequest(draft.closed, id);
-
-					if (studentIndex === -1 || requestIndex === -1) return;
-
-					const req = draft.closed[studentIndex].requests[requestIndex];
-					if (req.status === 'marked') {
-						req.markerName = markerName;
-						req.mark = mark;
-					}
-				});
+				updateRequests((draft) =>
+					updateRequest(draft.closed, id, (req) => ({
+						...req,
+						markerName,
+						mark,
+					})),
+				);
 			},
 		);
 
@@ -255,6 +272,19 @@ function removeRequest(students: StudentWithRequests[], id: number) {
 		students[studentIndex].requests.splice(requestIndex, 1);
 	}
 	return res;
+}
+
+function updateRequest(
+	students: StudentWithRequests[],
+	id: number,
+	requestTransformer: (req: MarkingRequestAsTutor) => MarkingRequestAsTutor,
+) {
+	const { studentIndex, requestIndex } = findRequest(students, id);
+
+	if (studentIndex === -1) return;
+
+	const request = students[studentIndex].requests[requestIndex];
+	students[studentIndex].requests[requestIndex] = requestTransformer(request);
 }
 
 function closeRequest(

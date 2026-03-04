@@ -1,5 +1,5 @@
 import type { ActivityAsStudent, ActivityAsTutor } from './activities';
-import type { Student } from './users';
+import type { Student, User } from './users';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +40,7 @@ interface BaseMarkingRequestAsTutor extends BaseMarkingRequest {
 export interface PendingRequest extends BaseMarkingRequestAsTutor {
 	status: 'pending';
 	closedAt: null;
+	claimer: User | null;
 }
 
 export interface WithdrawnRequest extends BaseMarkingRequestAsTutor {

@@ -4,8 +4,8 @@ import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
 import { Button } from '@/components/ui/base/button';
 import { Card } from '@/components/ui/base/card';
-import { RequestStatus } from '@/components/ui/base/request-status';
 import { Text } from '@/components/ui/base/typography';
+import { StudentRequestStatus } from '@/components/ui/requests/request-status';
 import { cn } from '@/lib/utils';
 
 export function StudentRequestCard({
@@ -26,12 +26,7 @@ export function StudentRequestCard({
 		>
 			<Text className="wrap-anywhere">{request.activity.name}</Text>
 			<Text className="text-center text-muted-foreground">
-				<RequestStatus
-					status={request.status}
-					when={
-						request.status === 'pending' ? request.createdAt : request.closedAt
-					}
-				/>
+				<StudentRequestStatus request={request} />
 			</Text>
 			<div className="flex justify-end">
 				<Button

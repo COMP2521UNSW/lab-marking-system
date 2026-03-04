@@ -43,6 +43,7 @@ function Button({
 	size = 'default',
 	asChild = false,
 	loading = false,
+	disabled = false,
 	children,
 	...props
 }: React.ComponentProps<'button'> &
@@ -57,7 +58,7 @@ function Button({
 			data-slot="button"
 			data-variant={variant}
 			data-size={size}
-			disabled={loading || props.disabled}
+			disabled={loading || disabled}
 			className={cn(
 				buttonVariants({ variant, size, className }),
 				loading && 'relative text-transparent',

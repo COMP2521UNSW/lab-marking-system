@@ -2,6 +2,7 @@ import type {
 	AmendMarkRequestData,
 	ApproveManualRequestRequestData,
 	ApproveManualRequestResponseData,
+	ClaimRequestRequestData,
 	CreateManualRequestRequestData,
 	DeclineRequestRequestData,
 	DenyManualRequestRequestData,
@@ -11,6 +12,7 @@ import type {
 	GetRequestsByClassRequestData,
 	GetRequestsByClassResponseData,
 	MarkRequestRequestData,
+	UnclaimRequestRequestData,
 	UpdateRequestsRequestData,
 	WithdrawRequestRequestData,
 } from '@workspace/types/services/requests';
@@ -47,6 +49,18 @@ export async function getRequestsByClass(req: GetRequestsByClassRequestData) {
 		},
 	});
 	return res.data;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export async function claimRequest(req: ClaimRequestRequestData) {
+	await api.post(`/requests/${req.id}/claim`);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export async function unclaimRequest(req: UnclaimRequestRequestData) {
+	await api.post(`/requests/${req.id}/unclaim`);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

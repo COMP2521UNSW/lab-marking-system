@@ -33,6 +33,20 @@ router.get(
 );
 
 router.post(
+	'/requests/:id/claim', //
+	requireLogin,
+	requireTutor,
+	requestsController.claimRequest,
+);
+
+router.post(
+	'/requests/:id/unclaim', //
+	requireLogin,
+	requireTutor,
+	requestsController.unclaimRequest,
+);
+
+router.post(
 	'/requests/:id/decline', //
 	requireLogin,
 	requireTutor,

@@ -365,6 +365,7 @@ function TutorRequestCards() {
 							createdAt: new Date(),
 							status: 'pending',
 							closedAt: null,
+							claimer: null,
 						},
 						{
 							id: 4,
@@ -376,6 +377,7 @@ function TutorRequestCards() {
 							createdAt: new Date(),
 							status: 'pending',
 							closedAt: null,
+							claimer: null,
 						},
 						{
 							id: 5,
@@ -387,6 +389,7 @@ function TutorRequestCards() {
 							createdAt: new Date(),
 							status: 'pending',
 							closedAt: null,
+							claimer: null,
 						},
 						{
 							id: 6,
@@ -398,6 +401,7 @@ function TutorRequestCards() {
 							createdAt: new Date(),
 							status: 'pending',
 							closedAt: null,
+							claimer: null,
 						},
 					]}
 					onMarkClick={(request) =>

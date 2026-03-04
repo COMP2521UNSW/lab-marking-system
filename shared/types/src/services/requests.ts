@@ -31,6 +31,14 @@ export type GetRequestsByClassRequestData = {
 
 export type GetRequestsByClassResponseData = StudentWithRequests[];
 
+export type ClaimRequestRequestData = {
+	id: number;
+};
+
+export type UnclaimRequestRequestData = {
+	id: number;
+};
+
 export type DeclineRequestRequestData = {
 	id: number;
 	reason: string;
