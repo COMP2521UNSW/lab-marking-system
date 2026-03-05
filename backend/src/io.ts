@@ -1,7 +1,7 @@
 import type { Server as HTTPServer } from 'node:http';
 
 import * as cookie from 'cookie';
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import type { Namespace } from 'socket.io';
 import { Server } from 'socket.io';
 
@@ -36,12 +36,25 @@ function createServer(httpServer: HTTPServer) {
 	);
 
 	const readToken: SocketIOMiddleware = (socket, next) => {
-		const cookies = cookie.parseCookie(socket.handshake.headers.cookie ?? '');
-		const payload = jwt.verify(cookies['token'] ?? '', process.env.JWT_SECRET!);
+		try {
+			const cookies = cookie.parseCookie(socket.handshake.headers.cookie ?? '');
+			const payload = jwt.verify(
+				cookies['token'] ?? '',
+				process.env.JWT_SECRET!,
+			);
 
-		// payload is guaranteed to satisfy SessionUser due to logIn() in
-		// src/controllers/auth.ts
-		socket.data.user = payload as SessionUser;
+			// payload is guaranteed to satisfy SessionUser due to logIn() in
+			// src/controllers/auth.ts
+			socket.data.user = payload as SessionUser;
+		} catch (err) {
+			if (err instanceof Error) {
+				logger.warn(`${err.name}: ${err.message}`);
+			} else {
+				logger.warn(JSON.stringify(err));
+			}
+			return;
+		}
+
 		next();
 	};
 
