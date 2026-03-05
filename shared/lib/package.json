@@ -5,6 +5,7 @@
 	"description": "Shared library code",
 	"license": "ISC",
 	"author": "",
+	"type": "module",
 	"exports": {
 		"./*": {
 			"types": "./src/*.ts",
