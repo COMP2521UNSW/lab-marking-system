@@ -17,7 +17,7 @@ const logStream = fs.createWriteStream(
 
 morgan.token('date', () => {
 	const date = toLocalDate(new Date());
-	return format(date, 'yyyy-MM-dd hh:mm:ss');
+	return format(date, 'yyyy-MM-dd HH:mm:ss');
 });
 
 morgan.token('user', (req: Request) =>
