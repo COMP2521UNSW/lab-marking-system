@@ -11,11 +11,11 @@ const buttonVariants = cva(
 		variants: {
 			variant: {
 				primary:
-					'border border-outline bg-primary text-primary-foreground hover:bg-primary/90',
+					'border border-outline bg-primary text-primary-foreground hover:bg-primary/90 [&>[data-slot=spinner]]:text-white',
 				danger:
-					'border border-outline bg-danger text-white hover:bg-danger/90 focus-visible:ring-danger/20 dark:focus-visible:ring-danger/40 dark:bg-danger/60',
+					'border border-outline bg-danger text-white hover:bg-danger/90 focus-visible:ring-danger/20 dark:focus-visible:ring-danger/40 dark:bg-danger/60 [&>[data-slot=spinner]]:text-white',
 				outline:
-					'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
+					'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 [&>[data-slot=spinner]]:text-foreground',
 				secondary:
 					'bg-secondary text-secondary-foreground hover:bg-secondary/80',
 				ghost: 'hover:bg-accent hover:text-accent-foreground',
@@ -66,7 +66,7 @@ function Button({
 			{...props}
 		>
 			{loading && (
-				<Spinner className="absolute left-1/2 top-1/2 size-4 -translate-1/2 text-white" />
+				<Spinner className="absolute left-1/2 top-1/2 size-4 -translate-1/2" />
 			)}
 			<Slottable>{children}</Slottable>
 		</Comp>
