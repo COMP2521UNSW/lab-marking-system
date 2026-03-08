@@ -3,9 +3,17 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
 import * as React from 'react';
 
-import type { ActiveClasses } from '@workspace/types/classes';
+import type { ActiveClasses, Class } from '@workspace/types/classes';
 import type { StudentWithRequests } from '@workspace/types/requests';
 
+import {
+	ActiveClassesProvider,
+	useActiveClasses,
+} from '@/components/providers/active-classes-provider';
+import {
+	TutorSocketProvider,
+	useTutorSocket,
+} from '@/components/providers/sockets/tutor-socket-provider';
 import { Card } from '@/components/ui/base/card';
 import { Image } from '@/components/ui/base/image';
 import { Loading } from '@/components/ui/base/loading';
@@ -24,7 +32,7 @@ import {
 	useDeclineDialog,
 } from './_decline-dialog/context';
 import { MarkDialogProvider, useMarkDialog } from './_mark-dialog/context';
-import { TutorRequestsProvider, useTutorRequests } from './context';
+import { useRequestManager } from './request-manager';
 
 type LoadingState =
 	| {
@@ -70,53 +78,74 @@ export function TutorRequestsPage() {
 			{!loadingState.loaded ? (
 				<Loading />
 			) : (
-				<TutorRequestsProvider activeClasses={loadingState.data.activeClasses}>
-					<MarkDialogProvider>
+				<TutorSocketProvider>
+					<ActiveClassesProvider
+						useSocket={useTutorSocket}
+						initialActiveClasses={loadingState.data.activeClasses}
+					>
 						<DeclineDialogProvider>
-							<AmendDialogProvider>
-								<TutorRequests />
-							</AmendDialogProvider>
+							<MarkDialogProvider>
+								<AmendDialogProvider>
+									<TutorRequests />
+								</AmendDialogProvider>
+							</MarkDialogProvider>
 						</DeclineDialogProvider>
-					</MarkDialogProvider>
-				</TutorRequestsProvider>
+					</ActiveClassesProvider>
+				</TutorSocketProvider>
 			)}
 		</>
 	);
 }
 
 function TutorRequests() {
-	const { selectedClass, loadingRequests } = useTutorRequests();
+	const { activeClasses } = useActiveClasses();
+	const { openRequests, closedRequests, changeClass } = useRequestManager();
+
+	const [selectedClass, setSelectedClass] = React.useState<Class>();
+
+	const [loading, setLoading] = React.useState(false);
+
+	const handleClassChange = async (cls: Class) => {
+		setSelectedClass(cls);
+
+		setLoading(true);
+		await changeClass(cls);
+		setLoading(false);
+	};
 
 	return (
 		<Card className="flex flex-col items-center gap-6 min-h-full py-6 px-4">
-			<ClassSelector />
+			<div className="flex flex-col items-center gap-4 w-full">
+				<Text>Select a class to view requests</Text>
+
+				<ClassSelect
+					classes={activeClasses}
+					selectedClass={selectedClass}
+					className="w-full max-w-84"
+					onValueChange={handleClassChange}
+				/>
+			</div>
 
 			{selectedClass &&
-				(loadingRequests ? <Spinner className="size-12" /> : <Requests />)}
+				(loading ? (
+					<Spinner className="size-12" />
+				) : (
+					<Requests
+						openRequests={openRequests}
+						closedRequests={closedRequests}
+					/>
+				))}
 		</Card>
 	);
 }
 
-function ClassSelector() {
-	const { activeClasses, selectedClass, changeClass } = useTutorRequests();
-
-	return (
-		<div className="flex flex-col items-center w-full space-y-4">
-			<Text>Select a class to view requests</Text>
-
-			<ClassSelect
-				classes={activeClasses}
-				selectedClass={selectedClass}
-				className="w-full max-w-84"
-				onValueChange={(value) => changeClass(value)}
-			/>
-		</div>
-	);
-}
-
-function Requests() {
-	const { openRequests, closedRequests } = useTutorRequests();
-
+function Requests({
+	openRequests,
+	closedRequests,
+}: {
+	openRequests: StudentWithRequests[];
+	closedRequests: StudentWithRequests[];
+}) {
 	const [tab, setTab] = React.useState<'open' | 'closed'>('open');
 
 	return (

@@ -1,48 +1,29 @@
 import * as React from 'react';
 
 import type { ActivityWithStatus } from '@workspace/types/activities';
-import type { ActiveClasses, Class } from '@workspace/types/classes';
+import type { Class } from '@workspace/types/classes';
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
-import { studentSocket as socket } from '@/sockets/sockets';
+import { useStudentSocket } from '@/components/providers/sockets/student-socket-provider';
 
 import { useDeclinedDialog } from './_declined-dialog/context';
 
-type ContextValue = {
-	attendedClass: Class | null;
-	requests: MarkingRequestAsStudent[];
-	activeClasses: ActiveClasses;
-	activeActivities: ActivityWithStatus[];
-};
+export function useRequestManager(
+	initialAttendedClass: Class | null,
+	initialRequests: MarkingRequestAsStudent[],
+	initialActiveActivities: ActivityWithStatus[],
+) {
+	const { socket } = useStudentSocket();
 
-const StudentRequestsContext = React.createContext<ContextValue | undefined>(
-	undefined,
-);
-
-export function StudentRequestsProvider({
-	activeClasses: initialActiveClasses,
-	activeActivities: initialActiveActivities,
-	attendedClass: initialAttendedClass,
-	requests: initialRequests,
-	children,
-}: {
-	activeClasses: ActiveClasses;
-	activeActivities: ActivityWithStatus[];
-	attendedClass: Class | null;
-	requests: MarkingRequestAsStudent[];
-	children: React.ReactNode;
-}) {
 	const { declined } = useDeclinedDialog();
-
-	const [activeClasses, setActiveClasses] =
-		React.useState<ActiveClasses>(initialActiveClasses);
-	const [activeActivities, setActiveActivities] = React.useState(
-		initialActiveActivities,
-	);
 
 	const [attendedClass, setAttendedClass] =
 		React.useState(initialAttendedClass);
 	const [requests, setRequests] = React.useState(initialRequests);
+
+	const [activeActivities, setActiveActivities] = React.useState(
+		initialActiveActivities,
+	);
 
 	const requestsRef = React.useRef(requests);
 
@@ -51,15 +32,6 @@ export function StudentRequestsProvider({
 	}, [requests]);
 
 	React.useEffect(() => {
-		socket.connect();
-
-		socket.on(
-			'activeClasses', //
-			(classes) => {
-				setActiveClasses(classes);
-			},
-		);
-
 		socket.on(
 			'requestsUpdated', //
 			(cls: Class, newRequests: MarkingRequestAsStudent[]) => {
@@ -117,32 +89,16 @@ export function StudentRequestsProvider({
 		);
 
 		return () => {
-			socket.off();
-			socket.disconnect();
+			socket.off('requestsUpdated');
+			socket.off('requestWithdrawn');
+			socket.off('requestDeclined');
+			socket.off('requestMarked');
 		};
-	}, [declined]);
+	}, [declined, socket]);
 
-	return (
-		<StudentRequestsContext.Provider
-			value={{
-				attendedClass,
-				requests,
-				activeClasses,
-				activeActivities,
-			}}
-		>
-			{children}
-		</StudentRequestsContext.Provider>
-	);
-}
-
-export function useStudentRequests() {
-	const value = React.useContext(StudentRequestsContext);
-	if (value === undefined) {
-		throw new Error(
-			'useStudentRequests must be used within <StudentRequestsProvider>',
-		);
-	}
-
-	return value;
+	return {
+		attendedClass,
+		requests,
+		activeActivities,
+	};
 }
