@@ -8,7 +8,6 @@ catalog:
   '@babel/preset-env': 7.29.0
   '@babel/preset-typescript': 7.28.5
   '@dr.pogodin/react-helmet': 3.1.0
-  '@eslint/eslintrc': 3.3.4
   '@eslint/js': 9.39.3
   '@heroicons/react': 2.2.0
   '@hookform/resolvers': 5.2.2

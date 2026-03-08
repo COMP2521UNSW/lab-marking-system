@@ -47,7 +47,6 @@
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@eslint/eslintrc": "catalog:",
 		"@tailwindcss/postcss": "catalog:",
 		"@types/node": "catalog:",
 		"@types/react": "catalog:",
