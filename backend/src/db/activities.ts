@@ -7,13 +7,18 @@ import { activitiesTable, db, marksTable } from './db';
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function getAllActivities() {
+	return await get(`getAllActivities`, dbGetAllActivities);
+}
+
+async function dbGetAllActivities() {
 	return await db
 		.select({
 			code: activitiesTable.code,
 			name: activitiesTable.name,
 			maxMark: activitiesTable.maxMark,
 		})
-		.from(activitiesTable);
+		.from(activitiesTable)
+		.orderBy(activitiesTable.ordering);
 }
 
 export async function getActiveActivitiesAndMarksForUser(

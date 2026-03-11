@@ -187,7 +187,11 @@ export async function getActiveOrRecentRequestsByClass(
 				),
 			),
 		)
-		.orderBy(requestsTable.requestedAt, activitiesTable.ordering);
+		.orderBy(
+			requestsTable.closedAt,
+			requestsTable.requestedAt,
+			activitiesTable.ordering,
+		);
 }
 
 export async function claimRequest(id: number, tutorZid: string) {

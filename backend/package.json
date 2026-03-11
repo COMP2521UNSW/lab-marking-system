@@ -47,7 +47,6 @@
 		"@babel/core": "catalog:",
 		"@babel/preset-env": "catalog:",
 		"@babel/preset-typescript": "catalog:",
-		"@eslint/eslintrc": "catalog:",
 		"@eslint/js": "catalog:",
 		"@jest/globals": "catalog:",
 		"@types/bcrypt": "catalog:",

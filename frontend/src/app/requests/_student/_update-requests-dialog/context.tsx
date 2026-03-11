@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 
+import { ActivityWithStatus } from '@workspace/types/activities';
 import type { Class } from '@workspace/types/classes';
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
@@ -14,6 +15,7 @@ interface UpdateRequestsDialogContextValue {
 		mode: Mode,
 		attendedClass: Class | null,
 		pendingRequests: MarkingRequestAsStudent[],
+		activeActivities: ActivityWithStatus[],
 	) => void;
 }
 
@@ -33,15 +35,20 @@ export function UpdateRequestsDialogProvider({
 	const [pendingRequests, setPendingRequests] = React.useState<
 		MarkingRequestAsStudent[]
 	>([]);
+	const [activeActivities, setActiveActivities] = React.useState<
+		ActivityWithStatus[]
+	>([]);
 
 	const updateRequests = (
 		mode: Mode,
 		attendedClass: Class | null,
 		pendingRequests: MarkingRequestAsStudent[],
+		activeActivities: ActivityWithStatus[],
 	) => {
 		setMode(mode);
 		setAttendedClass(attendedClass);
 		setPendingRequests(pendingRequests);
+		setActiveActivities(activeActivities);
 		setOpen(true);
 	};
 
@@ -55,6 +62,7 @@ export function UpdateRequestsDialogProvider({
 				mode={mode}
 				attendedClass={attendedClass}
 				pendingRequests={pendingRequests}
+				activeActivities={activeActivities}
 			/>
 		</UpdateRequestsDialogContext.Provider>
 	);

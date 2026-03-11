@@ -1,68 +1,32 @@
 import * as React from 'react';
 import { useImmer } from 'use-immer';
 
-import type { ActiveClasses, Class } from '@workspace/types/classes';
+import type { Class } from '@workspace/types/classes';
 import type {
 	MarkingRequestAsTutor,
 	StudentWithRequests,
 } from '@workspace/types/requests';
 import type { Student, User } from '@workspace/types/users';
 
+import { useTutorSocket } from '@/components/providers/sockets/tutor-socket-provider';
 import * as requestsService from '@/services/requests';
-import { tutorSocket as socket } from '@/sockets/sockets';
-
-type ContextValue = {
-	activeClasses: ActiveClasses;
-	selectedClass: Class | undefined;
-	loadingRequests: boolean;
-	openRequests: StudentWithRequests[];
-	closedRequests: StudentWithRequests[];
-	changeClass: (cls: Class) => Promise<void>;
-	declineRequest: (id: number, reason: string) => Promise<void>;
-	markRequest: (id: number, mark: number) => Promise<void>;
-	amendMark: (id: number, mark: number) => Promise<void>;
-};
-
-const TutorRequestsContext = React.createContext<ContextValue | undefined>(
-	undefined,
-);
 
 type RequestsState = {
 	open: StudentWithRequests[];
 	closed: StudentWithRequests[];
 };
 
-export function TutorRequestsProvider({
-	activeClasses: initialActiveClasses,
-	children,
-}: {
-	activeClasses: ActiveClasses;
-	children: React.ReactNode;
-}) {
-	const [activeClasses, setActiveClasses] =
-		React.useState(initialActiveClasses);
+export function useRequestManager() {
+	const { socket } = useTutorSocket();
 
-	const [selectedClass, setSelectedClass] = React.useState<Class | undefined>(
-		undefined,
-	);
-	const [loadingRequests, setLoadingRequests] = React.useState(false);
 	const [requests, updateRequests] = useImmer<RequestsState>({
 		open: [],
 		closed: [],
 	});
 
 	React.useEffect(() => {
-		socket.connect();
-
 		socket.on(
-			'activeClasses', //
-			(classes: ActiveClasses) => {
-				setActiveClasses(classes);
-			},
-		);
-
-		socket.on(
-			'requestsCreated',
+			'requestsCreated', //
 			(student: Student, requests: MarkingRequestAsTutor[]) => {
 				updateRequests((draft) => {
 					addRequests(draft.open, student, requests);
@@ -71,7 +35,7 @@ export function TutorRequestsProvider({
 		);
 
 		socket.on(
-			'studentJoined',
+			'studentJoined', //
 			(student: Student, requests: MarkingRequestAsTutor[]) => {
 				updateRequests((draft) => {
 					draft.open.push({ student, requests });
@@ -103,26 +67,32 @@ export function TutorRequestsProvider({
 			},
 		);
 
-		socket.on('requestClaimed', (id: number, tutor: User) => {
-			updateRequests((draft) =>
-				updateRequest(draft.open, id, (req) => ({
-					...req,
-					claimer: tutor,
-				})),
-			);
-		});
+		socket.on(
+			'requestClaimed', //
+			(id: number, tutor: User) => {
+				updateRequests((draft) =>
+					updateRequest(draft.open, id, (req) => ({
+						...req,
+						claimer: tutor,
+					})),
+				);
+			},
+		);
 
-		socket.on('requestUnclaimed', (id: number) => {
-			updateRequests((draft) =>
-				updateRequest(draft.open, id, (req) => {
-					if (req.status === 'pending') {
-						return { ...req, claimer: null };
-					} else {
-						return req;
-					}
-				}),
-			);
-		});
+		socket.on(
+			'requestUnclaimed', //
+			(id: number) => {
+				updateRequests((draft) =>
+					updateRequest(draft.open, id, (req) => {
+						if (req.status === 'pending') {
+							return { ...req, claimer: null };
+						} else {
+							return req;
+						}
+					}),
+				);
+			},
+		);
 
 		socket.on(
 			'requestDeclined', //
@@ -166,52 +136,31 @@ export function TutorRequestsProvider({
 		);
 
 		return () => {
-			socket.off();
-			socket.disconnect();
+			socket.off('requestsCreated');
+			socket.off('studentJoined');
+			socket.off('studentLeft');
+			socket.off('requestWithdrawn');
+			socket.off('requestClaimed');
+			socket.off('requestUnclaimed');
+			socket.off('requestDeclined');
+			socket.off('requestMarked');
+			socket.off('markAmended');
 		};
-	}, [updateRequests]);
+	}, [socket, updateRequests]);
 
 	const changeClass = async (cls: Class) => {
-		setSelectedClass(cls);
-
-		setLoadingRequests(true);
 		socket.emit('viewClass', cls.code);
 		const requests = await requestsService.getRequestsByClass({
 			classCode: cls.code,
 		});
 		updateRequests(sortRequests(requests));
-		setLoadingRequests(false);
 	};
 
-	const declineRequest = async (id: number, reason: string) => {
-		await requestsService.declineRequest({ id, reason });
+	return {
+		openRequests: requests.open,
+		closedRequests: requests.closed,
+		changeClass,
 	};
-
-	const markRequest = async (id: number, mark: number) => {
-		await requestsService.markRequest({ id, mark });
-	};
-
-	const amendMark = async (id: number, mark: number) => {
-		await requestsService.amendMark({ id, mark });
-	};
-
-	return (
-		<TutorRequestsContext.Provider
-			value={{
-				activeClasses,
-				selectedClass,
-				loadingRequests,
-				openRequests: requests.open,
-				closedRequests: requests.closed,
-				changeClass,
-				markRequest,
-				declineRequest,
-				amendMark,
-			}}
-		>
-			{children}
-		</TutorRequestsContext.Provider>
-	);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -310,17 +259,4 @@ function findRequest(students: StudentWithRequests[], id: number) {
 	}
 
 	return { studentIndex: -1, requestIndex: -1 };
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export function useTutorRequests() {
-	const value = React.useContext(TutorRequestsContext);
-	if (value === undefined) {
-		throw new Error(
-			'useTutorRequests must be used within <TutorRequestsProvider>',
-		);
-	}
-
-	return value;
 }

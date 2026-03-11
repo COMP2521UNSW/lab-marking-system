@@ -8,6 +8,14 @@ import type { ActivityWithStatus } from '@workspace/types/activities';
 import type { ActiveClasses, Class } from '@workspace/types/classes';
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
+import {
+	ActiveClassesProvider,
+	useActiveClasses,
+} from '@/components/providers/active-classes-provider';
+import {
+	StudentSocketProvider,
+	useStudentSocket,
+} from '@/components/providers/sockets/student-socket-provider';
 import { Button } from '@/components/ui/base/button';
 import { Card } from '@/components/ui/base/card';
 import { Image } from '@/components/ui/base/image';
@@ -32,7 +40,7 @@ import {
 	useWithdrawDialog,
 	WithdrawDialogProvider,
 } from './_withdraw-dialog/context';
-import { StudentRequestsProvider, useStudentRequests } from './context';
+import { useRequestManager } from './request-manager';
 
 type LoadingState =
 	| {
@@ -56,7 +64,7 @@ export function StudentRequestsPage() {
 	React.useEffect(() => {
 		async function fetchData() {
 			try {
-				const { activeClasses, activeActivities, requestDetails } =
+				const { requestDetails, activeClasses, activeActivities } =
 					await pagesService.getStudentRequestsPage();
 
 				setLoadingState({
@@ -87,33 +95,65 @@ export function StudentRequestsPage() {
 			{!loadingState.loaded ? (
 				<Loading />
 			) : (
-				<DeclinedDialogProvider>
-					<StudentRequestsProvider {...loadingState.data}>
+				<StudentSocketProvider>
+					<ActiveClassesProvider
+						useSocket={useStudentSocket}
+						initialActiveClasses={loadingState.data.activeClasses}
+					>
 						<UpdateRequestsDialogProvider>
 							<WithdrawDialogProvider>
-								<StudentRequests />
+								<DeclinedDialogProvider>
+									<StudentRequests {...loadingState.data} />
+								</DeclinedDialogProvider>
 							</WithdrawDialogProvider>
 						</UpdateRequestsDialogProvider>
-					</StudentRequestsProvider>
-				</DeclinedDialogProvider>
+					</ActiveClassesProvider>
+				</StudentSocketProvider>
 			)}
 		</>
 	);
 }
 
-function StudentRequests() {
-	const { requests } = useStudentRequests();
+function StudentRequests({
+	attendedClass: initialAttendedClass,
+	requests: initialRequests,
+	activeActivities: initialActiveActivities,
+}: {
+	attendedClass: Class | null;
+	requests: MarkingRequestAsStudent[];
+	activeActivities: ActivityWithStatus[];
+}) {
+	const { attendedClass, requests, activeActivities } = useRequestManager(
+		initialAttendedClass,
+		initialRequests,
+		initialActiveActivities,
+	);
 
 	return (
 		<Card className="min-h-full py-6 px-4 space-y-6">
-			{requests.length === 0 ? <NoRequests /> : <Requests />}
+			{requests.length === 0 ? (
+				<NoRequests
+					attendedClass={attendedClass}
+					activeActivities={activeActivities}
+				/>
+			) : (
+				<Requests
+					attendedClass={attendedClass}
+					requests={requests}
+					activeActivities={activeActivities}
+				/>
+			)}
 		</Card>
 	);
 }
 
-function NoRequests() {
-	const { attendedClass } = useStudentRequests();
-
+function NoRequests({
+	attendedClass,
+	activeActivities,
+}: {
+	attendedClass: Class | null;
+	activeActivities: ActivityWithStatus[];
+}) {
 	const { updateRequests } = useUpdateRequestsDialog();
 
 	return (
@@ -121,9 +161,15 @@ function NoRequests() {
 			<Text className="text-center">
 				You don&rsquo;t have any open marking requests.
 			</Text>
-			<Button onClick={() => updateRequests('create', attendedClass, [])}>
+
+			<Button
+				onClick={() =>
+					updateRequests('create', attendedClass, [], activeActivities)
+				}
+			>
 				<Text>Request Marking</Text>
 			</Button>
+
 			<Image
 				src="/sleeping.gif"
 				alt=""
@@ -137,9 +183,15 @@ function NoRequests() {
 	);
 }
 
-function Requests() {
-	const { activeClasses, attendedClass, requests } = useStudentRequests();
-
+function Requests({
+	attendedClass,
+	requests,
+	activeActivities,
+}: {
+	attendedClass: Class | null;
+	requests: MarkingRequestAsStudent[];
+	activeActivities: ActivityWithStatus[];
+}) {
 	const { updateRequests } = useUpdateRequestsDialog();
 	const { withdraw } = useWithdrawDialog();
 
@@ -147,6 +199,10 @@ function Requests() {
 		(request) => request.status === 'pending',
 	);
 	const numPendingRequests = pendingRequests.length;
+
+	const doUpdateRequests = (mode: 'create' | 'edit') => {
+		updateRequests(mode, attendedClass, pendingRequests, activeActivities);
+	};
 
 	return (
 		<div className="flex flex-col items-center gap-4">
@@ -156,11 +212,7 @@ function Requests() {
 						All of your requests have been marked!
 					</Text>
 
-					<Button
-						onClick={() =>
-							updateRequests('create', attendedClass, pendingRequests)
-						}
-					>
+					<Button onClick={() => doUpdateRequests('create')}>
 						<Text>Request Marking</Text>
 					</Button>
 				</>
@@ -183,15 +235,12 @@ function Requests() {
 									: `${attendedClass.code} (${attendedClass.labLocation})`}
 							</Text>
 
-							<SelectedClassAdvice
-								activeClasses={activeClasses}
-								attendedClass={attendedClass}
-							/>
+							<SelectedClassAdvice attendedClass={attendedClass} />
 						</div>
 
 						<Button
 							aria-label="Edit requests"
-							onClick={() => updateRequests('edit', attendedClass, requests)}
+							onClick={() => doUpdateRequests('edit')}
 						>
 							<Text>Edit</Text>
 						</Button>
@@ -213,12 +262,12 @@ function Requests() {
 }
 
 function SelectedClassAdvice({
-	activeClasses,
 	attendedClass,
 }: {
-	activeClasses: ActiveClasses;
 	attendedClass: Class | null;
 }) {
+	const { activeClasses } = useActiveClasses();
+
 	if (attendedClass === null) {
 		return null;
 	}

@@ -2,9 +2,11 @@
 
 import * as React from 'react';
 
+import { ActivityWithStatus } from '@workspace/types/activities';
 import type { Class } from '@workspace/types/classes';
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
+import { useActiveClasses } from '@/components/providers/active-classes-provider';
 import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/base/button';
 import {
@@ -20,24 +22,24 @@ import { ClassSelect } from '@/components/ui/requests/class-select';
 import { ApiError } from '@/lib/errors';
 import * as requestsService from '@/services/requests';
 
-import { useStudentRequests } from '../context';
-
 export function UpdateRequestsDialog({
 	open,
 	setOpen,
 	mode = 'create',
 	attendedClass,
 	pendingRequests,
+	activeActivities,
 }: {
 	open: boolean;
 	setOpen: (open: boolean) => void;
 	mode: 'create' | 'edit';
 	attendedClass: Class | null;
 	pendingRequests: MarkingRequestAsStudent[];
+	activeActivities: ActivityWithStatus[];
 }) {
 	const { user } = useAuth();
 
-	const { activeClasses, activeActivities } = useStudentRequests();
+	const { activeClasses } = useActiveClasses();
 
 	const [selectedClass, setSelectedClass] = React.useState(attendedClass);
 
@@ -51,7 +53,7 @@ export function UpdateRequestsDialog({
 		() =>
 			activeClasses.current.find((cls) => cls.code === user?.classCode) ||
 			activeClasses.upcoming.find((cls) => cls.code === user?.classCode),
-		[activeClasses],
+		[activeClasses, user?.classCode],
 	);
 
 	React.useEffect(() => {

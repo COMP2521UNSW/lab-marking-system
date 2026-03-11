@@ -205,7 +205,8 @@ export async function getStudentLogs(studentZid: string) {
 		.leftJoin(activitiesTable, eq(activitiesTable.code, logsTable.activityCode))
 		.leftJoin(markersTable, eq(markersTable.zid, logsTable.markerZid))
 		.leftJoin(approversTable, eq(approversTable.zid, logsTable.approverZid))
-		.where(eq(logsTable.studentZid, studentZid));
+		.where(eq(logsTable.studentZid, studentZid))
+		.orderBy(logsTable.timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

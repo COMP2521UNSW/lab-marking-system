@@ -6,10 +6,13 @@ import type {
 import type { SessionUser, User } from './users';
 import type { EmptyObject } from './utils';
 
+interface BaseServerToClientEvents {
+	activeClasses: (classes: ActiveClasses) => void;
+}
+
 type StudentClientToServerEvents = EmptyObject;
 
-interface StudentServerToClientEvents {
-	activeClasses: (classes: ActiveClasses) => void;
+interface StudentServerToClientEvents extends BaseServerToClientEvents {
 	requestsUpdated: (cls: Class, requests: MarkingRequestAsStudent[]) => void;
 	requestWithdrawn: (id: number) => void;
 	requestDeclined: (id: number, reason: string) => void;
@@ -20,8 +23,7 @@ interface TutorClientToServerEvents {
 	viewClass: (classCode: string) => void;
 }
 
-interface TutorServerToClientEvents {
-	activeClasses: (classes: ActiveClasses) => void;
+interface TutorServerToClientEvents extends BaseServerToClientEvents {
 	requestsCreated: (student: User, requests: MarkingRequestAsTutor[]) => void;
 	studentJoined: (student: User, requests: MarkingRequestAsTutor[]) => void;
 	studentLeft: (studentZid: string) => void;
@@ -43,6 +45,7 @@ interface SocketData {
 }
 
 export type {
+	BaseServerToClientEvents,
 	SocketData,
 	StudentClientToServerEvents,
 	StudentServerToClientEvents,
