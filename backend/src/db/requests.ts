@@ -183,7 +183,7 @@ export async function getActiveOrRecentRequestsByClass(
 				eq(requestsTable.classCode, classCode),
 				or(
 					isNull(requestsTable.closedAt),
-					gte(requestsTable.createdAt, startOfDay),
+					gte(requestsTable.closedAt, startOfDay),
 				),
 			),
 		)
