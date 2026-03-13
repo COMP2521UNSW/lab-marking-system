@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Socket } from 'socket.io-client';
 
 import { ActiveClasses } from '@workspace/types/classes';
-import { BaseServerToClientEvents } from '@workspace/types/sockets';
 
-import { SocketContextValue } from './sockets/create';
+import * as classesService from '@/services/classes';
+
+import { useSocket } from './socket-provider';
 
 type ContextValue = {
 	activeClasses: ActiveClasses;
@@ -15,28 +15,33 @@ const ActiveClassesContext = React.createContext<ContextValue | undefined>(
 );
 
 export function ActiveClassesProvider({
-	useSocket,
 	initialActiveClasses,
 	children,
 }: {
-	useSocket: () => SocketContextValue<Socket<BaseServerToClientEvents, object>>;
 	initialActiveClasses: ActiveClasses;
 	children: React.ReactNode;
 }) {
-	const { socket } = useSocket();
+	const { socket, addReconnectHandler, removeReconnectHandler } = useSocket();
 
 	const [activeClasses, setActiveClasses] =
 		React.useState(initialActiveClasses);
 
 	React.useEffect(() => {
+		const handleReconnect = async () => {
+			const activeClasses = await classesService.getActiveClasses();
+			setActiveClasses(activeClasses);
+		};
+		addReconnectHandler(handleReconnect);
+
 		socket.on('activeClasses', (activeClasses) => {
 			setActiveClasses(activeClasses);
 		});
 
 		return () => {
+			removeReconnectHandler(handleReconnect);
 			socket.off('activeClasses');
 		};
-	});
+	}, [socket, addReconnectHandler, removeReconnectHandler]);
 
 	return (
 		<ActiveClassesContext.Provider value={{ activeClasses }}>

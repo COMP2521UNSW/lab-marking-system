@@ -4,7 +4,8 @@ import type { ActivityWithStatus } from '@workspace/types/activities';
 import type { Class } from '@workspace/types/classes';
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
-import { useStudentSocket } from '@/components/providers/sockets/student-socket-provider';
+import { useStudentSocket } from '@/components/providers/socket-provider';
+import * as pagesService from '@/services/pages';
 
 import { useDeclinedDialog } from './_declined-dialog/context';
 
@@ -13,7 +14,8 @@ export function useRequestManager(
 	initialRequests: MarkingRequestAsStudent[],
 	initialActiveActivities: ActivityWithStatus[],
 ) {
-	const { socket } = useStudentSocket();
+	const { socket, addReconnectHandler, removeReconnectHandler } =
+		useStudentSocket();
 
 	const { declined } = useDeclinedDialog();
 
@@ -32,6 +34,15 @@ export function useRequestManager(
 	}, [requests]);
 
 	React.useEffect(() => {
+		const handleReconnect = async () => {
+			const { activeActivities, requestDetails } =
+				await pagesService.getStudentRequestsPage();
+			setAttendedClass(requestDetails.class);
+			setRequests(requestDetails.requests);
+			setActiveActivities(activeActivities);
+		};
+		addReconnectHandler(handleReconnect);
+
 		socket.on(
 			'requestsUpdated', //
 			(cls: Class, newRequests: MarkingRequestAsStudent[]) => {
@@ -89,12 +100,13 @@ export function useRequestManager(
 		);
 
 		return () => {
+			removeReconnectHandler(handleReconnect);
 			socket.off('requestsUpdated');
 			socket.off('requestWithdrawn');
 			socket.off('requestDeclined');
 			socket.off('requestMarked');
 		};
-	}, [declined, socket]);
+	}, [socket, addReconnectHandler, removeReconnectHandler, declined]);
 
 	return {
 		attendedClass,

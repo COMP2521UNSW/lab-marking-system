@@ -12,10 +12,7 @@ import {
 	ActiveClassesProvider,
 	useActiveClasses,
 } from '@/components/providers/active-classes-provider';
-import {
-	StudentSocketProvider,
-	useStudentSocket,
-} from '@/components/providers/sockets/student-socket-provider';
+import { StudentSocketProvider } from '@/components/providers/socket-provider';
 import { Button } from '@/components/ui/base/button';
 import { Card } from '@/components/ui/base/card';
 import { Image } from '@/components/ui/base/image';
@@ -97,7 +94,6 @@ export function StudentRequestsPage() {
 			) : (
 				<StudentSocketProvider>
 					<ActiveClassesProvider
-						useSocket={useStudentSocket}
 						initialActiveClasses={loadingState.data.activeClasses}
 					>
 						<UpdateRequestsDialogProvider>

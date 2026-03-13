@@ -8,7 +8,7 @@ import type {
 } from '@workspace/types/requests';
 import type { Student, User } from '@workspace/types/users';
 
-import { useTutorSocket } from '@/components/providers/sockets/tutor-socket-provider';
+import { useTutorSocket } from '@/components/providers/socket-provider';
 import * as requestsService from '@/services/requests';
 
 type RequestsState = {
@@ -17,14 +17,42 @@ type RequestsState = {
 };
 
 export function useRequestManager() {
-	const { socket } = useTutorSocket();
+	const { socket, addReconnectHandler, removeReconnectHandler } =
+		useTutorSocket();
 
+	const classRef = React.useRef<Class | undefined>(undefined);
 	const [requests, updateRequests] = useImmer<RequestsState>({
 		open: [],
 		closed: [],
 	});
 
+	const loadClass = React.useCallback(
+		async (cls: Class) => {
+			socket.emit('viewClass', cls.code);
+			const requests = await requestsService.getRequestsByClass({
+				classCode: cls.code,
+			});
+			updateRequests(sortRequests(requests));
+		},
+		[socket, updateRequests],
+	);
+
+	const changeClass = React.useCallback(
+		async (cls: Class) => {
+			classRef.current = cls;
+			await loadClass(cls);
+		},
+		[loadClass],
+	);
+
 	React.useEffect(() => {
+		const handleReconnect = async () => {
+			if (classRef.current !== undefined) {
+				await loadClass(classRef.current);
+			}
+		};
+		addReconnectHandler(handleReconnect);
+
 		socket.on(
 			'requestsCreated', //
 			(student: Student, requests: MarkingRequestAsTutor[]) => {
@@ -136,6 +164,7 @@ export function useRequestManager() {
 		);
 
 		return () => {
+			removeReconnectHandler(handleReconnect);
 			socket.off('requestsCreated');
 			socket.off('studentJoined');
 			socket.off('studentLeft');
@@ -146,15 +175,13 @@ export function useRequestManager() {
 			socket.off('requestMarked');
 			socket.off('markAmended');
 		};
-	}, [socket, updateRequests]);
-
-	const changeClass = async (cls: Class) => {
-		socket.emit('viewClass', cls.code);
-		const requests = await requestsService.getRequestsByClass({
-			classCode: cls.code,
-		});
-		updateRequests(sortRequests(requests));
-	};
+	}, [
+		socket,
+		updateRequests,
+		loadClass,
+		addReconnectHandler,
+		removeReconnectHandler,
+	]);
 
 	return {
 		openRequests: requests.open,
