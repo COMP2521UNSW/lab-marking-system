@@ -10,10 +10,7 @@ import {
 	ActiveClassesProvider,
 	useActiveClasses,
 } from '@/components/providers/active-classes-provider';
-import {
-	TutorSocketProvider,
-	useTutorSocket,
-} from '@/components/providers/sockets/tutor-socket-provider';
+import { TutorSocketProvider } from '@/components/providers/socket-provider';
 import { Card } from '@/components/ui/base/card';
 import { Image } from '@/components/ui/base/image';
 import { Loading } from '@/components/ui/base/loading';
@@ -80,7 +77,6 @@ export function TutorRequestsPage() {
 			) : (
 				<TutorSocketProvider>
 					<ActiveClassesProvider
-						useSocket={useTutorSocket}
 						initialActiveClasses={loadingState.data.activeClasses}
 					>
 						<DeclineDialogProvider>

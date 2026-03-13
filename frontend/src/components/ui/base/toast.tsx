@@ -8,7 +8,7 @@ import {
 	TriangleAlertIcon,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import type { ToasterProps } from 'sonner';
+import type { ExternalToast, ToasterProps } from 'sonner';
 import { Toaster as Sonner, toast as sonnerToast } from 'sonner';
 
 const Toaster = ({ ...props }: ToasterProps) => {
@@ -43,8 +43,8 @@ interface ToastProps {
 	message: string;
 }
 
-function toast(message: string) {
-	return sonnerToast.custom((id) => <Toast id={id} message={message} />);
+function toast(message: string, data?: ExternalToast) {
+	return sonnerToast.custom((id) => <Toast id={id} message={message} />, data);
 }
 
 function Toast(props: ToastProps) {
@@ -57,4 +57,8 @@ function Toast(props: ToastProps) {
 	);
 }
 
-export { toast, Toaster };
+function dismiss(toastId: number | string) {
+	sonnerToast.dismiss(toastId);
+}
+
+export { dismiss, toast, Toaster };

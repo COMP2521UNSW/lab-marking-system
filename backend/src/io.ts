@@ -1,7 +1,7 @@
 import type { Server as HTTPServer } from 'node:http';
 
 import * as cookie from 'cookie';
-import jwt, { JsonWebTokenError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import type { Namespace } from 'socket.io';
 import { Server } from 'socket.io';
 
@@ -29,8 +29,12 @@ function createServer(httpServer: HTTPServer) {
 		httpServer,
 		{
 			cors: {
-				origin: clientOrigin,
+				origin: [clientOrigin],
 				credentials: true,
+			},
+			connectionStateRecovery: {
+				maxDisconnectionDuration: 5 * 60 * 1000,
+				skipMiddlewares: true,
 			},
 		},
 	);

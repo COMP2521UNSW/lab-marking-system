@@ -12,18 +12,20 @@ function SubmissionLink({
 	zid: string;
 	activityCode: string;
 }) {
-	return (
+	const link = getSubmissionLink(zid, activityCode);
+
+	return link ? (
 		<Text className="text-center">
 			<Link
 				target="_blank"
-				href={getSubmissionLink(zid, activityCode)}
+				href={link}
 				className="text-muted-foreground outline-none focus:underline hover:underline"
 			>
 				View submission
 				<ExternalLinkIcon className="inline ms-1 mb-0.5 size-4.5" />
 			</Link>
 		</Text>
-	);
+	) : null;
 }
 
 export { SubmissionLink };
