@@ -54,6 +54,10 @@ function SocketProvider({
 		socket.io.on('reconnect', handleReconnect);
 
 		return () => {
+			if (toastIdRef.current !== undefined) {
+				dismiss(toastIdRef.current);
+			}
+
 			socket.io.off('reconnect_attempt', handleReconnectAttempt);
 			socket.io.off('reconnect', handleReconnect);
 			socket.disconnect();
