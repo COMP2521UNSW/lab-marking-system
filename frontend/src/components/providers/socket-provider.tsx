@@ -4,8 +4,7 @@ import { Socket } from 'socket.io-client';
 import { BaseServerToClientEvents } from '@workspace/types/sockets';
 
 import { dismiss, toast } from '@/components/ui/base/toast';
-import { studentSocket } from '@/sockets/student-socket';
-import { tutorSocket } from '@/sockets/tutor-socket';
+import { studentSocket, tutorSocket } from '@/sockets/sockets';
 
 type ReconnectCallback = () => Promise<void>;
 
