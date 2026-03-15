@@ -48,6 +48,7 @@
 		"@babel/preset-env": "catalog:",
 		"@babel/preset-typescript": "catalog:",
 		"@eslint/js": "catalog:",
+		"@faker-js/faker": "catalog:",
 		"@jest/globals": "catalog:",
 		"@types/bcrypt": "catalog:",
 		"@types/cookie-parser": "catalog:",
