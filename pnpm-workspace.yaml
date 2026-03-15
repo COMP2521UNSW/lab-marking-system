@@ -9,6 +9,7 @@ catalog:
   '@babel/preset-typescript': 7.28.5
   '@dr.pogodin/react-helmet': 3.1.1
   '@eslint/js': 9.39.4
+  '@faker-js/faker': 10.3.0
   '@heroicons/react': 2.2.0
   '@hookform/resolvers': 5.2.2
   '@jest/globals': 30.3.0
