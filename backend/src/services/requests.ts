@@ -1,6 +1,6 @@
 import '@/lib/polyfills/group-by';
 
-import { addMinutes, format, getDay, isSameDay } from 'date-fns';
+import { addMinutes, format, getISODay, isSameDay } from 'date-fns';
 
 import { MAX_REASON_LEN } from '@workspace/lib/constants';
 import type { ActivityAsTutor } from '@workspace/types/activities';
@@ -166,7 +166,7 @@ async function validateSelectedClass(user: SessionUser, classCode: string) {
 
 	const now = toLocalDate(getCurrentTime());
 
-	const day = getDay(now);
+	const day = getISODay(now);
 	const time = format(now, 'HH:mm');
 	const upcomingTime = format(addMinutes(now, earlyRequestMinutes), 'HH:mm');
 
