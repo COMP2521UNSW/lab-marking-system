@@ -16,6 +16,17 @@ const app = express();
 
 // app.use(rateLimiter);
 
+// temporary middleware to clear out old cookies
+app.use((req, res, next) => {
+	res.clearCookie('token', {
+		httpOnly: true,
+		secure: true,
+		sameSite: 'none',
+		partitioned: true,
+	});
+	next();
+});
+
 app.use(express.json());
 app.use(cookieParser());
 
