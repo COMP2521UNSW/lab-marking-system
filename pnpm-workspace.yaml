@@ -1,6 +1,7 @@
 packages:
   - backend
   - frontend
+  - proxy
   - shared/*
 
 catalog:
@@ -28,12 +29,14 @@ catalog:
   '@types/cookie-parser': 1.4.10
   '@types/cors': 2.8.19
   '@types/express': 5.0.6
+  '@types/http-proxy': 1.17.17
   '@types/jsonwebtoken': 9.0.10
   '@types/morgan': 1.9.10
   '@types/node': 25.5.0
   '@types/pg': 8.18.0
   '@types/react': 19.2.14
   '@types/react-dom': 19.2.3
+  '@types/wait-on': 5.3.4
   axios: 1.13.6
   babel-jest: 30.3.0
   bcrypt: 6.0.0
@@ -43,7 +46,6 @@ catalog:
   clsx: 2.1.1
   cookie: 1.1.1
   cookie-parser: 1.4.7
-  cors: 2.8.6
   cross-env: 10.1.0
   date-fns: 4.1.0
   date-fns-tz: 3.2.0
@@ -56,6 +58,7 @@ catalog:
   express: 5.2.1
   express-rate-limit: 8.3.1
   globals: 17.4.0
+  http-proxy: 1.18.1
   immer: 11.1.4
   jest: 30.3.0
   jiti: 2.6.1
@@ -88,6 +91,7 @@ catalog:
   typescript-eslint: 8.57.0
   use-debounce: 10.1.0
   use-immer: 0.11.0
+  wait-on: 9.0.4
   winston: 3.19.0
   winston-daily-rotate-file: 5.0.0
   zod: 4.3.6

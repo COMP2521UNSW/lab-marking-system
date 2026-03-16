@@ -17,8 +17,6 @@ import type { EmptyObject } from '@workspace/types/utils';
 
 import { logger } from '@/lib/logger';
 
-const clientOrigin = process.env.CLIENT_URL!;
-
 type SocketIOMiddleware = Parameters<
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	Server<any, any, any, SocketData>['use']
@@ -28,10 +26,6 @@ function createServer(httpServer: HTTPServer) {
 	const io = new Server<EmptyObject, EmptyObject, EmptyObject, SocketData>(
 		httpServer,
 		{
-			cors: {
-				origin: [clientOrigin],
-				credentials: true,
-			},
 			connectionStateRecovery: {
 				maxDisconnectionDuration: 5 * 60 * 1000,
 				skipMiddlewares: true,

@@ -8,13 +8,13 @@ import type {
 	TutorServerToClientEvents,
 } from '@workspace/types/sockets';
 
-const url = new URL('socket.io', `${process.env.NEXT_PUBLIC_SERVER_URL!}/`);
+const { uri, path } = getSocketUriAndPath();
 
 export const studentSocket: Socket<
 	StudentServerToClientEvents,
 	StudentClientToServerEvents
-> = io(`${url.origin}/students`, {
-	path: url.pathname,
+> = io(`${uri}/students`, {
+	path,
 	autoConnect: false,
 	withCredentials: true,
 });
@@ -22,8 +22,29 @@ export const studentSocket: Socket<
 export const tutorSocket: Socket<
 	TutorServerToClientEvents,
 	TutorClientToServerEvents
-> = io(`${url.origin}/tutors`, {
-	path: url.pathname,
+> = io(`${uri}/tutors`, {
+	path,
 	autoConnect: false,
 	withCredentials: true,
 });
+
+////////////////////////////////////////////////////////////////////////////////
+
+function getSocketUriAndPath() {
+	const serverPath = process.env.NEXT_PUBLIC_SERVER_URL!;
+
+	if (serverPath.startsWith('/')) {
+		return {
+			uri: '',
+			path: `${serverPath}/socket.io`,
+		};
+	} else {
+		const url = new URL('socket.io', `${serverPath}/`);
+		return {
+			uri: url.origin,
+			path: url.pathname,
+		};
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////

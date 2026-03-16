@@ -7,8 +7,7 @@ import * as authService from '@/services/auth';
 const cookieOptions: CookieOptions = {
 	httpOnly: true,
 	secure: true,
-	sameSite: 'none',
-	partitioned: true,
+	sameSite: 'strict',
 };
 
 ////////////////////////////////////////////////////////////////////////////////

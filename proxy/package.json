@@ -1,0 +1,23 @@
+{
+	"name": "proxy",
+	"version": "1.0.0",
+	"private": true,
+	"description": "",
+	"license": "ISC",
+	"author": "",
+	"main": "src/index.ts",
+	"scripts": {
+		"dev": "tsx watch src/index.ts"
+	},
+	"devDependencies": {
+		"@types/http-proxy": "catalog:",
+		"@types/wait-on": "^5.3.4",
+		"dotenv": "catalog:",
+		"eslint": "catalog:",
+		"http-proxy": "catalog:",
+		"tsx": "catalog:",
+		"typescript": "catalog:",
+		"typescript-eslint": "catalog:",
+		"wait-on": "catalog:"
+	}
+}
