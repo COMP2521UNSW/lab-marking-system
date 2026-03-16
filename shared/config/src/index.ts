@@ -1,5 +1,3 @@
-import { removePrefix } from '@workspace/lib/string';
-
 const COURSE_CODE = 'COMP2521';
 
 const SESSION = '26T1';
@@ -10,7 +8,7 @@ function getSubmissionLink(
 	zid: string,
 	activityCode: string,
 ): string | undefined {
-	zid = removePrefix(zid, 'z');
+	zid = zid.replace(/^s/, '');
 	return `https://cgi.cse.unsw.edu.au/~cs2521/${SESSION}/view/${zid}/submission/${activityCode}/latest/`;
 }
 

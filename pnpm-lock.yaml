@@ -611,10 +611,6 @@ importers:
         version: 9.0.4
 
   shared/config:
-    dependencies:
-      '@workspace/lib':
-        specifier: workspace:*
-        version: link:../lib
     devDependencies:
       eslint:
         specifier: 'catalog:'
