@@ -8,7 +8,7 @@
 pnpm install
 ```
 
-### Run the backend
+### Set up the backend
 
 From the `backend` directory:
 
@@ -29,13 +29,7 @@ From the `backend` directory:
 
    This will create an SQLite database in `test.db`.
 
-3. Run the server
-
-   ```
-   pnpm dev
-   ```
-
-### Run the frontend
+### Set up the frontend
 
 From the `frontend` directory:
 
@@ -45,10 +39,17 @@ From the `frontend` directory:
    cp .env.example .env
    ```
 
-2. Run the client
+### Set up the proxy
+
+From the `proxy` directory:
+
+1. Configure environment
 
    ```
-   pnpm dev
+   cp .env.example .env
    ```
 
-3. Open http://localhost:3000 in the browser.
+### Start the application
+
+1. From the root directory, run `pnpm dev`
+2. Open http://localhost:8080 in the browser.

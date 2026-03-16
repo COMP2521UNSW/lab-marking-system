@@ -4,7 +4,7 @@ import { server } from './server';
 
 import './cron';
 
-const serverPort = Number(process.env.SERVER_PORT!);
+const serverPort = Number(process.env.PORT!);
 server.listen(serverPort, () => {
 	console.log(`Server running on port ${serverPort}`);
 });
