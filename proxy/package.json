@@ -11,7 +11,7 @@
 	},
 	"devDependencies": {
 		"@types/http-proxy": "catalog:",
-		"@types/wait-on": "^5.3.4",
+		"@types/wait-on": "catalog:",
 		"dotenv": "catalog:",
 		"eslint": "catalog:",
 		"http-proxy": "catalog:",
