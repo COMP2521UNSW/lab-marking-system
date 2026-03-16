@@ -27,7 +27,6 @@ catalog:
   '@trivago/prettier-plugin-sort-imports': 6.0.2
   '@types/bcrypt': 6.0.0
   '@types/cookie-parser': 1.4.10
-  '@types/cors': 2.8.19
   '@types/express': 5.0.6
   '@types/http-proxy': 1.17.17
   '@types/jsonwebtoken': 9.0.10

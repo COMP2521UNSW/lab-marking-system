@@ -72,9 +72,6 @@ catalogs:
     '@types/cookie-parser':
       specifier: 1.4.10
       version: 1.4.10
-    '@types/cors':
-      specifier: 2.8.19
-      version: 2.8.19
     '@types/express':
       specifier: 5.0.6
       version: 5.0.6
@@ -398,9 +395,6 @@ importers:
       '@types/cookie-parser':
         specifier: 'catalog:'
         version: 1.4.10(@types/express@5.0.6)
-      '@types/cors':
-        specifier: 'catalog:'
-        version: 2.8.19
       '@types/express':
         specifier: 'catalog:'
         version: 5.0.6

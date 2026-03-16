@@ -51,7 +51,6 @@
 		"@jest/globals": "catalog:",
 		"@types/bcrypt": "catalog:",
 		"@types/cookie-parser": "catalog:",
-		"@types/cors": "catalog:",
 		"@types/express": "catalog:",
 		"@types/jsonwebtoken": "catalog:",
 		"@types/morgan": "catalog:",
