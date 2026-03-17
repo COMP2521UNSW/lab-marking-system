@@ -2,11 +2,12 @@ import type { CookieOptions, RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import z from 'zod';
 
+import { devMode } from '@/lib/utils';
 import * as authService from '@/services/auth';
 
 const cookieOptions: CookieOptions = {
 	httpOnly: true,
-	secure: true,
+	secure: !devMode(),
 	sameSite: 'strict',
 };
 

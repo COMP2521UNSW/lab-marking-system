@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 
 import { processToken } from '@/middleware/authentication';
+import { clearOldCookie } from '@/middleware/cookie-migration';
 import { errorHandler } from '@/middleware/error-handler';
 import { logger } from '@/middleware/logger';
 // import { rateLimiter } from '@/middleware/rate-limiter';
@@ -17,15 +18,7 @@ const app = express();
 // app.use(rateLimiter);
 
 // temporary middleware to clear out old cookies
-app.use((req, res, next) => {
-	res.clearCookie('token', {
-		httpOnly: true,
-		secure: true,
-		sameSite: 'none',
-		partitioned: true,
-	});
-	next();
-});
+app.use(clearOldCookie);
 
 app.use(express.json());
 app.use(cookieParser());
