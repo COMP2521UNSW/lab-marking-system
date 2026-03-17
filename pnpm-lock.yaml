@@ -255,6 +255,9 @@ catalogs:
     typescript-eslint:
       specifier: 8.57.0
       version: 8.57.0
+    ua-parser-js:
+      specifier: 2.0.9
+      version: 2.0.9
     use-debounce:
       specifier: 10.1.0
       version: 10.1.0
@@ -365,7 +368,7 @@ importers:
         specifier: 'catalog:'
         version: 4.8.3
       ua-parser-js:
-        specifier: ^2.0.9
+        specifier: 'catalog:'
         version: 2.0.9
       winston:
         specifier: 'catalog:'
