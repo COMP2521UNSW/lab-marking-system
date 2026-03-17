@@ -1,9 +1,8 @@
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import { UAParser } from 'ua-parser-js';
 
-import { devMode } from '@/lib/utils';
 import { processToken } from '@/middleware/authentication';
+import { clearOldCookie } from '@/middleware/cookie-migration';
 import { errorHandler } from '@/middleware/error-handler';
 import { logger } from '@/middleware/logger';
 // import { rateLimiter } from '@/middleware/rate-limiter';
@@ -19,20 +18,7 @@ const app = express();
 // app.use(rateLimiter);
 
 // temporary middleware to clear out old cookies
-app.use((req, res, next) => {
-	const { browser } = UAParser(req.headers['user-agent']);
-	if (!browser.name?.includes('Safari')) {
-		res.clearCookie('token', {
-			httpOnly: true,
-			secure: !devMode(),
-			sameSite: 'none',
-			partitioned: true,
-		});
-	} else {
-		console.log(browser);
-	}
-	next();
-});
+app.use(clearOldCookie);
 
 app.use(express.json());
 app.use(cookieParser());
