@@ -1,6 +1,8 @@
 import cookieParser from 'cookie-parser';
 import express from 'express';
+import { UAParser } from 'ua-parser-js';
 
+import { devMode } from '@/lib/utils';
 import { processToken } from '@/middleware/authentication';
 import { errorHandler } from '@/middleware/error-handler';
 import { logger } from '@/middleware/logger';
@@ -18,12 +20,17 @@ const app = express();
 
 // temporary middleware to clear out old cookies
 app.use((req, res, next) => {
-	res.clearCookie('token', {
-		httpOnly: true,
-		secure: true,
-		sameSite: 'none',
-		partitioned: true,
-	});
+	const { browser } = UAParser(req.headers['user-agent']);
+	if (!browser.name?.includes('Safari')) {
+		res.clearCookie('token', {
+			httpOnly: true,
+			secure: !devMode(),
+			sameSite: 'none',
+			partitioned: true,
+		});
+	} else {
+		console.log(browser);
+	}
 	next();
 });
 
