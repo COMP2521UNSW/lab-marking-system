@@ -8,7 +8,7 @@ function getSubmissionLink(
 	zid: string,
 	activityCode: string,
 ): string | undefined {
-	zid = zid.replace(/^s/, '');
+	zid = zid.replace(/^z/, '');
 	return `https://cgi.cse.unsw.edu.au/~cs2521/${SESSION}/view/${zid}/submission/${activityCode}/latest/`;
 }
 
