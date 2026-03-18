@@ -1,4 +1,4 @@
-import { and, eq, gte, inArray, isNull, or } from 'drizzle-orm';
+import { and, eq, gte, inArray, isNull, or, sql } from 'drizzle-orm';
 
 import type { NonNullableKeys } from '@workspace/types/utils';
 
@@ -170,6 +170,9 @@ export async function getActiveOrRecentRequestsByClass(
 			},
 			mark: requestsTable.mark,
 			closedAt: requestsTable.closedAt,
+			reason: sql<
+				string | null
+			>`coalesce(${requestsTable.withdrawReason}, ${requestsTable.declineReason})`,
 		})
 		.from(requestsTable)
 		.innerJoin(usersTable, eq(usersTable.zid, requestsTable.studentZid))

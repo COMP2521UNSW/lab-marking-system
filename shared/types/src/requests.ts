@@ -46,11 +46,14 @@ export interface PendingRequest extends BaseMarkingRequestAsTutor {
 export interface WithdrawnRequest extends BaseMarkingRequestAsTutor {
 	status: 'withdrawn';
 	closedAt: Date;
+	reason: string;
 }
 
 export interface DeclinedRequest extends BaseMarkingRequestAsTutor {
 	status: 'declined';
 	closedAt: Date;
+	tutorName: string;
+	reason: string;
 }
 
 export interface MarkedRequest extends BaseMarkingRequestAsTutor {

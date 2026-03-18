@@ -27,10 +27,15 @@ interface TutorServerToClientEvents extends BaseServerToClientEvents {
 	requestsCreated: (student: User, requests: MarkingRequestAsTutor[]) => void;
 	studentJoined: (student: User, requests: MarkingRequestAsTutor[]) => void;
 	studentLeft: (studentZid: string) => void;
-	requestWithdrawn: (id: number, time: Date) => void;
+	requestWithdrawn: (id: number, reason: string, time: Date) => void;
 	requestClaimed: (id: number, tutor: User) => void;
 	requestUnclaimed: (id: number) => void;
-	requestDeclined: (id: number, time: Date) => void;
+	requestDeclined: (
+		id: number,
+		tutorName: string,
+		reason: string,
+		time: Date,
+	) => void;
 	requestMarked: (
 		id: number,
 		markerName: string,

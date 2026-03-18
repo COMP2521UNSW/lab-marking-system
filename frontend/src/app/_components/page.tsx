@@ -413,6 +413,9 @@ function TutorRequestCards() {
 					onAmendClick={(request) =>
 						console.log(`amend button clicked: ${request}`)
 					}
+					onViewClick={(request) =>
+						console.log(`view button clicked: ${request}`)
+					}
 				/>
 			</div>
 		</div>

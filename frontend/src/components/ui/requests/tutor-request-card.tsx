@@ -1,17 +1,19 @@
 'use client';
 
-import { toast } from '../base/toast';
 import * as React from 'react';
 
 import type {
+	DeclinedRequest,
 	MarkedRequest,
 	MarkingRequestAsTutor,
+	WithdrawnRequest,
 } from '@workspace/types/requests';
 import type { Student } from '@workspace/types/users';
 
 import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/base/button';
 import { Separator } from '@/components/ui/base/separator';
+import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
 import { TutorRequestStatus } from '@/components/ui/requests/request-status';
 import { ApiError } from '@/lib/errors';
@@ -25,6 +27,7 @@ export function TutorRequestCard({
 	onDeclineClick,
 	onMarkClick,
 	onAmendClick,
+	onViewClick,
 }: {
 	student: Student;
 	requests: MarkingRequestAsTutor[];
@@ -32,6 +35,7 @@ export function TutorRequestCard({
 	onDeclineClick: (request: MarkingRequestAsTutor) => void;
 	onMarkClick: (request: MarkingRequestAsTutor) => void;
 	onAmendClick: (request: MarkedRequest) => void;
+	onViewClick: (request: WithdrawnRequest | DeclinedRequest) => void;
 }) {
 	return (
 		<div
@@ -55,6 +59,7 @@ export function TutorRequestCard({
 						onDeclineClick={onDeclineClick}
 						onMarkClick={onMarkClick}
 						onAmendClick={onAmendClick}
+						onViewClick={onViewClick}
 					/>
 				))}
 			</div>
@@ -67,11 +72,13 @@ function RequestRow({
 	onDeclineClick,
 	onMarkClick,
 	onAmendClick,
+	onViewClick,
 }: {
 	request: MarkingRequestAsTutor;
 	onDeclineClick: (request: MarkingRequestAsTutor) => void;
 	onMarkClick: (request: MarkingRequestAsTutor) => void;
 	onAmendClick: (request: MarkedRequest) => void;
+	onViewClick: (request: WithdrawnRequest | DeclinedRequest) => void;
 }) {
 	const { user } = useAuth();
 
@@ -103,6 +110,12 @@ function RequestRow({
 	const handleAmendClick = () => {
 		if (request.status === 'marked') {
 			onAmendClick(request);
+		}
+	};
+
+	const handleViewClick = () => {
+		if (request.status === 'withdrawn' || request.status === 'declined') {
+			onViewClick(request);
 		}
 	};
 
@@ -145,16 +158,27 @@ function RequestRow({
 				</div>
 			) : (
 				<div className="flex justify-end">
-					<Button
-						variant="primary"
-						size="sm"
-						className="px-2"
-						disabled={request.status !== 'marked'}
-						aria-label={`Amend ${request.activity.name} mark`}
-						onClick={handleAmendClick}
-					>
-						<Text>Amend</Text>
-					</Button>
+					{request.status === 'marked' ? (
+						<Button
+							variant="primary"
+							size="sm"
+							className="w-16 px-2"
+							aria-label={`Amend ${request.activity.name} mark`}
+							onClick={handleAmendClick}
+						>
+							<Text>Amend</Text>
+						</Button>
+					) : (
+						<Button
+							variant="primary"
+							size="sm"
+							className="w-16 px-2"
+							aria-label={`View ${request.activity.name} request`}
+							onClick={handleViewClick}
+						>
+							<Text>View</Text>
+						</Button>
+					)}
 				</div>
 			)}
 		</>
