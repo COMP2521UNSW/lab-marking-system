@@ -256,7 +256,7 @@ export async function withdrawRequest(
 
 	// Socket messages
 	studentMessages.requestWithdrawn(user.zid, req.id);
-	tutorMessages.requestWithdrawn(res.classCode, req.id, timestamp);
+	tutorMessages.requestWithdrawn(res.classCode, req.id, req.reason, timestamp);
 }
 
 function validateWithdrawRequest(
@@ -305,10 +305,12 @@ export async function getRequestsByClass(
 				return (
 					request.status === 'pending'
 						? { ...request, claimer: marker }
-						: {
-								...request,
-								markerName: marker !== null ? marker.name : null,
-							}
+						: request.status === 'declined'
+							? { ...request, tutorName: marker !== null ? marker.name : null }
+							: {
+									...request,
+									markerName: marker !== null ? marker.name : null,
+								}
 				) as MarkingRequestAsTutor;
 			}),
 		};
@@ -410,8 +412,19 @@ export async function declineRequest(
 	);
 
 	// Socket messages
+	const tutor = await dbUsers.getUserByZid(user.zid);
+	if (tutor === null) {
+		internalServerError(user, `Couldn't find user with zid ${user.zid}`);
+	}
+
 	studentMessages.requestDeclined(res.studentZid, req.id, req.reason);
-	tutorMessages.requestDeclined(res.classCode, req.id, timestamp);
+	tutorMessages.requestDeclined(
+		res.classCode,
+		req.id,
+		tutor.name,
+		req.reason,
+		timestamp,
+	);
 }
 
 function validateDeclineRequest(

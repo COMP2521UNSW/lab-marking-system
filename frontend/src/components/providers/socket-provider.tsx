@@ -25,14 +25,24 @@ function SocketProvider({
 	socket: typeof studentSocket | typeof tutorSocket;
 	children?: React.ReactNode;
 }) {
+	const reconnectingRef = React.useRef<boolean>(false);
 	const toastIdRef = React.useRef<number | string | undefined>(undefined);
 	const reconnectHandlersRef = React.useRef<ReconnectCallback[]>([]);
+
+	const clearToast = React.useCallback(() => {
+		if (toastIdRef.current !== undefined) {
+			dismiss(toastIdRef.current);
+			toastIdRef.current = undefined;
+		}
+	}, []);
 
 	React.useEffect(() => {
 		socket.connect();
 
 		const handleReconnectAttempt = () => {
-			if (toastIdRef.current === undefined) {
+			if (!reconnectingRef.current) {
+				reconnectingRef.current = true;
+				clearToast();
 				toastIdRef.current = toast('Reconnecting, please wait...', {
 					duration: Infinity,
 				});
@@ -44,24 +54,19 @@ function SocketProvider({
 			if (!socket.recovered) {
 				await Promise.all(reconnectHandlersRef.current.map((fn) => fn()));
 			}
-			if (toastIdRef.current !== undefined) {
-				dismiss(toastIdRef.current);
-				toastIdRef.current = undefined;
-			}
-			toast('Reconnected');
+			reconnectingRef.current = false;
+			clearToast();
+			toastIdRef.current = toast('Reconnected', { duration: 2000 });
 		};
 		socket.io.on('reconnect', handleReconnect);
 
 		return () => {
-			if (toastIdRef.current !== undefined) {
-				dismiss(toastIdRef.current);
-			}
-
+			clearToast();
 			socket.io.off('reconnect_attempt', handleReconnectAttempt);
 			socket.io.off('reconnect', handleReconnect);
 			socket.disconnect();
 		};
-	}, [socket]);
+	}, [socket, clearToast]);
 
 	const addReconnectHandler = React.useCallback(
 		(callback: ReconnectCallback) => {

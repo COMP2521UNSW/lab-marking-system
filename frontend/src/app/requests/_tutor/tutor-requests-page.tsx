@@ -29,6 +29,7 @@ import {
 	useDeclineDialog,
 } from './_decline-dialog/context';
 import { MarkDialogProvider, useMarkDialog } from './_mark-dialog/context';
+import { useViewDialog, ViewDialogProvider } from './_view-dialog/context';
 import { useRequestManager } from './request-manager';
 
 type LoadingState =
@@ -82,7 +83,9 @@ export function TutorRequestsPage() {
 						<DeclineDialogProvider>
 							<MarkDialogProvider>
 								<AmendDialogProvider>
-									<TutorRequests />
+									<ViewDialogProvider>
+										<TutorRequests />
+									</ViewDialogProvider>
 								</AmendDialogProvider>
 							</MarkDialogProvider>
 						</DeclineDialogProvider>
@@ -180,6 +183,7 @@ function RequestList({
 	const { mark } = useMarkDialog();
 	const { decline } = useDeclineDialog();
 	const { amend } = useAmendDialog();
+	const { view } = useViewDialog();
 
 	if (students.length === 0) {
 		return (
@@ -209,6 +213,7 @@ function RequestList({
 					onMarkClick={(request) => mark(stu.student, request)}
 					onDeclineClick={(request) => decline(stu.student, request)}
 					onAmendClick={(request) => amend(stu.student, request)}
+					onViewClick={(request) => view(stu.student, request)}
 				/>
 			))}
 		</div>
