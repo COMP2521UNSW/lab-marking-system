@@ -84,12 +84,13 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestWithdrawn', //
-			(id: number, time: Date) => {
+			(id: number, reason: string, time: Date) => {
 				updateRequests((draft) =>
 					closeRequest(draft, id, (req) => ({
 						...req,
 						status: 'withdrawn',
 						closedAt: new Date(time),
+						reason,
 					})),
 				);
 			},
@@ -124,12 +125,14 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestDeclined', //
-			(id: number, time: Date) => {
+			(id: number, tutorName: string, reason: string, time: Date) => {
 				updateRequests((draft) =>
 					closeRequest(draft, id, (req) => ({
 						...req,
 						status: 'declined',
 						closedAt: time,
+						tutorName,
+						reason,
 					})),
 				);
 			},
