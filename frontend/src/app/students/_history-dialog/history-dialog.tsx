@@ -222,27 +222,27 @@ function eventToRowData(event: RequestLogEvent): [
     case 'request-declined':
       return [
         'Request declined',
-        event.activity, event.classCode, null, null, event.reason,
+        event.activity, event.classCode, null, event.markerName, event.reason,
       ];
     case 'request-marked':
       return [
         'Request marked',
         event.activity, event.classCode,
-        <Mark mark={event.mark} outOf={event.activity.maxMark} />,
+        <Mark key={null} mark={event.mark} outOf={event.activity.maxMark} />,
         event.markerName, null,
       ];
     case 'mark-amended':
       return [
         'Mark amended',
         event.activity, event.classCode,
-        <Mark mark={event.mark} outOf={event.activity.maxMark} />,
+        <Mark key={null} mark={event.mark} outOf={event.activity.maxMark} />,
         event.markerName, null,
       ];
     case 'manual-request-created':
       return [
         'Manual request created',
         event.activity, null,
-        <Mark mark={event.mark} outOf={event.activity.maxMark} />,
+        <Mark key={null} mark={event.mark} outOf={event.activity.maxMark} />,
         event.markerName, event.reason,
       ];
     case 'manual-request-approved':
@@ -259,7 +259,7 @@ function eventToRowData(event: RequestLogEvent): [
       return [
         'Mark imported from SMS',
         event.activity, null,
-        <Mark mark={event.mark} outOf={event.activity.maxMark} />,
+        <Mark key={null} mark={event.mark} outOf={event.activity.maxMark} />,
         null, null,
       ]
 	}
