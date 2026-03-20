@@ -65,9 +65,11 @@ export interface MarkedRequest extends BaseMarkingRequestAsTutor {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export type StudentWithRequests = {
+export type StudentWithRequests<
+	T extends MarkingRequestAsTutor = MarkingRequestAsTutor,
+> = {
 	student: Student;
-	requests: MarkingRequestAsTutor[];
+	requests: T[];
 };
 
 ////////////////////////////////////////////////////////////////////////////////

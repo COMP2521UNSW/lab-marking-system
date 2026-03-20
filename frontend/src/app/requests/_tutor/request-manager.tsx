@@ -4,9 +4,11 @@ import { useImmer } from 'use-immer';
 import type { Class } from '@workspace/types/classes';
 import type {
 	MarkingRequestAsTutor,
+	PendingRequest,
 	StudentWithRequests,
 } from '@workspace/types/requests';
 import type { Student, User } from '@workspace/types/users';
+import type { JSONified } from '@workspace/types/utils';
 
 import { useTutorSocket } from '@/components/providers/socket-provider';
 import * as requestsService from '@/services/requests';
@@ -55,18 +57,31 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestsCreated', //
-			(student: Student, requests: MarkingRequestAsTutor[]) => {
+			(student: Student, requests: JSONified<PendingRequest[]>) => {
 				updateRequests((draft) => {
-					addRequests(draft.open, student, requests);
+					addRequests(
+						draft.open,
+						student,
+						requests.map((request) => ({
+							...request,
+							createdAt: new Date(request.createdAt),
+						})),
+					);
 				});
 			},
 		);
 
 		socket.on(
 			'studentJoined', //
-			(student: Student, requests: MarkingRequestAsTutor[]) => {
+			(student: Student, requests: JSONified<PendingRequest[]>) => {
 				updateRequests((draft) => {
-					draft.open.push({ student, requests });
+					draft.open.push({
+						student,
+						requests: requests.map((request) => ({
+							...request,
+							createdAt: new Date(request.createdAt),
+						})),
+					});
 				});
 			},
 		);
@@ -84,7 +99,7 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestWithdrawn', //
-			(id: number, reason: string, time: Date) => {
+			(id: number, reason: string, time: JSONified<Date>) => {
 				updateRequests((draft) =>
 					closeRequest(draft, id, (req) => ({
 						...req,
@@ -125,12 +140,17 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestDeclined', //
-			(id: number, tutorName: string, reason: string, time: Date) => {
+			(
+				id: number,
+				tutorName: string,
+				reason: string,
+				time: JSONified<Date>,
+			) => {
 				updateRequests((draft) =>
 					closeRequest(draft, id, (req) => ({
 						...req,
 						status: 'declined',
-						closedAt: time,
+						closedAt: new Date(time),
 						tutorName,
 						reason,
 					})),
@@ -140,12 +160,12 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestMarked', //
-			(id: number, markerName: string, mark: number, time: Date) => {
+			(id: number, markerName: string, mark: number, time: JSONified<Date>) => {
 				updateRequests((draft) =>
 					closeRequest(draft, id, (req) => ({
 						...req,
 						status: 'marked',
-						closedAt: time,
+						closedAt: new Date(time),
 						markerName,
 						mark,
 					})),
