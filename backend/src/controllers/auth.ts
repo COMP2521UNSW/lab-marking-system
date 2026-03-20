@@ -37,7 +37,7 @@ const logIn: RequestHandler = async (req, res) => {
 
 const logOut: RequestHandler = (req, res) => {
 	authService.logOut(req.user);
-	res.clearCookie('token', cookieOptions).sendStatus(200);
+	res.clearCookie('token', cookieOptions).sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
