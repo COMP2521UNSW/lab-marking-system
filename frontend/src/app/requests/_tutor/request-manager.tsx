@@ -217,24 +217,43 @@ export function useRequestManager() {
 
 function sortRequests(students: StudentWithRequests[]) {
 	const res: {
-		open: StudentWithRequests[];
-		closed: StudentWithRequests[];
+		open: StudentWithRequests<PendingRequest>[];
+		closed: StudentWithRequests<
+			Exclude<MarkingRequestAsTutor, PendingRequest>
+		>[];
 	} = {
 		open: [],
 		closed: [],
 	};
 
 	for (const stu of students) {
-		const groups = Object.groupBy(stu.requests, (req) =>
-			req.closedAt === null ? 'open' : 'closed',
-		);
-		if (groups.open) {
-			res.open.push({ student: stu.student, requests: groups.open });
+		const open: PendingRequest[] = [];
+		const closed: Exclude<MarkingRequestAsTutor, PendingRequest>[] = [];
+
+		for (const req of stu.requests) {
+			if (req.closedAt === null) {
+				open.push(req);
+			} else {
+				closed.push(req);
+			}
 		}
-		if (groups.closed) {
-			res.closed.push({ student: stu.student, requests: groups.closed });
+
+		if (open.length > 0) {
+			res.open.push({ student: stu.student, requests: open });
+		}
+		if (closed.length > 0) {
+			res.closed.push({ student: stu.student, requests: closed });
 		}
 	}
+
+	res.open.sort(
+		(a, b) =>
+			a.requests[0].createdAt.getTime() - b.requests[0].createdAt.getTime(),
+	);
+	res.closed.sort(
+		(a, b) =>
+			a.requests[0].closedAt.getTime() - b.requests[0].closedAt.getTime(),
+	);
 
 	return res;
 }
