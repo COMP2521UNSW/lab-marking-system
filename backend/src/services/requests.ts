@@ -8,6 +8,8 @@ import type {
 	ManualRequest,
 	MarkingRequestAsStudent,
 	MarkingRequestAsTutor,
+	OpenRequest,
+	PendingRequest,
 } from '@workspace/types/requests';
 import type {
 	AmendMarkRequestData,
@@ -134,7 +136,11 @@ export async function updateRequests(
 
 	const { class: cls, requests } = await getRequestDetails(user, user.zid, req);
 
-	studentMessages.requestsUpdated(user.zid, cls, toStudentRequests(requests));
+	studentMessages.requestsUpdated(
+		user.zid,
+		cls,
+		toStudentRequests<OpenRequest>(requests),
+	);
 
 	// class changed
 	if (currClass !== null && req.classCode !== currClass.code) {
@@ -142,7 +148,11 @@ export async function updateRequests(
 		tutorMessages.studentLeft(currClass.code, user.zid);
 		tutorMessages.studentJoined(req.classCode, student, requests);
 	} else {
-		tutorMessages.requestsCreated(cls.code, student, toTutorRequests(requests));
+		tutorMessages.requestsCreated(
+			cls.code,
+			student,
+			toTutorRequests<PendingRequest>(requests),
+		);
 	}
 }
 
@@ -780,7 +790,7 @@ type RequestDetails = {
 async function getOpenRequests(zid: string, activityCodes?: string[]) {
 	const requests = await dbRequests.getOpenRequestsByUser(zid, activityCodes);
 
-	return toTutorRequests(requests);
+	return toTutorRequests<PendingRequest>(requests);
 }
 
 async function getRequestDetails(
@@ -810,9 +820,9 @@ async function getRequestDetails(
 	};
 }
 
-function toStudentRequests(
-	requests: Awaited<ReturnType<typeof dbRequests.getOpenRequestsByUser>>,
-) {
+function toStudentRequests<
+	T extends MarkingRequestAsStudent = MarkingRequestAsStudent,
+>(requests: Awaited<ReturnType<typeof dbRequests.getOpenRequestsByUser>>) {
 	return requests.map(
 		(request) =>
 			({
@@ -824,13 +834,13 @@ function toStudentRequests(
 				createdAt: request.createdAt,
 				status: request.status,
 				closedAt: request.closedAt,
-			}) as MarkingRequestAsStudent,
+			}) as T,
 	);
 }
 
-function toTutorRequests(
-	requests: Awaited<ReturnType<typeof dbRequests.getOpenRequestsByUser>>,
-) {
+function toTutorRequests<
+	T extends MarkingRequestAsTutor = MarkingRequestAsTutor,
+>(requests: Awaited<ReturnType<typeof dbRequests.getOpenRequestsByUser>>) {
 	return requests.map(
 		(request) =>
 			({
@@ -840,7 +850,7 @@ function toTutorRequests(
 				status: request.status,
 				closedAt: request.closedAt,
 				claimer: request.marker,
-			}) as MarkingRequestAsTutor,
+			}) as T,
 	);
 }
 

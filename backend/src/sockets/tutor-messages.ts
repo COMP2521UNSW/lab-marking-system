@@ -1,4 +1,4 @@
-import type { MarkingRequestAsTutor } from '@workspace/types/requests';
+import type { PendingRequest } from '@workspace/types/requests';
 import type { User } from '@workspace/types/users';
 
 import { tutorSocket } from '@/server';
@@ -6,7 +6,7 @@ import { tutorSocket } from '@/server';
 function requestsCreated(
 	classCode: string,
 	student: User,
-	requests: MarkingRequestAsTutor[],
+	requests: PendingRequest[],
 ) {
 	tutorSocket.to(classCode).emit('requestsCreated', student, requests);
 }
@@ -14,7 +14,7 @@ function requestsCreated(
 function studentJoined(
 	classCode: string,
 	student: User,
-	requests: MarkingRequestAsTutor[],
+	requests: PendingRequest[],
 ) {
 	tutorSocket.to(classCode).emit('studentJoined', student, requests);
 }

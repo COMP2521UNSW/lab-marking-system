@@ -26,7 +26,7 @@ const updateRequestsSchema = z
 const updateRequests: RequestHandler = async (req, res) => {
 	const reqData = updateRequestsSchema.parse(req);
 	await requestsService.updateRequests(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ const withdrawRequestSchema = z
 const withdrawRequest: RequestHandler = async (req, res) => {
 	const reqData = withdrawRequestSchema.parse(req);
 	await requestsService.withdrawRequest(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ const claimRequestSchema = z
 const claimRequest: RequestHandler = async (req, res) => {
 	const reqData = claimRequestSchema.parse(req);
 	await requestsService.claimRequest(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ const unclaimRequestSchema = claimRequestSchema;
 const unclaimRequest: RequestHandler = async (req, res) => {
 	const reqData = unclaimRequestSchema.parse(req);
 	await requestsService.unclaimRequest(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ const declineRequestSchema = z
 const declineRequest: RequestHandler = async (req, res) => {
 	const reqData = declineRequestSchema.parse(req);
 	await requestsService.declineRequest(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -136,7 +136,7 @@ const markRequestSchema = z
 const markRequest: RequestHandler = async (req, res) => {
 	const reqData = markRequestSchema.parse(req);
 	await requestsService.markRequest(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +158,7 @@ const amendMarkSchema = z
 const amendMark: RequestHandler = async (req, res) => {
 	const reqData = amendMarkSchema.parse(req);
 	await requestsService.amendMark(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -177,7 +177,7 @@ const createManualRequestSchema = z
 const createManualRequest: RequestHandler = async (req, res) => {
 	const reqData = createManualRequestSchema.parse(req);
 	await requestsService.createManualRequest(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////

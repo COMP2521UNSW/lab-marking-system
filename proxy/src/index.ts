@@ -23,7 +23,17 @@ async function main() {
 		process.exit(1);
 	}
 
-	const proxy = createProxyServer({ ws: true });
+	const proxy = createProxyServer({
+		ws: true,
+		timeout: 1000,
+	});
+
+	proxy.on('error', (err: NodeJS.ErrnoException, req, res) => {
+		if (err.code === 'ECONNRESET' || err.code === 'ECONNREFUSED') {
+			return;
+		}
+		console.error('Proxy error:', err);
+	});
 
 	const server = createServer((req, res) => {
 		const url = req.url!;
@@ -46,11 +56,6 @@ async function main() {
 		} else {
 			proxy.ws(req, socket, head, { target: frontendUrl });
 		}
-	});
-
-	server.on('error', (err) => {
-		console.log('Error!!!!!');
-		console.error(err);
 	});
 
 	const proxyPort = Number(process.env.PROXY_PORT!);

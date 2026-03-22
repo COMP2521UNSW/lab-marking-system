@@ -1,10 +1,7 @@
 import type { ActiveClasses, Class } from './classes';
-import type {
-	MarkingRequestAsStudent,
-	MarkingRequestAsTutor,
-} from './requests';
+import type { OpenRequest, PendingRequest } from './requests';
 import type { SessionUser, User } from './users';
-import type { EmptyObject } from './utils';
+import type { EmptyObject, JSONified } from './utils';
 
 interface BaseServerToClientEvents {
 	activeClasses: (classes: ActiveClasses) => void;
@@ -13,10 +10,10 @@ interface BaseServerToClientEvents {
 type StudentClientToServerEvents = EmptyObject;
 
 interface StudentServerToClientEvents extends BaseServerToClientEvents {
-	requestsUpdated: (cls: Class, requests: MarkingRequestAsStudent[]) => void;
+	requestsUpdated: (cls: Class, requests: JSONified<OpenRequest[]>) => void;
 	requestWithdrawn: (id: number) => void;
 	requestDeclined: (id: number, reason: string) => void;
-	requestMarked: (id: number, time: Date) => void;
+	requestMarked: (id: number, time: JSONified<Date>) => void;
 }
 
 interface TutorClientToServerEvents {
@@ -24,23 +21,26 @@ interface TutorClientToServerEvents {
 }
 
 interface TutorServerToClientEvents extends BaseServerToClientEvents {
-	requestsCreated: (student: User, requests: MarkingRequestAsTutor[]) => void;
-	studentJoined: (student: User, requests: MarkingRequestAsTutor[]) => void;
+	requestsCreated: (
+		student: User,
+		requests: JSONified<PendingRequest[]>,
+	) => void;
+	studentJoined: (student: User, requests: JSONified<PendingRequest[]>) => void;
 	studentLeft: (studentZid: string) => void;
-	requestWithdrawn: (id: number, reason: string, time: Date) => void;
+	requestWithdrawn: (id: number, reason: string, time: JSONified<Date>) => void;
 	requestClaimed: (id: number, tutor: User) => void;
 	requestUnclaimed: (id: number) => void;
 	requestDeclined: (
 		id: number,
 		tutorName: string,
 		reason: string,
-		time: Date,
+		time: JSONified<Date>,
 	) => void;
 	requestMarked: (
 		id: number,
 		markerName: string,
 		mark: number,
-		time: Date,
+		time: JSONified<Date>,
 	) => void;
 	markAmended: (id: number, markerName: string, mark: number) => void;
 }

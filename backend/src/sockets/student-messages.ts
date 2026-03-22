@@ -1,13 +1,9 @@
 import type { Class } from '@workspace/types/classes';
-import type { MarkingRequestAsStudent } from '@workspace/types/requests';
+import type { OpenRequest } from '@workspace/types/requests';
 
 import { studentSocket } from '@/server';
 
-function requestsUpdated(
-	zid: string,
-	cls: Class,
-	requests: MarkingRequestAsStudent[],
-) {
+function requestsUpdated(zid: string, cls: Class, requests: OpenRequest[]) {
 	studentSocket.to(zid).emit('requestsUpdated', cls, requests);
 }
 
