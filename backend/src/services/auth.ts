@@ -9,9 +9,8 @@ import type { SessionUser } from '@workspace/types/users';
 
 import * as dbUsers from '@/db/users';
 import { authenticate } from '@/lib/auth';
-import { UnauthorizedError } from '@/lib/errors';
-
-import { info, internalServerError } from './utils';
+import { InternalServerError, UnauthorizedError } from '@/lib/errors';
+import { logger } from '@/lib/logger';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -24,7 +23,7 @@ export async function logIn(
 
 	// Checking password first prevents enumeration attack
 	if (!(await authenticateUser(zid, password))) {
-		info(undefined, 'Authentication error', loggableData);
+		logger.info('Authentication error', { loggableData });
 
 		throw new UnauthorizedError('Incorrect zID or password');
 	}
@@ -32,11 +31,11 @@ export async function logIn(
 	const user = await dbUsers.getUserByZid(zid);
 
 	if (user === null || !user.enrolled) {
-		info(undefined, 'Not enrolled', loggableData);
+		logger.info('Not enrolled', { loggableData });
 
 		throw new UnauthorizedError('Not enrolled in the course');
 	} else {
-		info(user, 'Logging in');
+		logger.info('Logging in', { user });
 
 		return {
 			zid: user.zid,
@@ -67,7 +66,7 @@ function isMasterPassword(password: string) {
 export function logOut(
 	user: SessionUser, //
 ) {
-	info(user, 'Logging out');
+	logger.info('Logging out', { user });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -82,8 +81,7 @@ export async function getUser(
 	const user = await dbUsers.getUserByZid(maybeUser.zid);
 
 	if (user === null) {
-		internalServerError(
-			maybeUser,
+		throw new InternalServerError(
 			`Couldn't find user with zid ${maybeUser.zid}`,
 		);
 	}

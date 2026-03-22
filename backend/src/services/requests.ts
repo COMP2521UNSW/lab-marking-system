@@ -39,18 +39,13 @@ import * as dbRequests from '@/db/requests';
 import * as dbSettings from '@/db/settings';
 import * as dbUsers from '@/db/users';
 import { toLocalDate, toLocalStartOfDay } from '@/lib/date';
-import { BadRequestError } from '@/lib/errors';
+import { BadRequestError, InternalServerError } from '@/lib/errors';
+import { logger } from '@/lib/logger';
 import * as activitiesService from '@/services/activities';
 import * as studentMessages from '@/sockets/student-messages';
 import * as tutorMessages from '@/sockets/tutor-messages';
 
-import {
-	badRequestError,
-	getCurrentTime,
-	getCurrentWeek,
-	info,
-	internalServerError,
-} from './utils';
+import { getCurrentTime, getCurrentWeek } from './utils';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -78,14 +73,14 @@ export async function updateRequests(
 	user: SessionUser,
 	req: UpdateRequestsRequestData,
 ) {
-	info(user, 'Updating requests', req);
+	logger.info('Updating requests', { user, req });
 
 	await validateUpdateRequests(user, req);
 
 	const currClass = await dbRequests.getCurrentClass(user.zid);
 
 	if (currClass === null && req.activityCodes.length === 0) {
-		badRequestError(user, "Can't change classes with no requests");
+		throw new BadRequestError("Can't change classes with no requests");
 	}
 
 	const timestamp = new Date();
@@ -93,7 +88,7 @@ export async function updateRequests(
 	// class changed
 	if (currClass !== null && req.classCode !== currClass.code) {
 		await dbRequests.updateRequestsClass(user.zid, req.classCode, timestamp);
-		info(user, 'Successfully updated class');
+		logger.info('Successfully updated class', { user });
 	}
 
 	if (req.activityCodes.length > 0) {
@@ -104,9 +99,8 @@ export async function updateRequests(
 			timestamp,
 		);
 		if (res) {
-			info(user, 'Successfully created requests', {
-				ids: res.map((row) => row.id),
-			});
+			const ids = res.map((row) => row.id);
+			logger.info('Successfully created requests', { user, ids: { ids } });
 		}
 	}
 
@@ -131,10 +125,10 @@ export async function updateRequests(
 
 	const student = await dbUsers.getStudentByZid(user.zid);
 	if (student === null) {
-		internalServerError(user, `Couldn't find user with zid ${user.zid}`);
+		throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
 	}
 
-	const { class: cls, requests } = await getRequestDetails(user, user.zid, req);
+	const { class: cls, requests } = await getRequestDetails(user.zid, req);
 
 	studentMessages.requestsUpdated(
 		user.zid,
@@ -169,7 +163,7 @@ async function validateSelectedClass(user: SessionUser, classCode: string) {
 	const classDetails = await dbClasses.getClassDetails(classCode);
 
 	if (classDetails === null) {
-		badRequestError(user, 'Invalid class');
+		throw new BadRequestError('Invalid class');
 	}
 
 	const earlyRequestMinutes = await dbSettings.getEarlyRequestMinutes();
@@ -188,8 +182,9 @@ async function validateSelectedClass(user: SessionUser, classCode: string) {
 					upcomingTime < classDetails.labEndTime))
 		)
 	) {
-		info(user, 'Class is not open for requests');
-		throw new BadRequestError('Class is not open for requests');
+		throw new BadRequestError('Class is not open for requests', {
+			logLevel: 'info',
+		});
 	}
 }
 
@@ -198,7 +193,7 @@ async function validateRequestedActivities(
 	activityCodes: string[],
 ) {
 	if (activityCodes.length > 5) {
-		badRequestError(user, "Can't create more than 5 requests at a time");
+		throw new BadRequestError("Can't create more than 5 requests at a time");
 	}
 
 	const activeActivities =
@@ -210,11 +205,11 @@ async function validateRequestedActivities(
 		);
 
 		if (!activity) {
-			badRequestError(user, `Can't request marking for ${activityCode}`);
+			throw new BadRequestError(`Can't request marking for ${activityCode}`);
 		}
 
 		if (activity.marked) {
-			badRequestError(user, `${activityCode} has already been marked`);
+			throw new BadRequestError(`${activityCode} has already been marked`);
 		}
 	});
 
@@ -222,8 +217,7 @@ async function validateRequestedActivities(
 
 	requests.forEach((request) => {
 		if (activityCodes.includes(request.activity.code)) {
-			badRequestError(
-				user,
+			throw new BadRequestError(
 				`Already requested marking for ${request.activity.code}`,
 			);
 		}
@@ -236,9 +230,9 @@ export async function withdrawRequest(
 	user: SessionUser,
 	req: WithdrawRequestRequestData,
 ) {
-	info(user, 'Withdrawing request', req);
+	logger.info('Withdrawing request', { user, req });
 
-	req = validateWithdrawRequest(user, req);
+	req = validateWithdrawRequest(req);
 
 	const timestamp = new Date();
 
@@ -250,10 +244,10 @@ export async function withdrawRequest(
 	);
 
 	if (res === null) {
-		badRequestError(user, "Can't withdraw this request", 'Request not found');
+		throw new BadRequestError("Can't withdraw this request");
 	}
 
-	info(user, 'Request successfully withdrawn');
+	logger.info('Request successfully withdrawn', { user });
 
 	// Log event
 	await dbLogs.logRequestWithdrawn(
@@ -269,19 +263,15 @@ export async function withdrawRequest(
 	tutorMessages.requestWithdrawn(res.classCode, req.id, req.reason, timestamp);
 }
 
-function validateWithdrawRequest(
-	user: SessionUser,
-	req: WithdrawRequestRequestData,
-) {
+function validateWithdrawRequest(req: WithdrawRequestRequestData) {
 	req.reason = req.reason.trim();
 
 	if (req.reason.length === 0) {
-		badRequestError(user, 'Reason is blank');
+		throw new BadRequestError('Reason is blank');
 	}
 
 	if (req.reason.length > MAX_REASON_LEN) {
-		badRequestError(
-			user,
+		throw new BadRequestError(
 			`Reason must not exceed ${MAX_REASON_LEN} characters`,
 		);
 	}
@@ -295,7 +285,7 @@ export async function getRequestsByClass(
 	user: SessionUser,
 	req: GetRequestsByClassRequestData,
 ): Promise<GetRequestsByClassResponseData> {
-	await validateGetRequestsByClass(user, req);
+	await validateGetRequestsByClass(req);
 
 	const requests = await dbRequests.getActiveOrRecentRequestsByClass(
 		req.classCode,
@@ -327,10 +317,7 @@ export async function getRequestsByClass(
 	});
 }
 
-async function validateGetRequestsByClass(
-	user: SessionUser,
-	req: GetRequestsByClassRequestData,
-) {
+async function validateGetRequestsByClass(req: GetRequestsByClassRequestData) {
 	const cls = await dbClasses.getClassDetails(req.classCode);
 
 	if (cls === null) {
@@ -344,19 +331,19 @@ export async function claimRequest(
 	user: SessionUser,
 	req: ClaimRequestRequestData,
 ) {
-	info(user, 'Claiming request', req);
+	logger.info('Claiming request', { user, req });
 
 	const res = await dbRequests.claimRequest(req.id, user.zid);
 
 	if (res === null) {
-		badRequestError(user, "Can't claim this request");
+		throw new BadRequestError("Can't claim this request");
 	}
 
-	info(user, 'Request successfully claimed');
+	logger.info('Request successfully claimed', { user });
 
 	const marker = await dbUsers.getUserByZid(user.zid);
 	if (marker === null) {
-		internalServerError(user, `Couldn't find user with zid ${user.zid}`);
+		throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
 	}
 
 	// Socket messages
@@ -372,15 +359,15 @@ export async function unclaimRequest(
 	user: SessionUser,
 	req: UnclaimRequestRequestData,
 ) {
-	info(user, 'Unclaiming request', req);
+	logger.info('Unclaiming request', { user, req });
 
 	const res = await dbRequests.unclaimRequest(req.id, user.zid);
 
 	if (res === null) {
-		badRequestError(user, "Can't unclaim this request");
+		throw new BadRequestError("Can't unclaim this request");
 	}
 
-	info(user, 'Request successfully unclaimed');
+	logger.info('Request successfully unclaimed', { user });
 
 	// Socket messages
 	tutorMessages.requestUnclaimed(res.classCode, req.id);
@@ -392,9 +379,9 @@ export async function declineRequest(
 	user: SessionUser,
 	req: DeclineRequestRequestData,
 ) {
-	info(user, 'Declining request', req);
+	logger.info('Declining request', { user, req });
 
-	req = validateDeclineRequest(user, req);
+	req = validateDeclineRequest(req);
 
 	const timestamp = new Date();
 
@@ -406,10 +393,10 @@ export async function declineRequest(
 	);
 
 	if (res === null) {
-		badRequestError(user, "Can't decline this request", 'Request not found');
+		throw new BadRequestError("Can't decline this request");
 	}
 
-	info(user, 'Request successfully declined');
+	logger.info('Request successfully declined', { user });
 
 	// Log event
 	await dbLogs.logRequestDeclined(
@@ -424,7 +411,7 @@ export async function declineRequest(
 	// Socket messages
 	const tutor = await dbUsers.getUserByZid(user.zid);
 	if (tutor === null) {
-		internalServerError(user, `Couldn't find user with zid ${user.zid}`);
+		throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
 	}
 
 	studentMessages.requestDeclined(res.studentZid, req.id, req.reason);
@@ -437,19 +424,15 @@ export async function declineRequest(
 	);
 }
 
-function validateDeclineRequest(
-	user: SessionUser,
-	req: DeclineRequestRequestData,
-) {
+function validateDeclineRequest(req: DeclineRequestRequestData) {
 	req.reason = req.reason.trim();
 
 	if (req.reason.length === 0) {
-		badRequestError(user, 'Reason is blank');
+		throw new BadRequestError('Reason is blank');
 	}
 
 	if (req.reason.length > MAX_REASON_LEN) {
-		badRequestError(
-			user,
+		throw new BadRequestError(
 			`Reason must not exceed ${MAX_REASON_LEN} characters`,
 		);
 	}
@@ -463,9 +446,9 @@ export async function markRequest(
 	user: SessionUser,
 	req: MarkRequestRequestData,
 ) {
-	info(user, 'Marking request', req);
+	logger.info('Marking request', { user, req });
 
-	await validateMarkRequest(user, req);
+	await validateMarkRequest(req);
 
 	const timestamp = new Date();
 
@@ -477,12 +460,12 @@ export async function markRequest(
 	);
 
 	if (res === null) {
-		internalServerError(user, 'Request not found');
+		throw new InternalServerError('Request not found');
 	}
 
 	await dbMarks.setMark(res.studentZid, res.activityCode, req.mark, timestamp);
 
-	info(user, 'Request successfully marked');
+	logger.info('Request successfully marked', { user });
 
 	// Log event
 	await dbLogs.logRequestMarked(
@@ -497,7 +480,7 @@ export async function markRequest(
 	// Socket messages
 	const marker = await dbUsers.getUserByZid(user.zid);
 	if (marker === null) {
-		internalServerError(user, `Couldn't find user with zid ${user.zid}`);
+		throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
 	}
 
 	studentMessages.requestMarked(res.studentZid, req.id, timestamp);
@@ -510,52 +493,47 @@ export async function markRequest(
 	);
 }
 
-async function validateMarkRequest(
-	user: SessionUser,
-	req: MarkRequestRequestData,
-) {
+async function validateMarkRequest(req: MarkRequestRequestData) {
 	const request = await dbRequests.getOpenRequest(req.id);
 	if (request === null) {
-		badRequestError(user, 'Request not found');
+		throw new BadRequestError('Request not found');
 	}
 
 	const activity = await dbActivities.getActivityByCode(request.activityCode);
 	if (activity === null) {
-		internalServerError(
-			user,
+		throw new InternalServerError(
 			`Couldn't find activity with code ${request.activityCode}`,
 		);
 	}
 
 	const week = await getCurrentWeek();
 	if (week < activity.startWeek || week > activity.endWeek) {
-		badRequestError(
-			user,
+		throw new BadRequestError(
 			`${request.activityCode} cannot be marked in week ${week}`,
 		);
 	}
 
-	validateActivityMark(user, activity, req.mark);
+	validateActivityMark(activity, req.mark);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function amendMark(user: SessionUser, req: AmendMarkRequestData) {
-	info(user, 'Amending mark', req);
+	logger.info('Amending mark', { user, req });
 
-	await validateAmendMark(user, req);
+	await validateAmendMark(req);
 
 	const timestamp = new Date();
 
 	const res = await dbRequests.amendMark(req.id, user.zid, req.mark);
 
 	if (res === null) {
-		internalServerError(user, `Couldn't find request with id ${req.id}`);
+		throw new InternalServerError(`Couldn't find request with id ${req.id}`);
 	}
 
 	await dbMarks.setMark(res.studentZid, res.activityCode, req.mark, timestamp);
 
-	info(user, 'Mark successfully amended');
+	logger.info('Mark successfully amended', { user });
 
 	// Log event
 	await dbLogs.logMarkAmended(
@@ -570,35 +548,34 @@ export async function amendMark(user: SessionUser, req: AmendMarkRequestData) {
 	// Socket messages
 	const marker = await dbUsers.getUserByZid(user.zid);
 	if (marker === null) {
-		internalServerError(user, `Couldn't find user with zid ${user.zid}`);
+		throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
 	}
 
 	tutorMessages.markAmended(res.classCode, req.id, marker.name, req.mark);
 }
 
-async function validateAmendMark(user: SessionUser, req: AmendMarkRequestData) {
+async function validateAmendMark(req: AmendMarkRequestData) {
 	const request = await dbRequests.getMarkedRequest(req.id);
 	if (request === null) {
-		badRequestError(user, 'Request not found');
+		throw new BadRequestError('Request not found');
 	}
 
 	const activity = await dbActivities.getActivityByCode(request.activityCode);
 	if (activity === null) {
-		internalServerError(
-			user,
+		throw new InternalServerError(
 			`Couldn't find activity with code ${request.activityCode}`,
 		);
 	}
 
 	// A mark can only be amended on the same day as it was marked
 	if (!isSameDay(request.markedAt, new Date())) {
-		badRequestError(user, 'Too late to amend mark');
+		throw new BadRequestError('Too late to amend mark');
 	}
 
-	validateActivityMark(user, activity, req.mark);
+	validateActivityMark(activity, req.mark);
 
 	if (req.mark === request.mark) {
-		badRequestError(user, 'New mark must be different from current mark');
+		throw new BadRequestError('New mark must be different from current mark');
 	}
 }
 
@@ -610,9 +587,9 @@ export async function createManualRequest(
 	user: SessionUser,
 	req: CreateManualRequestRequestData,
 ) {
-	info(user, 'Creating manual request', req);
+	logger.info('Creating manual request', { user, req });
 
-	req = await validateCreateManualRequest(user, req);
+	req = await validateCreateManualRequest(req);
 
 	const res = await dbRequests.createManualRequest(
 		req.studentZid,
@@ -622,7 +599,7 @@ export async function createManualRequest(
 		user.zid,
 	);
 
-	info(user, 'Request successfully created', { id: res.id });
+	logger.info('Request successfully created', { user, res: { id: res.id } });
 
 	await dbLogs.logManualRequestCreated(
 		req.studentZid,
@@ -635,33 +612,31 @@ export async function createManualRequest(
 }
 
 async function validateCreateManualRequest(
-	user: SessionUser,
 	req: CreateManualRequestRequestData,
 ) {
 	req.reason = req.reason.trim();
 
 	if (req.reason.length === 0) {
-		badRequestError(user, 'Reason is blank');
+		throw new BadRequestError('Reason is blank');
 	}
 
 	if (req.reason.length > MAX_REASON_LEN) {
-		badRequestError(
-			user,
+		throw new BadRequestError(
 			`Reason must not exceed ${MAX_REASON_LEN} characters`,
 		);
 	}
 
 	const student = await dbUsers.getStudentByZid(req.studentZid);
 	if (student === null) {
-		badRequestError(user, 'Invalid student');
+		throw new BadRequestError('Invalid student');
 	}
 
 	const activity = await dbActivities.getActivityByCode(req.activityCode);
 	if (activity === null) {
-		badRequestError(user, 'Invalid activity');
+		throw new BadRequestError('Invalid activity');
 	}
 
-	validateActivityMark(user, activity, req.mark);
+	validateActivityMark(activity, req.mark);
 
 	return req;
 }
@@ -683,7 +658,7 @@ export async function approveManualRequest(
 	user: SessionUser,
 	req: ApproveManualRequestRequestData,
 ): Promise<ApproveManualRequestResponseData> {
-	info(user, 'Approving manual request', req);
+	logger.info('Approving manual request', { user, req });
 
 	const timestamp = new Date();
 
@@ -694,7 +669,7 @@ export async function approveManualRequest(
 	);
 
 	if (res === null) {
-		badRequestError(user, 'No open request with this id', 'Request not found');
+		throw new BadRequestError('No open request with this id');
 	}
 
 	await dbMarks.setMark(
@@ -704,7 +679,7 @@ export async function approveManualRequest(
 		res.createdAt,
 	);
 
-	info(user, 'Request successfully approved');
+	logger.info('Request successfully approved', { user });
 
 	await dbLogs.logManualRequestApproved(
 		res.studentZid,
@@ -725,9 +700,9 @@ export async function denyManualRequest(
 	user: SessionUser,
 	req: DenyManualRequestRequestData,
 ): Promise<DenyManualRequestResponseData> {
-	info(user, 'Denying manual request', req);
+	logger.info('Denying manual request', { user, req });
 
-	req = validateDenyManualRequest(user, req);
+	req = validateDenyManualRequest(req);
 
 	const timestamp = new Date();
 
@@ -739,10 +714,10 @@ export async function denyManualRequest(
 	);
 
 	if (res === null) {
-		badRequestError(user, 'No open request with this id', 'Request not found');
+		throw new BadRequestError('No open request with this id');
 	}
 
-	info(user, 'Request successfully denied');
+	logger.info('Request successfully denied', { user });
 
 	await dbLogs.logManualRequestDenied(
 		res.studentZid,
@@ -758,19 +733,15 @@ export async function denyManualRequest(
 	return request as ManualRequest;
 }
 
-function validateDenyManualRequest(
-	user: SessionUser,
-	req: DenyManualRequestRequestData,
-) {
+function validateDenyManualRequest(req: DenyManualRequestRequestData) {
 	req.reason = req.reason.trim();
 
 	if (req.reason.length === 0) {
-		badRequestError(user, 'Reason is blank');
+		throw new BadRequestError('Reason is blank');
 	}
 
 	if (req.reason.length > MAX_REASON_LEN) {
-		badRequestError(
-			user,
+		throw new BadRequestError(
 			`Reason must not exceed ${MAX_REASON_LEN} characters`,
 		);
 	}
@@ -793,15 +764,10 @@ async function getOpenRequests(zid: string, activityCodes?: string[]) {
 	return toTutorRequests<PendingRequest>(requests);
 }
 
-async function getRequestDetails(
-	user: SessionUser,
-	zid: string,
-	request: RequestDetails,
-) {
+async function getRequestDetails(zid: string, request: RequestDetails) {
 	const cls = await dbClasses.getClassDetails(request.classCode);
 	if (cls === null) {
-		internalServerError(
-			user,
+		throw new InternalServerError(
 			`Couldn't find class with code ${request.classCode}`,
 		);
 	}
@@ -854,17 +820,13 @@ function toTutorRequests<
 	);
 }
 
-function validateActivityMark(
-	user: SessionUser,
-	activity: ActivityAsTutor,
-	mark: number,
-) {
+function validateActivityMark(activity: ActivityAsTutor, mark: number) {
 	if (mark < 0 || mark > activity.maxMark) {
-		badRequestError(user, 'Invalid mark');
+		throw new BadRequestError('Invalid mark');
 	}
 
 	if (/\.\d{3}/.test(String(mark))) {
-		badRequestError(user, 'Invalid mark');
+		throw new BadRequestError('Invalid mark');
 	}
 }
 

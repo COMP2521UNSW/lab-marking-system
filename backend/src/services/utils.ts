@@ -1,10 +1,6 @@
 import { differenceInWeeks, isBefore } from 'date-fns';
 
-import { SessionUser } from '@workspace/types/users';
-
 import * as dbSettings from '@/db/settings';
-import { BadRequestError, InternalServerError } from '@/lib/errors';
-import { logger } from '@/lib/logger';
 import { devMode } from '@/lib/utils';
 
 import * as fakeUtils from './fake/utils';
@@ -34,34 +30,4 @@ const getCurrentWeek = inDevMode
 
 ////////////////////////////////////////////////////////////////////////////////
 
-function info(user: SessionUser | undefined, msg: string, data?: object) {
-	logger.info(msg, { user, data });
-}
-
-function badRequestError(
-	user: SessionUser,
-	msg: string,
-	logMsg?: string,
-): never {
-	logger.warn(logMsg ?? msg, { user });
-	throw new BadRequestError(msg);
-}
-
-function internalServerError(
-	user: SessionUser,
-	msg: string,
-	logMsg?: string,
-): never {
-	logger.error(logMsg ?? msg, { user });
-	throw new InternalServerError(msg);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export {
-	badRequestError,
-	getCurrentTime,
-	getCurrentWeek,
-	info,
-	internalServerError,
-};
+export { getCurrentTime, getCurrentWeek };

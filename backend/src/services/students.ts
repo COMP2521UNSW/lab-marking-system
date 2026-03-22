@@ -20,15 +20,12 @@ export async function searchStudents(
 	user: SessionUser,
 	req: SearchStudentsRequestData,
 ): Promise<SearchStudentsResponseData> {
-	req = validateSearchStudents(user, req);
+	req = validateSearchStudents(req);
 
 	return await dbStudents.searchStudents(req.q);
 }
 
-function validateSearchStudents(
-	user: SessionUser,
-	req: SearchStudentsRequestData,
-) {
+function validateSearchStudents(req: SearchStudentsRequestData) {
 	req.q = req.q.trim();
 
 	if (req.q.length < 2) {
