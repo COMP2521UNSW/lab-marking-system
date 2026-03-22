@@ -2,10 +2,7 @@ import '@/lib/polyfills/group-by';
 
 import { addDays } from 'date-fns';
 
-import type {
-	GetActiveClassesResponseData,
-	GetAllClassesResponseData,
-} from '@workspace/types/services/classes';
+import type { ClassesService } from '@workspace/types/services/classes';
 import type { SessionUser } from '@workspace/types/users';
 
 import { get } from '@/cache/cache';
@@ -14,28 +11,32 @@ import * as dbSettings from '@/db/settings';
 import { toLocalDayAndTime } from '@/lib/date';
 import { addMinutes, subtractMinutes } from '@/lib/time';
 import type { Time } from '@/types/time';
+import type { BackendService } from '@/types/utils';
 
 import { getCurrentTime } from './utils';
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export async function getAllClasses(
-	user: SessionUser, //
-): Promise<GetAllClassesResponseData> {
-	return await dbClasses.getAllClasses();
-}
+class BackendClassesService implements BackendService<ClassesService> {
+	async getAllClasses(user: SessionUser) {
+		return await dbClasses.getAllClasses();
+	}
 
-////////////////////////////////////////////////////////////////////////////////
-
-export async function getActiveClasses(
-	user: SessionUser, //
-): Promise<GetActiveClassesResponseData> {
-	if (user.role === 'student') {
-		return await getActiveClassesForStudent();
-	} else {
-		return await getActiveClassesForTutor();
+	async getActiveClasses(user: SessionUser) {
+		if (user.role === 'student') {
+			return await getActiveClassesForStudent();
+		} else {
+			return await getActiveClassesForTutor();
+		}
 	}
 }
+
+const classesService: BackendService<ClassesService> =
+	new BackendClassesService();
+
+export default classesService;
+
+////////////////////////////////////////////////////////////////////////////////
 
 export async function getActiveClassesForStudent() {
 	const classes = await getAllActiveClasses();

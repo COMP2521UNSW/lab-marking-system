@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { ActiveClasses } from '@workspace/types/classes';
 
-import * as classesService from '@/services/classes';
+import classesService from '@/services/classes';
 
 import { useSocket } from './socket-provider';
 

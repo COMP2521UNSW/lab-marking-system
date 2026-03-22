@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express';
 import z from 'zod';
 
-import * as requestsService from '@/services/requests';
+import requestsService from '@/services/requests';
 
 ////////////////////////////////////////////////////////////////////////////////
 

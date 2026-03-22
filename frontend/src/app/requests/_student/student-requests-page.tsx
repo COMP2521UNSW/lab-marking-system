@@ -26,7 +26,7 @@ import {
 import { Text } from '@/components/ui/base/typography';
 import { StudentRequestCard } from '@/components/ui/requests/student-request-card';
 import { ApiError } from '@/lib/errors';
-import * as pagesService from '@/services/pages';
+import pagesService from '@/services/pages';
 
 import { DeclinedDialogProvider } from './_declined-dialog/context';
 import {

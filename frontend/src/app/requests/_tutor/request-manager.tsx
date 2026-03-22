@@ -11,7 +11,7 @@ import type { Student, User } from '@workspace/types/users';
 import type { JSONified } from '@workspace/types/utils';
 
 import { useTutorSocket } from '@/components/providers/socket-provider';
-import * as requestsService from '@/services/requests';
+import requestsService from '@/services/requests';
 
 type RequestsState = {
 	open: StudentWithRequests[];

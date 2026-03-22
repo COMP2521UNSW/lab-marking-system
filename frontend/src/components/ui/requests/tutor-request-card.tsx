@@ -18,7 +18,7 @@ import { Text } from '@/components/ui/base/typography';
 import { TutorRequestStatus } from '@/components/ui/requests/request-status';
 import { ApiError } from '@/lib/errors';
 import { cn } from '@/lib/utils';
-import * as requestsService from '@/services/requests';
+import requestsService from '@/services/requests';
 
 export function TutorRequestCard({
 	student,

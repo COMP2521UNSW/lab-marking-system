@@ -28,8 +28,8 @@ import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
 import { ApiError } from '@/lib/errors';
 import { cn } from '@/lib/utils';
-import * as activitiesService from '@/services/activities';
-import * as studentsService from '@/services/students';
+import activitiesService from '@/services/activities';
+import studentsService from '@/services/students';
 
 import {
 	HistoryDialogProvider,

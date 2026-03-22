@@ -2,6 +2,24 @@ import type { ActivityAsTutor } from '../activities';
 import type { RequestLogEvent } from '../logs';
 import type { StudentDetails } from '../users';
 
+////////////////////////////////////////////////////////////////////////////////
+
+export interface StudentsService {
+	searchStudents(
+		req: SearchStudentsRequestData,
+	): Promise<SearchStudentsResponseData>;
+
+	getStudentMarks(
+		req: GetStudentMarksRequestData,
+	): Promise<GetStudentMarksResponseData>;
+
+	getStudentLogs(
+		req: GetStudentLogsRequestData,
+	): Promise<GetStudentLogsResponseData>;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 export type SearchStudentsRequestData = {
 	q: string;
 };
