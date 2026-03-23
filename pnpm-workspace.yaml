@@ -98,6 +98,6 @@ catalog:
   winston-daily-rotate-file: 5.0.0
   zod: 4.3.6
 
-patchedDependencies:
-  # https://github.com/vercel/next.js/issues/84029#issuecomment-3565082492
-  react-dom@19.2.4: .dev/patches/react-dom@19.2.4.patch
+# Notes:
+# - https://github.com/vercel/next.js/issues/84029#issuecomment-3565082492
+#   - Known issue with React which causes hydration mismatches
