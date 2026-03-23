@@ -51,6 +51,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 	async getActiveRequestsForCurrentUser(user: SessionUser) {
 		const currClass = await dbRequests.getCurrentClass(user.zid);
+
 		if (currClass === null) {
 			return {
 				class: null,
@@ -58,7 +59,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			};
 		}
 
-		const requests = await getPendingRequests(user.zid);
+		const requests = await this.getPendingRequests(user.zid);
 		return {
 			class: toClass(currClass),
 			requests: toOpenRequestList(requests),
@@ -80,8 +81,9 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		const timestamp = new Date();
 
-		// class changed
-		if (currClass !== null && req.classCode !== currClass.code) {
+		const classChanged = currClass !== null && req.classCode !== currClass.code;
+
+		if (classChanged) {
 			await dbRequests.updateRequestsClass(user.zid, req.classCode, timestamp);
 			logger.info('Successfully updated class', { user });
 		}
@@ -99,10 +101,8 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			}
 		}
 
-		//////////////
 		// Log event
-
-		if (currClass !== null && req.classCode !== currClass.code) {
+		if (classChanged) {
 			await dbLogs.logClassChanged(user.zid, req.classCode, timestamp);
 		}
 
@@ -115,22 +115,16 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			);
 		}
 
-		////////////////////
 		// Socket messages
+		const student = await this.getStudent(user.zid);
 
-		const dbStudent = await dbUsers.getStudentByZid(user.zid);
-		if (dbStudent === null) {
-			throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
-		}
-		const student = toUser(dbStudent);
-
-		const { class: cls, requests } = await getRequestDetails(user.zid, req);
+		const cls = await this.getClass(req.classCode);
+		const requests = await this.getPendingRequests(user.zid, req.activityCodes);
 
 		studentMessages.requestsUpdated(user.zid, cls, toOpenRequestList(requests));
 
-		// class changed
-		if (currClass !== null && req.classCode !== currClass.code) {
-			const requests = await getPendingRequests(user.zid);
+		if (classChanged) {
+			const requests = await this.getPendingRequests(user.zid);
 			tutorMessages.studentLeft(currClass.code, user.zid);
 			tutorMessages.studentJoined(req.classCode, student, requests);
 		} else {
@@ -315,13 +309,10 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		logger.info('Request successfully claimed', { user });
 
-		const dbMarker = await dbUsers.getUserByZid(user.zid);
-		if (dbMarker === null) {
-			throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
-		}
+		const marker = await this.getUser(user.zid);
 
 		// Socket messages
-		tutorMessages.requestClaimed(res.classCode, req.id, toUser(dbMarker));
+		tutorMessages.requestClaimed(res.classCode, req.id, marker);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -374,10 +365,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 		);
 
 		// Socket messages
-		const tutor = await dbUsers.getUserByZid(user.zid);
-		if (tutor === null) {
-			throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
-		}
+		const tutor = await this.getUser(user.zid);
 
 		studentMessages.requestDeclined(res.studentZid, req.id, req.reason);
 		tutorMessages.requestDeclined(
@@ -445,10 +433,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 		);
 
 		// Socket messages
-		const marker = await dbUsers.getUserByZid(user.zid);
-		if (marker === null) {
-			throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
-		}
+		const marker = await this.getUser(user.zid);
 
 		studentMessages.requestMarked(res.studentZid, req.id, timestamp);
 		tutorMessages.requestMarked(
@@ -466,12 +451,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			throw new BadRequestError('Request not found');
 		}
 
-		const activity = await dbActivities.getActivityByCode(request.activityCode);
-		if (activity === null) {
-			throw new InternalServerError(
-				`Couldn't find activity with code ${request.activityCode}`,
-			);
-		}
+		const activity = await this.getActivity(request.activityCode);
 
 		const week = await timeService.getCurrentWeek();
 		if (week < activity.startWeek || week > activity.endWeek) {
@@ -480,7 +460,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			);
 		}
 
-		validateActivityMark(activity, req.mark);
+		this.validateActivityMark(activity, req.mark);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -518,10 +498,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 		);
 
 		// Socket messages
-		const marker = await dbUsers.getUserByZid(user.zid);
-		if (marker === null) {
-			throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
-		}
+		const marker = await this.getUser(user.zid);
 
 		tutorMessages.markAmended(res.classCode, req.id, marker.name, req.mark);
 	}
@@ -532,19 +509,14 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			throw new BadRequestError('Request not found');
 		}
 
-		const activity = await dbActivities.getActivityByCode(request.activityCode);
-		if (activity === null) {
-			throw new InternalServerError(
-				`Couldn't find activity with code ${request.activityCode}`,
-			);
-		}
-
 		// A mark can only be amended on the same day as it was marked
 		if (!isSameDay(request.markedAt, new Date())) {
 			throw new BadRequestError('Too late to amend mark');
 		}
 
-		validateActivityMark(activity, req.mark);
+		const activity = await this.getActivity(request.activityCode);
+
+		this.validateActivityMark(activity, req.mark);
 
 		if (req.mark === request.mark) {
 			throw new BadRequestError('New mark must be different from current mark');
@@ -608,7 +580,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			throw new BadRequestError('Invalid activity');
 		}
 
-		validateActivityMark(activity, req.mark);
+		this.validateActivityMark(activity, req.mark);
 
 		return req;
 	}
@@ -717,55 +689,59 @@ class BackendRequestsService implements BackendService<RequestsService> {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
+	//                                 HELPERS                                  //
+	//////////////////////////////////////////////////////////////////////////////
+
+	private async getUser(zid: string) {
+		const dbUser = await dbUsers.getUserByZid(zid);
+		if (dbUser === null) {
+			throw new InternalServerError(`Couldn't find user with zid ${zid}`);
+		}
+		return toUser(dbUser);
+	}
+
+	private async getStudent(zid: string) {
+		const dbStudent = await dbUsers.getStudentByZid(zid);
+		if (dbStudent === null) {
+			throw new InternalServerError(`Couldn't find user with zid ${zid}`);
+		}
+		return toUser(dbStudent);
+	}
+
+	private async getClass(code: string) {
+		const dbClass = await dbClasses.getClassDetails(code);
+		if (dbClass === null) {
+			throw new InternalServerError(`Couldn't find class with code ${code}`);
+		}
+		return toClass(dbClass);
+	}
+
+	private async getActivity(code: string) {
+		const dbActivity = await dbActivities.getActivityByCode(code);
+		if (dbActivity === null) {
+			throw new InternalServerError(`Couldn't find activity with code ${code}`);
+		}
+		return dbActivity;
+	}
+
+	private async getPendingRequests(zid: string, activityCodes?: string[]) {
+		const requests = await dbRequests.getOpenRequestsByUser(zid, activityCodes);
+
+		return toPendingRequestList(requests);
+	}
+
+	private validateActivityMark(activity: ActivityAsTutor, mark: number) {
+		if (mark < 0 || mark > activity.maxMark) {
+			throw new BadRequestError('Invalid mark');
+		}
+
+		if (/\.\d{3}/.test(String(mark))) {
+			throw new BadRequestError('Invalid mark');
+		}
+	}
 }
 
 const requestsService: BackendService<RequestsService> =
 	new BackendRequestsService();
 
 export default requestsService;
-
-////////////////////////////////////////////////////////////////////////////////
-//                                 HELPERS                                    //
-////////////////////////////////////////////////////////////////////////////////
-
-type RequestDetails = {
-	classCode: string;
-	activityCodes: string[];
-};
-
-async function getPendingRequests(zid: string, activityCodes?: string[]) {
-	const requests = await dbRequests.getOpenRequestsByUser(zid, activityCodes);
-
-	return toPendingRequestList(requests);
-}
-
-async function getRequestDetails(zid: string, request: RequestDetails) {
-	const cls = await dbClasses.getClassDetails(request.classCode);
-	if (cls === null) {
-		throw new InternalServerError(
-			`Couldn't find class with code ${request.classCode}`,
-		);
-	}
-
-	const requests = await dbRequests.getOpenRequestsByUser(
-		zid,
-		request.activityCodes,
-	);
-
-	return {
-		class: toClass(cls),
-		requests: toPendingRequestList(requests),
-	};
-}
-
-function validateActivityMark(activity: ActivityAsTutor, mark: number) {
-	if (mark < 0 || mark > activity.maxMark) {
-		throw new BadRequestError('Invalid mark');
-	}
-
-	if (/\.\d{3}/.test(String(mark))) {
-		throw new BadRequestError('Invalid mark');
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
