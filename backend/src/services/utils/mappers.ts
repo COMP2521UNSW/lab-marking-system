@@ -105,7 +105,6 @@ export function toOpenRequest(request: PendingRequest): OpenRequest {
 		createdAt: request.createdAt,
 		activity: toActivityAsStudent(request.activity),
 		status: request.status,
-		closedAt: request.closedAt,
 	};
 }
 
@@ -123,7 +122,6 @@ export function toPendingRequest(
 		createdAt: request.createdAt,
 		activity: toActivityAsTutor(request.activity),
 		status: 'pending',
-		closedAt: null,
 		claimer: request.marker,
 	};
 }
@@ -152,7 +150,6 @@ export function toMarkingRequestAsTutor(
 			return {
 				...base,
 				status: 'pending',
-				closedAt: null,
 				claimer: request.marker,
 			};
 		case 'withdrawn':

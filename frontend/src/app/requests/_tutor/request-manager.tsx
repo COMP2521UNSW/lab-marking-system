@@ -231,7 +231,7 @@ function sortRequests(students: StudentWithRequests[]) {
 		const closed: Exclude<MarkingRequestAsTutor, PendingRequest>[] = [];
 
 		for (const req of stu.requests) {
-			if (req.closedAt === null) {
+			if (req.status === 'pending') {
 				open.push(req);
 			} else {
 				closed.push(req);
