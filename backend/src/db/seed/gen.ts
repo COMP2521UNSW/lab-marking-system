@@ -2,10 +2,10 @@ import util from 'util';
 
 import { faker } from '@faker-js/faker';
 
+import type { Time } from '@workspace/types/time';
 import type { UserRole } from '@workspace/types/users';
 
 import type { classesTable, usersTable } from '@/db/db';
-import type { Time } from '@/types/time';
 
 faker.seed(1);
 
@@ -46,9 +46,9 @@ export function genClasses(): (typeof classesTable.$inferInsert)[] {
 
 	const classes = [];
 	for (const [dayOfWeek, letter] of days) {
-		for (let i = 0; i <= 22; ++i) {
+		for (let i = 0; i <= 23; ++i) {
 			const startHour = i.toString().padStart(2, '0');
-			const endHour = (i + 2).toString().padStart(2, '0');
+			const endHour = ((i + 2) % 24).toString().padStart(2, '0');
 
 			const lab = labs[labIndex];
 			classes.push({
@@ -57,6 +57,7 @@ export function genClasses(): (typeof classesTable.$inferInsert)[] {
 				labStartTime: `${startHour}:00` as Time,
 				labEndTime: `${endHour}:00` as Time,
 				labLocation: lab === 'Online' ? 'Online' : `${lab} Lab`,
+				weeks: '1-5,7-10',
 			});
 
 			labIndex = (labIndex + 1) % labs.length;

@@ -56,10 +56,10 @@ export const classesTable = sqliteTable(
 		labStartTime: time().notNull(),
 		labEndTime: time().notNull(),
 		labLocation: text().notNull(),
+		weeks: text(), // e.g., '1-5,7,9-10' (NULL = all weeks)
 	},
 	(table) => [
 		check('dayOfWeek_check', sql`${table.dayOfWeek} BETWEEN 1 AND 7`),
-		check('labTime_check', sql`${table.labStartTime} < ${table.labEndTime}`),
 	],
 );
 

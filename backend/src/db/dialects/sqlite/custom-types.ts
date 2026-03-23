@@ -5,9 +5,8 @@ import type {
 	ManualRequestStatus,
 	RequestStatus,
 } from '@workspace/types/requests';
+import type { Time } from '@workspace/types/time';
 import type { UserRole } from '@workspace/types/users';
-
-import type { Time } from '@/types/time';
 
 const boolean = customType<{
 	data: boolean;

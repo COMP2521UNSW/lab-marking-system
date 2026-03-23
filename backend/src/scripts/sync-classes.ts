@@ -6,10 +6,10 @@ import * as cheerio from 'cheerio';
 import { sql } from 'drizzle-orm';
 
 import { COURSE_CODE, SESSION } from '@workspace/config';
+import type { Time } from '@workspace/types/time';
 
 import { classesTable, db } from '@/db/db';
 import { logger } from '@/lib/logger';
-import type { Time } from '@/types/time';
 
 import { parseError } from './utils';
 
@@ -61,6 +61,9 @@ async function parseClasses(url: string): Promise<Class[]> {
 
 				const labDetails = $($(cells.get(3)).find('.row').get(1)).find('div');
 
+				// E.g., Week 1-5,7-10
+				const weeks = $(labDetails.get(0)).text().split('Week ')[1];
+
 				// E.g., Mon 12:00 - 14:00
 				const labTime = $(labDetails.get(1)).text();
 
@@ -92,6 +95,7 @@ async function parseClasses(url: string): Promise<Class[]> {
 					labStartTime,
 					labEndTime,
 					labLocation,
+					weeks,
 				};
 			})
 			.toArray();
@@ -114,6 +118,7 @@ async function insertClasses(classes: Class[]) {
 				labStartTime: sql`excluded."labStartTime"`,
 				labEndTime: sql`excluded."labEndTime"`,
 				labLocation: sql`excluded."labLocation"`,
+				weeks: sql`excluded.weeks`,
 			},
 		});
 }
