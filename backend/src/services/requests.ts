@@ -38,11 +38,10 @@ import { toLocalDate, toLocalStartOfDay } from '@/lib/date';
 import { BadRequestError, InternalServerError } from '@/lib/errors';
 import { logger } from '@/lib/logger';
 import activitiesService from '@/services/activities';
+import timeService from '@/services/time';
 import * as studentMessages from '@/sockets/student-messages';
 import * as tutorMessages from '@/sockets/tutor-messages';
 import type { BackendService } from '@/types/utils';
-
-import { getCurrentTime, getCurrentWeek } from './utils';
 
 class BackendRequestsService implements BackendService<RequestsService> {
 	//////////////////////////////////////////////////////////////////////////////
@@ -161,7 +160,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		const earlyRequestMinutes = await dbSettings.getEarlyRequestMinutes();
 
-		const now = toLocalDate(getCurrentTime());
+		const now = toLocalDate(timeService.getCurrentTime());
 
 		const day = getISODay(now);
 		const time = format(now, 'HH:mm');
@@ -498,7 +497,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			);
 		}
 
-		const week = await getCurrentWeek();
+		const week = await timeService.getCurrentWeek();
 		if (week < activity.startWeek || week > activity.endWeek) {
 			throw new BadRequestError(
 				`${request.activityCode} cannot be marked in week ${week}`,

@@ -1,19 +1,15 @@
 import '@/lib/polyfills/group-by';
 
-import { addDays } from 'date-fns';
-
 import type { ClassesService } from '@workspace/types/services/classes';
 import type { SessionUser } from '@workspace/types/users';
 
 import { get } from '@/cache/cache';
 import * as dbClasses from '@/db/classes';
-import * as dbSettings from '@/db/settings';
 import { toLocalDayAndTime } from '@/lib/date';
 import { addMinutes, subtractMinutes } from '@/lib/time';
+import timeService from '@/services/time';
 import type { Time } from '@/types/time';
 import type { BackendService } from '@/types/utils';
-
-import { getCurrentTime } from './utils';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -58,19 +54,19 @@ export async function getActiveClassesForTutor() {
  * (in < 15 minutes) and classes which have ended recently (up to 1 hour ago)
  */
 async function getAllActiveClasses() {
-	const date = getCurrentTime();
+	const date = timeService.getCurrentTime();
 
 	const { day, time } = toLocalDayAndTime(date);
 
 	return await get(
 		`getClassesByTime:${day}:${time}`,
-		() => getClassesByTime(date, day, time),
+		() => getClassesByTime(day, time),
 		60,
 	);
 }
 
-async function getClassesByTime(date: Date, localDay: number, localTime: Time) {
-	if (!(await termInProgress(date))) {
+async function getClassesByTime(localDay: number, localTime: Time) {
+	if (!(await timeService.termInProgress())) {
 		return {
 			current: [],
 			upcoming: [],
@@ -108,13 +104,4 @@ async function getClassesByDayAndTime(day: number, time: Time) {
 		upcoming: groupedClasses.upcoming ?? [],
 		recent: groupedClasses.recent ?? [],
 	};
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-async function termInProgress(date: Date) {
-	const { startDate, endDate } = await dbSettings.getTermDates();
-
-	// endDate is inclusive, so add 1 day before comparing
-	return date >= startDate && date < addDays(endDate, 1);
 }
