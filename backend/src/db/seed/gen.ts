@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 
 import type { UserRole } from '@workspace/types/users';
 
-import { classesTable, usersTable } from '@/db/db';
+import type { classesTable, usersTable } from '@/db/db';
 import type { Time } from '@/types/time';
 
 faker.seed(1);

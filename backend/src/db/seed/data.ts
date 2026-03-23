@@ -1,4 +1,4 @@
-import { activitiesTable, settingsTable } from '@/db/db';
+import type { activitiesTable, settingsTable } from '@/db/db';
 
 import { genClasses, genUsers } from './gen';
 

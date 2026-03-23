@@ -3,7 +3,6 @@ import * as React from 'react';
 import type {
 	MarkingRequestAsStudent,
 	MarkingRequestAsTutor,
-	RequestStatus,
 } from '@workspace/types/requests';
 
 import { TimeAgo } from '@/components/ui/base/time-ago';

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import { ActivityWithStatus } from '@workspace/types/activities';
+import type { ActivityWithStatus } from '@workspace/types/activities';
 import type { Class } from '@workspace/types/classes';
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 

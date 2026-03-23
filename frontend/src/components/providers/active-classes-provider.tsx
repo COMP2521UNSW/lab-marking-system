@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ActiveClasses } from '@workspace/types/classes';
+import type { ActiveClasses } from '@workspace/types/classes';
 
 import classesService from '@/services/classes';
 
