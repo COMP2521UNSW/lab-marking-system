@@ -1,5 +1,5 @@
 import type { ActivityAsTutor } from '../activities';
-import type { RequestLogEvent } from '../logs';
+import type { LogEvent } from '../logs';
 import type { StudentDetails } from '../users';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,4 +40,4 @@ export type GetStudentLogsRequestData = {
 	zid: string;
 };
 
-export type GetStudentLogsResponseData = RequestLogEvent[];
+export type GetStudentLogsResponseData = LogEvent[];

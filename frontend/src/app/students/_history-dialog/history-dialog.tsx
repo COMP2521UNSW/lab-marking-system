@@ -4,7 +4,7 @@ import { ChevronRightIcon } from 'lucide-react';
 import * as React from 'react';
 
 import type { ActivityAsTutor } from '@workspace/types/activities';
-import type { RequestLogEvent } from '@workspace/types/logs';
+import type { LogEvent } from '@workspace/types/logs';
 import type { Student } from '@workspace/types/users';
 
 import { Button } from '@/components/ui/base/button';
@@ -37,7 +37,7 @@ type DataState =
 	  }
 	| {
 			loaded: true;
-			logs: RequestLogEvent[];
+			logs: LogEvent[];
 	  };
 
 export function HistoryDialog({
@@ -126,7 +126,7 @@ export function HistoryDialog({
 	);
 }
 
-function LogTableRow({ event }: { event: RequestLogEvent }) {
+function LogTableRow({ event }: { event: LogEvent }) {
 	const [expanded, setExpanded] = React.useState(false);
 
 	const rowData = eventToRowData(event);
@@ -195,7 +195,7 @@ function LogData({ children }: { children: React.ReactNode }) {
 }
 
 // prettier-ignore
-function eventToRowData(event: RequestLogEvent): [
+function eventToRowData(event: LogEvent): [
   eventType: string,
   activity: ActivityAsTutor | null,
   classCode: string | null,

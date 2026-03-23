@@ -1,4 +1,4 @@
-import type { RequestLogEvent } from '@workspace/types/logs';
+import type { LogEvent } from '@workspace/types/logs';
 import type {
 	GetStudentLogsRequestData,
 	GetStudentMarksRequestData,
@@ -44,7 +44,7 @@ class BackendStudentsService implements BackendService<StudentsService> {
 		const logs = await dbLogs.getStudentLogs(req.zid);
 
 		// logs are expected to satisfy the RequestLogEvent union type
-		return logs as RequestLogEvent[];
+		return logs as LogEvent[];
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
