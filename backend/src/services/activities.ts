@@ -5,9 +5,13 @@ import * as dbActivities from '@/db/activities';
 import timeService from '@/services/time';
 import type { BackendService } from '@/types/utils';
 
+import { toActivityAsStudent, toActivityAsTutorList } from './utils/mappers';
+
 class BackendActivitiesService implements BackendService<ActivitiesService> {
 	async getAllActivities(user: SessionUser) {
-		return await dbActivities.getAllActivities();
+		const activities = await dbActivities.getAllActivities();
+
+		return toActivityAsTutorList(activities);
 	}
 
 	async getActiveActivitiesForUser(user: SessionUser) {
@@ -19,7 +23,7 @@ class BackendActivitiesService implements BackendService<ActivitiesService> {
 		);
 
 		return rows.map((row) => ({
-			activity: row.activity,
+			activity: toActivityAsStudent(row.activity),
 			marked: row.mark !== null,
 		}));
 	}

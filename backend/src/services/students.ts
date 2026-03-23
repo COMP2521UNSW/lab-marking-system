@@ -1,4 +1,3 @@
-import type { LogEvent } from '@workspace/types/logs';
 import type {
 	GetStudentLogsRequestData,
 	GetStudentMarksRequestData,
@@ -13,13 +12,21 @@ import * as dbStudents from '@/db/users';
 import { BadRequestError } from '@/lib/errors';
 import type { BackendService } from '@/types/utils';
 
+import {
+	toLogEventList,
+	toMarkEntryList,
+	toStudentDetailsList,
+} from './utils/mappers';
+
 class BackendStudentsService implements BackendService<StudentsService> {
 	//////////////////////////////////////////////////////////////////////////////
 
 	async searchStudents(user: SessionUser, req: SearchStudentsRequestData) {
 		req = this.validateSearchStudents(req);
 
-		return await dbStudents.searchStudents(req.q);
+		const students = await dbStudents.searchStudents(req.q);
+
+		return toStudentDetailsList(students);
 	}
 
 	private validateSearchStudents(req: SearchStudentsRequestData) {
@@ -35,7 +42,9 @@ class BackendStudentsService implements BackendService<StudentsService> {
 	//////////////////////////////////////////////////////////////////////////////
 
 	async getStudentMarks(user: SessionUser, req: GetStudentMarksRequestData) {
-		return await dbMarks.getStudentMarks(req.zid);
+		const markEntries = await dbMarks.getStudentMarks(req.zid);
+
+		return toMarkEntryList(markEntries);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -43,8 +52,7 @@ class BackendStudentsService implements BackendService<StudentsService> {
 	async getStudentLogs(user: SessionUser, req: GetStudentLogsRequestData) {
 		const logs = await dbLogs.getStudentLogs(req.zid);
 
-		// logs are expected to satisfy the RequestLogEvent union type
-		return logs as LogEvent[];
+		return toLogEventList(logs);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////

@@ -11,11 +11,15 @@ import timeService from '@/services/time';
 import type { Time } from '@/types/time';
 import type { BackendService } from '@/types/utils';
 
+import { toClassList } from './utils/mappers';
+
 ////////////////////////////////////////////////////////////////////////////////
 
 class BackendClassesService implements BackendService<ClassesService> {
 	async getAllClasses(user: SessionUser) {
-		return await dbClasses.getAllClasses();
+		const classes = await dbClasses.getAllClasses();
+
+		return toClassList(classes);
 	}
 
 	async getActiveClasses(user: SessionUser) {
@@ -100,8 +104,8 @@ async function getClassesByDayAndTime(day: number, time: Time) {
 	});
 
 	return {
-		current: groupedClasses.current ?? [],
-		upcoming: groupedClasses.upcoming ?? [],
-		recent: groupedClasses.recent ?? [],
+		current: toClassList(groupedClasses.current ?? []),
+		upcoming: toClassList(groupedClasses.upcoming ?? []),
+		recent: toClassList(groupedClasses.recent ?? []),
 	};
 }

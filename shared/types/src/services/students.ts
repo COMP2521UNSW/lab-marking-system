@@ -1,5 +1,5 @@
-import type { ActivityAsTutor } from '../activities';
 import type { LogEvent } from '../logs';
+import type { MarkEntry } from '../marks';
 import type { StudentDetails } from '../users';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,11 +30,7 @@ export type GetStudentMarksRequestData = {
 	zid: string;
 };
 
-export type GetStudentMarksResponseData = {
-	activity: ActivityAsTutor;
-	mark: number | null;
-	markedAt: Date | null;
-}[];
+export type GetStudentMarksResponseData = MarkEntry[];
 
 export type GetStudentLogsRequestData = {
 	zid: string;

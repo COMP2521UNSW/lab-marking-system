@@ -5,13 +5,6 @@ import { addMinutes, format, getISODay, isSameDay } from 'date-fns';
 import { MAX_REASON_LEN } from '@workspace/lib/constants';
 import type { ActivityAsTutor } from '@workspace/types/activities';
 import type {
-	ManualRequest,
-	MarkingRequestAsStudent,
-	MarkingRequestAsTutor,
-	OpenRequest,
-	PendingRequest,
-} from '@workspace/types/requests';
-import type {
 	AmendMarkRequestData,
 	ApproveManualRequestRequestData,
 	ClaimRequestRequestData,
@@ -43,6 +36,16 @@ import * as studentMessages from '@/sockets/student-messages';
 import * as tutorMessages from '@/sockets/tutor-messages';
 import type { BackendService } from '@/types/utils';
 
+import {
+	toClass,
+	toManualRequest,
+	toManualRequestList,
+	toMarkingRequestAsTutorList,
+	toOpenRequestList,
+	toPendingRequestList,
+	toUser,
+} from './utils/mappers';
+
 class BackendRequestsService implements BackendService<RequestsService> {
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -55,10 +58,10 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			};
 		}
 
-		const requests = await dbRequests.getOpenRequestsByUser(user.zid);
+		const requests = await getPendingRequests(user.zid);
 		return {
-			class: currClass,
-			requests: toStudentRequests(requests),
+			class: toClass(currClass),
+			requests: toOpenRequestList(requests),
 		};
 	}
 
@@ -115,30 +118,23 @@ class BackendRequestsService implements BackendService<RequestsService> {
 		////////////////////
 		// Socket messages
 
-		const student = await dbUsers.getStudentByZid(user.zid);
-		if (student === null) {
+		const dbStudent = await dbUsers.getStudentByZid(user.zid);
+		if (dbStudent === null) {
 			throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
 		}
+		const student = toUser(dbStudent);
 
 		const { class: cls, requests } = await getRequestDetails(user.zid, req);
 
-		studentMessages.requestsUpdated(
-			user.zid,
-			cls,
-			toStudentRequests<OpenRequest>(requests),
-		);
+		studentMessages.requestsUpdated(user.zid, cls, toOpenRequestList(requests));
 
 		// class changed
 		if (currClass !== null && req.classCode !== currClass.code) {
-			const requests = await getOpenRequests(user.zid);
+			const requests = await getPendingRequests(user.zid);
 			tutorMessages.studentLeft(currClass.code, user.zid);
 			tutorMessages.studentJoined(req.classCode, student, requests);
 		} else {
-			tutorMessages.requestsCreated(
-				cls.code,
-				student,
-				toTutorRequests<PendingRequest>(requests),
-			);
+			tutorMessages.requestsCreated(cls.code, student, requests);
 		}
 	}
 
@@ -292,27 +288,10 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			(request) => request.student.zid,
 		);
 
-		return Array.from(groupedRequests.entries()).map(([zid, requests]) => {
-			return {
-				student: requests[0].student,
-				requests: requests.map(({ student, marker, ...request }) => {
-					// request is expected to satisfy the MarkingRequestAsTutor union type
-					return (
-						request.status === 'pending'
-							? { ...request, claimer: marker }
-							: request.status === 'declined'
-								? {
-										...request,
-										tutorName: marker !== null ? marker.name : null,
-									}
-								: {
-										...request,
-										markerName: marker !== null ? marker.name : null,
-									}
-					) as MarkingRequestAsTutor;
-				}),
-			};
-		});
+		return Array.from(groupedRequests.entries()).map(([zid, requests]) => ({
+			student: toUser(requests[0].student),
+			requests: toMarkingRequestAsTutorList(requests),
+		}));
 	}
 
 	private async validateGetRequestsByClass(req: GetRequestsByClassRequestData) {
@@ -336,16 +315,13 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		logger.info('Request successfully claimed', { user });
 
-		const marker = await dbUsers.getUserByZid(user.zid);
-		if (marker === null) {
+		const dbMarker = await dbUsers.getUserByZid(user.zid);
+		if (dbMarker === null) {
 			throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
 		}
 
 		// Socket messages
-		tutorMessages.requestClaimed(res.classCode, req.id, {
-			zid: marker.zid,
-			name: marker.name,
-		});
+		tutorMessages.requestClaimed(res.classCode, req.id, toUser(dbMarker));
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -642,8 +618,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 	async getAllManualRequests(user: SessionUser) {
 		const requests = await dbRequests.getManualRequests();
 
-		// requests are expected to satisfy the ManualRequest union type
-		return requests as ManualRequest[];
+		return toManualRequestList(requests);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -684,8 +659,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		const request = (await dbRequests.getManualRequests([req.id]))[0];
 
-		// requests is expected to satisfy the ManualRequest union type
-		return request as ManualRequest;
+		return toManualRequest(request);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -723,8 +697,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		const request = (await dbRequests.getManualRequests([req.id]))[0];
 
-		// requests is expected to satisfy the ManualRequest union type
-		return request as ManualRequest;
+		return toManualRequest(request);
 	}
 
 	private validateDenyManualRequest(req: DenyManualRequestRequestData) {
@@ -760,10 +733,10 @@ type RequestDetails = {
 	activityCodes: string[];
 };
 
-async function getOpenRequests(zid: string, activityCodes?: string[]) {
+async function getPendingRequests(zid: string, activityCodes?: string[]) {
 	const requests = await dbRequests.getOpenRequestsByUser(zid, activityCodes);
 
-	return toTutorRequests<PendingRequest>(requests);
+	return toPendingRequestList(requests);
 }
 
 async function getRequestDetails(zid: string, request: RequestDetails) {
@@ -780,46 +753,9 @@ async function getRequestDetails(zid: string, request: RequestDetails) {
 	);
 
 	return {
-		class: {
-			code: cls.code,
-			labLocation: cls.labLocation,
-		},
-		requests,
+		class: toClass(cls),
+		requests: toPendingRequestList(requests),
 	};
-}
-
-function toStudentRequests<
-	T extends MarkingRequestAsStudent = MarkingRequestAsStudent,
->(requests: Awaited<ReturnType<typeof dbRequests.getOpenRequestsByUser>>) {
-	return requests.map(
-		(request) =>
-			({
-				id: request.id,
-				activity: {
-					code: request.activity.code,
-					name: request.activity.name,
-				},
-				createdAt: request.createdAt,
-				status: request.status,
-				closedAt: request.closedAt,
-			}) as T,
-	);
-}
-
-function toTutorRequests<
-	T extends MarkingRequestAsTutor = MarkingRequestAsTutor,
->(requests: Awaited<ReturnType<typeof dbRequests.getOpenRequestsByUser>>) {
-	return requests.map(
-		(request) =>
-			({
-				id: request.id,
-				activity: request.activity,
-				createdAt: request.createdAt,
-				status: request.status,
-				closedAt: request.closedAt,
-				claimer: request.marker,
-			}) as T,
-	);
 }
 
 function validateActivityMark(activity: ActivityAsTutor, mark: number) {

@@ -12,6 +12,8 @@ import { InternalServerError, UnauthorizedError } from '@/lib/errors';
 import { logger } from '@/lib/logger';
 import type { BackendService } from '@/types/utils';
 
+import { toUserDetails } from './utils/mappers';
+
 class BackendAuthService implements BackendService<AuthService> {
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -36,12 +38,7 @@ class BackendAuthService implements BackendService<AuthService> {
 		} else {
 			logger.info('Logging in', { user });
 
-			return {
-				zid: user.zid,
-				name: user.name,
-				role: user.role,
-				classCode: user.classCode,
-			};
+			return toUserDetails(user);
 		}
 	}
 
@@ -80,12 +77,7 @@ class BackendAuthService implements BackendService<AuthService> {
 			throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
 		}
 
-		return {
-			zid: dbUser.zid,
-			name: dbUser.name,
-			role: dbUser.role,
-			classCode: dbUser.classCode,
-		};
+		return toUserDetails(dbUser);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////

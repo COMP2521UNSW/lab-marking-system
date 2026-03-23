@@ -1,4 +1,4 @@
-import type { Class, ClassDetails } from '../classes';
+import type { Class } from '../classes';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +9,7 @@ export interface ClassesService {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export type GetAllClassesResponseData = ClassDetails[];
+export type GetAllClassesResponseData = Class[];
 
 export type GetActiveClassesResponseData = {
 	current: Class[];
