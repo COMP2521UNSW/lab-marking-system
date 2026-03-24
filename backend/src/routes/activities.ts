@@ -13,11 +13,10 @@ router.get(
 	activitiesController.getAllActivities,
 );
 
-/* superseded by /pages/requests */
-// router.get(
-// 	'/activities/active', //
-// 	requireLogin,
-// 	activitiesController.getActiveActivitiesForUser,
-// );
+router.get(
+	'/activities/active', //
+	requireLogin,
+	activitiesController.getActiveActivitiesForUser,
+);
 
 export { router };
