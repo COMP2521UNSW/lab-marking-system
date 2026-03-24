@@ -67,10 +67,6 @@ class BackendAuthService implements BackendService<AuthService> {
 	//////////////////////////////////////////////////////////////////////////////
 
 	async getUser(user: SessionUser) {
-		if (user === null) {
-			return null;
-		}
-
 		const dbUser = await dbUsers.getUserByZid(user.zid);
 
 		if (dbUser === null) {

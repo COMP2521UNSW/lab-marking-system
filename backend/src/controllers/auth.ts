@@ -46,8 +46,7 @@ const logOut: RequestHandler = async (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////
 
 const getUser: RequestHandler = async (req, res) => {
-	const user =
-		req.maybeUser === null ? null : await authService.getUser(req.maybeUser);
+	const user = req.maybeUser && (await authService.getUser(req.maybeUser));
 
 	res.status(200).json(user);
 };
