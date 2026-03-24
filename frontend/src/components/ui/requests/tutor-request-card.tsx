@@ -128,7 +128,7 @@ function RequestRow({
 			</Text>
 
 			{request.status === 'pending' ? (
-				<div className="flex flex-col xxs:flex-row xxs:flex-wrap xs:flex-nowrap gap-2 items-end xxs:justify-center xs:justify-self-end xxs:w-38 xs:w-auto  whitespace-nowrap">
+				<div className="flex flex-col xxs:flex-row xxs:flex-wrap xs:flex-nowrap gap-2 items-end xxs:justify-center xs:justify-self-end xxs:w-38 xs:w-auto whitespace-nowrap">
 					<Button
 						variant="outline"
 						className="px-2 h-8 w-18"

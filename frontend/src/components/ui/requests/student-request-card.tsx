@@ -25,9 +25,11 @@ export function StudentRequestCard({
 			)}
 		>
 			<Text className="wrap-anywhere">{request.activity.name}</Text>
-			<Text className="text-center text-muted-foreground">
+
+			<Text className="text-center text-muted-foreground leading-4.5">
 				<StudentRequestStatus request={request} />
 			</Text>
+
 			<div className="flex justify-end">
 				<Button
 					variant="danger"
