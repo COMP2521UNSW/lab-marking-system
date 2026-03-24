@@ -20,19 +20,3 @@ async function dbGetTermDates() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-export async function getEarlyRequestMinutes() {
-	return await get('getEarlyRequestMinutes', dbGetEarlyRequestMinutes);
-}
-
-async function dbGetEarlyRequestMinutes() {
-	const rows = await db
-		.select({
-			earlyRequestMinutes: settingsTable.earlyRequestMinutes,
-		})
-		.from(settingsTable);
-
-	return rows[0].earlyRequestMinutes;
-}
-
-////////////////////////////////////////////////////////////////////////////////

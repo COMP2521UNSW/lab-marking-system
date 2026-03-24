@@ -6,7 +6,6 @@ export const fakeSettings: (typeof settingsTable.$inferInsert)[] = [
 	{
 		termStartDate: new Date(2026, 1, 16),
 		termEndDate: new Date(2026, 3, 24),
-		earlyRequestMinutes: 15,
 	},
 ];
 

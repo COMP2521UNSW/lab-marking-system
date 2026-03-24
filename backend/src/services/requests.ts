@@ -1,6 +1,6 @@
 import '@/lib/polyfills/group-by';
 
-import { addMinutes, format, getISODay, isSameDay } from 'date-fns';
+import { format, getISODay, isSameDay } from 'date-fns';
 
 import { MAX_REASON_LEN } from '@workspace/lib/constants';
 import type { ActivityAsTutor } from '@workspace/types/activities';
@@ -25,7 +25,6 @@ import * as dbClasses from '@/db/classes';
 import * as dbLogs from '@/db/logs';
 import * as dbMarks from '@/db/marks';
 import * as dbRequests from '@/db/requests';
-import * as dbSettings from '@/db/settings';
 import * as dbUsers from '@/db/users';
 import { toLocalDate, toLocalStartOfDay } from '@/lib/date';
 import { BadRequestError, InternalServerError } from '@/lib/errors';
@@ -149,21 +148,16 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			throw new BadRequestError('Invalid class');
 		}
 
-		const earlyRequestMinutes = await dbSettings.getEarlyRequestMinutes();
-
 		const now = toLocalDate(getDate());
 
 		const day = getISODay(now);
 		const time = format(now, 'HH:mm');
-		const upcomingTime = format(addMinutes(now, earlyRequestMinutes), 'HH:mm');
 
 		if (
 			!(
 				day === classDetails.dayOfWeek &&
-				((time >= classDetails.labStartTime &&
-					time < classDetails.labEndTime) ||
-					(upcomingTime >= classDetails.labStartTime &&
-						upcomingTime < classDetails.labEndTime))
+				time >= classDetails.labStartTime &&
+				time < classDetails.labEndTime
 			)
 		) {
 			throw new BadRequestError('Class is not open for requests', {
