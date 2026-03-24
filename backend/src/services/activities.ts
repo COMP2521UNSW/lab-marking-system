@@ -2,10 +2,10 @@ import type { ActivitiesService } from '@workspace/types/services/activities';
 import type { SessionUser } from '@workspace/types/users';
 
 import * as dbActivities from '@/db/activities';
-import timeService from '@/services/time';
 import type { BackendService } from '@/types/utils';
 
 import { toActivityAsStudent, toActivityAsTutorList } from './utils/mappers';
+import { getCurrentWeek } from './utils/term';
 
 class BackendActivitiesService implements BackendService<ActivitiesService> {
 	async getAllActivities(user: SessionUser) {
@@ -15,7 +15,7 @@ class BackendActivitiesService implements BackendService<ActivitiesService> {
 	}
 
 	async getActiveActivitiesForUser(user: SessionUser) {
-		const week = await timeService.getCurrentWeek();
+		const week = await getCurrentWeek();
 
 		const rows = await dbActivities.getActiveActivitiesAndMarksForUser(
 			week,

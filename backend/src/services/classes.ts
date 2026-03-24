@@ -7,11 +7,12 @@ import { get } from '@/cache/cache';
 import * as dbClasses from '@/db/classes';
 import { toLocalDayAndTime } from '@/lib/date';
 import { addMinutes, subtractMinutes } from '@/lib/time';
-import timeService from '@/services/time';
 import type { Time } from '@/types/time';
 import type { BackendService } from '@/types/utils';
 
 import { toClassList } from './utils/mappers';
+import { termInProgress } from './utils/term';
+import { getDate } from './utils/time';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -58,7 +59,7 @@ export async function getActiveClassesForTutor() {
  * (in < 15 minutes) and classes which have ended recently (up to 1 hour ago)
  */
 async function getAllActiveClasses() {
-	const date = timeService.getCurrentTime();
+	const date = getDate();
 
 	const { day, time } = toLocalDayAndTime(date);
 
@@ -70,7 +71,7 @@ async function getAllActiveClasses() {
 }
 
 async function getClassesByTime(localDay: number, localTime: Time) {
-	if (!(await timeService.termInProgress())) {
+	if (!(await termInProgress())) {
 		return {
 			current: [],
 			upcoming: [],
