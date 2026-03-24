@@ -535,12 +535,15 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		req = await this.validateCreateManualRequest(req);
 
+		const timestamp = new Date();
+
 		const res = await dbRequests.createManualRequest(
 			req.studentZid,
 			req.activityCode,
 			req.reason,
 			req.mark,
 			user.zid,
+			timestamp,
 		);
 
 		logger.info('Request successfully created', { user, res: { id: res.id } });
@@ -551,7 +554,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			user.zid,
 			req.mark,
 			req.reason,
-			res.createdAt,
+			timestamp,
 		);
 	}
 
