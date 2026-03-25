@@ -7,6 +7,10 @@ import { classesTable, db } from './db';
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function getAllClasses() {
+	return await get('getAllClasses', dbGetAllClasses);
+}
+
+async function dbGetAllClasses() {
 	return await db
 		.select()
 		.from(classesTable)
@@ -15,19 +19,6 @@ export async function getAllClasses() {
 			classesTable.labStartTime,
 			classesTable.code,
 		);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export async function getClassesByDay(day: number) {
-	return await get(`getClassesByDay:${day}`, () => dbGetClassesByDay(day));
-}
-
-async function dbGetClassesByDay(day: number) {
-	return await db
-		.select()
-		.from(classesTable)
-		.where(eq(classesTable.dayOfWeek, day));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

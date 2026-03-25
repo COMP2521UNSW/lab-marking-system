@@ -1,6 +1,6 @@
 import '@/lib/polyfills/group-by';
 
-import { format, getISODay, isSameDay } from 'date-fns';
+import { isSameDay } from 'date-fns';
 
 import { MAX_REASON_LEN } from '@workspace/lib/constants';
 import type { ActivityAsTutor } from '@workspace/types/activities';
@@ -26,7 +26,7 @@ import * as dbLogs from '@/db/logs';
 import * as dbMarks from '@/db/marks';
 import * as dbRequests from '@/db/requests';
 import * as dbUsers from '@/db/users';
-import { toLocalDate, toLocalStartOfDay } from '@/lib/date';
+import { toLocalStartOfDay } from '@/lib/date';
 import { BadRequestError, InternalServerError } from '@/lib/errors';
 import { logger } from '@/lib/logger';
 import activitiesService from '@/services/activities';
@@ -34,6 +34,7 @@ import * as studentMessages from '@/sockets/student-messages';
 import * as tutorMessages from '@/sockets/tutor-messages';
 import type { BackendService } from '@/types/utils';
 
+import { classIsOpen } from './utils/classes';
 import {
 	toClass,
 	toManualRequest,
@@ -44,7 +45,6 @@ import {
 	toUser,
 } from './utils/mappers';
 import { getCurrentWeek } from './utils/term';
-import { getDate } from './utils/time';
 
 class BackendRequestsService implements BackendService<RequestsService> {
 	//////////////////////////////////////////////////////////////////////////////
@@ -148,18 +148,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			throw new BadRequestError('Invalid class');
 		}
 
-		const now = toLocalDate(getDate());
-
-		const day = getISODay(now);
-		const time = format(now, 'HH:mm');
-
-		if (
-			!(
-				day === classDetails.dayOfWeek &&
-				time >= classDetails.labStartTime &&
-				time < classDetails.labEndTime
-			)
-		) {
+		if (!(await classIsOpen(classDetails))) {
 			throw new BadRequestError('Class is not open for requests', {
 				logLevel: 'info',
 			});

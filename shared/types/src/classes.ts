@@ -1,3 +1,5 @@
+import type { Time } from './time';
+
 export type Class = {
 	code: string;
 	labLocation: string;
@@ -6,9 +8,10 @@ export type Class = {
 export type ClassDetails = {
 	code: string;
 	dayOfWeek: number;
-	labStartTime: string;
-	labEndTime: string;
+	labStartTime: Time;
+	labEndTime: Time;
 	labLocation: string;
+	weeks: string | null;
 };
 
 export type ActiveClasses = {
