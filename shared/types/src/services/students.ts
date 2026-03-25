@@ -1,6 +1,24 @@
-import type { ActivityAsTutor } from '../activities';
-import type { RequestLogEvent } from '../logs';
+import type { LogEvent } from '../logs';
+import type { MarkEntry } from '../marks';
 import type { StudentDetails } from '../users';
+
+////////////////////////////////////////////////////////////////////////////////
+
+export interface StudentsService {
+	searchStudents(
+		req: SearchStudentsRequestData,
+	): Promise<SearchStudentsResponseData>;
+
+	getStudentMarks(
+		req: GetStudentMarksRequestData,
+	): Promise<GetStudentMarksResponseData>;
+
+	getStudentLogs(
+		req: GetStudentLogsRequestData,
+	): Promise<GetStudentLogsResponseData>;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 export type SearchStudentsRequestData = {
 	q: string;
@@ -12,14 +30,10 @@ export type GetStudentMarksRequestData = {
 	zid: string;
 };
 
-export type GetStudentMarksResponseData = {
-	activity: ActivityAsTutor;
-	mark: number | null;
-	markedAt: Date | null;
-}[];
+export type GetStudentMarksResponseData = MarkEntry[];
 
 export type GetStudentLogsRequestData = {
 	zid: string;
 };
 
-export type GetStudentLogsResponseData = RequestLogEvent[];
+export type GetStudentLogsResponseData = LogEvent[];

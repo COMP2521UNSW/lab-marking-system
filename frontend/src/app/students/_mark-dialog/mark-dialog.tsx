@@ -28,7 +28,7 @@ import { Select } from '@/components/ui/base/select';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
 import { ApiError } from '@/lib/errors';
-import * as requestsService from '@/services/requests';
+import requestsService from '@/services/requests';
 
 export function MarkDialog({
 	open,

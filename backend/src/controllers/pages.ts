@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
 
-import * as pagesService from '@/services/pages';
+import pagesService from '@/services/pages';
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -1,6 +1,15 @@
-import type { Class, ClassDetails } from '../classes';
+import type { Class } from '../classes';
 
-export type GetAllClassesResponseData = ClassDetails[];
+////////////////////////////////////////////////////////////////////////////////
+
+export interface ClassesService {
+	getAllClasses(): Promise<GetAllClassesResponseData>;
+	getActiveClasses(): Promise<GetActiveClassesResponseData>;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export type GetAllClassesResponseData = Class[];
 
 export type GetActiveClassesResponseData = {
 	current: Class[];

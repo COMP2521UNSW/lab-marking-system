@@ -2,8 +2,7 @@ import { format, getISODay, startOfDay } from 'date-fns';
 import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 
 import { LOCAL_TIME_ZONE } from '@workspace/config';
-
-import type { Time } from '@/types/time';
+import type { Time } from '@workspace/types/time';
 
 function toLocalDate(date: Date, timeZone: string = LOCAL_TIME_ZONE) {
 	return toZonedTime(date, timeZone);

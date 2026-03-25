@@ -284,7 +284,6 @@ function StudentRequestCards() {
 						activity: { code: 'lab03', name: 'lab03' },
 						createdAt: new Date(),
 						status: 'pending',
-						closedAt: null,
 					}}
 					onWithdrawClick={() => console.log('withdraw button clicked: lab03')}
 				/>
@@ -295,7 +294,6 @@ function StudentRequestCards() {
 						activity: { code: 'lab04', name: 'lab with a long name' },
 						createdAt: new Date(),
 						status: 'pending',
-						closedAt: null,
 					}}
 					onWithdrawClick={() => console.log('withdraw button clicked: lab04')}
 				/>
@@ -309,7 +307,6 @@ function StudentRequestCards() {
 						},
 						createdAt: new Date(),
 						status: 'pending',
-						closedAt: null,
 					}}
 					onWithdrawClick={() => console.log('withdraw button clicked: lab05')}
 				/>
@@ -323,7 +320,6 @@ function StudentRequestCards() {
 						},
 						createdAt: new Date(),
 						status: 'pending',
-						closedAt: null,
 					}}
 					onWithdrawClick={() => console.log('withdraw button clicked: lab07')}
 				/>
@@ -364,7 +360,6 @@ function TutorRequestCards() {
 							activity: { code: 'lab03', name: 'lab03', maxMark: 5 },
 							createdAt: new Date(),
 							status: 'pending',
-							closedAt: null,
 							claimer: null,
 						},
 						{
@@ -376,7 +371,6 @@ function TutorRequestCards() {
 							},
 							createdAt: new Date(),
 							status: 'pending',
-							closedAt: null,
 							claimer: null,
 						},
 						{
@@ -388,7 +382,6 @@ function TutorRequestCards() {
 							},
 							createdAt: new Date(),
 							status: 'pending',
-							closedAt: null,
 							claimer: null,
 						},
 						{
@@ -400,7 +393,6 @@ function TutorRequestCards() {
 							},
 							createdAt: new Date(),
 							status: 'pending',
-							closedAt: null,
 							claimer: null,
 						},
 					]}

@@ -21,7 +21,7 @@ import { Text } from '@/components/ui/base/typography';
 import { ClassSelect } from '@/components/ui/requests/class-select';
 import { TutorRequestCard } from '@/components/ui/requests/tutor-request-card';
 import { ApiError } from '@/lib/errors';
-import * as classesService from '@/services/classes';
+import classesService from '@/services/classes';
 
 import { AmendDialogProvider, useAmendDialog } from './_amend-dialog/context';
 import {

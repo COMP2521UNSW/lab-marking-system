@@ -19,7 +19,6 @@ interface BaseMarkingRequestAsStudent extends BaseMarkingRequest {
 
 export interface OpenRequest extends BaseMarkingRequestAsStudent {
 	status: 'pending';
-	closedAt: null;
 }
 
 export interface ClosedRequest extends BaseMarkingRequestAsStudent {
@@ -39,7 +38,6 @@ interface BaseMarkingRequestAsTutor extends BaseMarkingRequest {
 
 export interface PendingRequest extends BaseMarkingRequestAsTutor {
 	status: 'pending';
-	closedAt: null;
 	claimer: User | null;
 }
 
@@ -65,9 +63,11 @@ export interface MarkedRequest extends BaseMarkingRequestAsTutor {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export type StudentWithRequests = {
+export type StudentWithRequests<
+	T extends MarkingRequestAsTutor = MarkingRequestAsTutor,
+> = {
 	student: Student;
-	requests: MarkingRequestAsTutor[];
+	requests: T[];
 };
 
 ////////////////////////////////////////////////////////////////////////////////

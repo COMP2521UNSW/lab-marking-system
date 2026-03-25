@@ -3,8 +3,25 @@ import axios from 'axios';
 import { delay } from '@/lib/delay';
 import { ApiError } from '@/lib/errors';
 
+const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+const dateReviver = (key: PropertyKey, value: unknown) => {
+	if (typeof value === 'string' && isoDateRegex.test(value)) {
+		return new Date(value);
+	}
+	return value;
+};
+
 const api = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
+	transformResponse: [
+		(data) => {
+			try {
+				return JSON.parse(data, dateReviver);
+			} catch {
+				return data;
+			}
+		},
+	],
 });
 
 api.interceptors.request.use(async (config) => {

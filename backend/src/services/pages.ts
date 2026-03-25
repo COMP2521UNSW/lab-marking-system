@@ -1,22 +1,29 @@
-import type { GetStudentRequestsPageResponseData } from '@workspace/types/services/pages';
+import type { PagesService } from '@workspace/types/services/pages';
 import type { SessionUser } from '@workspace/types/users';
 
-import * as activitiesService from '@/services/activities';
-import * as classesService from '@/services/classes';
-import * as requestsService from '@/services/requests';
+import activitiesService from '@/services/activities';
+import classesService from '@/services/classes';
+import requestsService from '@/services/requests';
+import type { BackendService } from '@/types/utils';
 
-export async function getStudentRequestsPage(
-	user: SessionUser,
-): Promise<GetStudentRequestsPageResponseData> {
-	const [activeClasses, activeActivities, requestDetails] = await Promise.all([
-		classesService.getActiveClasses(user),
-		activitiesService.getActiveActivitiesForUser(user),
-		requestsService.getActiveRequestsForCurrentUser(user),
-	]);
+class BackendPagesService implements BackendService<PagesService> {
+	async getStudentRequestsPage(user: SessionUser) {
+		const [activeClasses, activeActivities, requestDetails] = await Promise.all(
+			[
+				classesService.getActiveClasses(user),
+				activitiesService.getActiveActivitiesForUser(user),
+				requestsService.getActiveRequestsForCurrentUser(user),
+			],
+		);
 
-	return {
-		activeClasses,
-		activeActivities,
-		requestDetails,
-	};
+		return {
+			activeClasses,
+			activeActivities,
+			requestDetails,
+		};
+	}
 }
+
+const pagesService: BackendService<PagesService> = new BackendPagesService();
+
+export default pagesService;

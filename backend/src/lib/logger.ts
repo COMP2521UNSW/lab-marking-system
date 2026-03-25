@@ -1,6 +1,7 @@
 import path from 'path';
 
 import { format as formatDate } from 'date-fns';
+import { SPLAT } from 'triple-beam';
 import { addColors, createLogger, format, transports } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 
@@ -8,6 +9,10 @@ import type { SessionUser } from '@workspace/types/users';
 
 import { toLocalDate } from '@/lib/date';
 import { rootDir } from '@@/path-config';
+
+type Meta = {
+	user?: SessionUser;
+} & Record<string, object>;
 
 const timestampFormatter = format.timestamp({
 	format: () => {
@@ -17,15 +22,22 @@ const timestampFormatter = format.timestamp({
 });
 
 const printfFormatter = format.printf((info) => {
-	const user = info.user as SessionUser | undefined;
-	const data = info.data as object | undefined;
-	return (
-		`[${info.timestamp as string}]` +
-		` ${info.level}: ` +
-		(user ? `[${user.zid}] ` : '') +
-		`${info.message as string}` +
-		(data ? ` (${JSON.stringify(data)})` : '')
-	);
+	const splat = info[SPLAT] as Record<string, object>[] | undefined;
+	const meta = (splat?.[0] ?? {}) as Meta;
+	const { user, ...data } = meta;
+
+	const segments = [
+		`[${info.timestamp as string}]`,
+		`${info.level}:`,
+		user && `[${user.zid}]`,
+		`${info.message as string}`,
+		Object.keys(data).length > 0 &&
+			`(${Object.values(data)
+				.map((obj) => JSON.stringify(obj))
+				.join(', ')})`,
+	];
+
+	return segments.filter(Boolean).join(' ');
 });
 
 const logger = createLogger({

@@ -1,13 +1,11 @@
 import type { Request, RequestHandler } from 'express';
 import { UAParser } from 'ua-parser-js';
 
-import { devMode } from '@/lib/utils';
-
 const clearOldCookie: RequestHandler = (req, res, next) => {
 	if (canClearCookie(req)) {
 		res.clearCookie('token', {
 			httpOnly: true,
-			secure: !devMode(),
+			secure: true,
 			sameSite: 'none',
 			partitioned: true,
 		});

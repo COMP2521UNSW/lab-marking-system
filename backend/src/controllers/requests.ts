@@ -1,7 +1,8 @@
 import type { RequestHandler } from 'express';
 import z from 'zod';
 
-import * as requestsService from '@/services/requests';
+import { numberSchema } from '@/lib/schemas';
+import requestsService from '@/services/requests';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -26,7 +27,7 @@ const updateRequestsSchema = z
 const updateRequests: RequestHandler = async (req, res) => {
 	const reqData = updateRequestsSchema.parse(req);
 	await requestsService.updateRequests(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +35,7 @@ const updateRequests: RequestHandler = async (req, res) => {
 const withdrawRequestSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 		body: z.object({
 			reason: z.string(),
@@ -48,7 +49,7 @@ const withdrawRequestSchema = z
 const withdrawRequest: RequestHandler = async (req, res) => {
 	const reqData = withdrawRequestSchema.parse(req);
 	await requestsService.withdrawRequest(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +75,7 @@ const getRequestsByClass: RequestHandler = async (req, res) => {
 const claimRequestSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 	})
 	.transform((data) => data.params);
@@ -82,7 +83,7 @@ const claimRequestSchema = z
 const claimRequest: RequestHandler = async (req, res) => {
 	const reqData = claimRequestSchema.parse(req);
 	await requestsService.claimRequest(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +93,7 @@ const unclaimRequestSchema = claimRequestSchema;
 const unclaimRequest: RequestHandler = async (req, res) => {
 	const reqData = unclaimRequestSchema.parse(req);
 	await requestsService.unclaimRequest(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +101,7 @@ const unclaimRequest: RequestHandler = async (req, res) => {
 const declineRequestSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 		body: z.object({
 			reason: z.string(),
@@ -114,7 +115,7 @@ const declineRequestSchema = z
 const declineRequest: RequestHandler = async (req, res) => {
 	const reqData = declineRequestSchema.parse(req);
 	await requestsService.declineRequest(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -122,7 +123,7 @@ const declineRequest: RequestHandler = async (req, res) => {
 const markRequestSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 		body: z.object({
 			mark: z.number(),
@@ -136,7 +137,7 @@ const markRequestSchema = z
 const markRequest: RequestHandler = async (req, res) => {
 	const reqData = markRequestSchema.parse(req);
 	await requestsService.markRequest(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -144,7 +145,7 @@ const markRequest: RequestHandler = async (req, res) => {
 const amendMarkSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 		body: z.object({
 			mark: z.number(),
@@ -158,7 +159,7 @@ const amendMarkSchema = z
 const amendMark: RequestHandler = async (req, res) => {
 	const reqData = amendMarkSchema.parse(req);
 	await requestsService.amendMark(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -177,7 +178,7 @@ const createManualRequestSchema = z
 const createManualRequest: RequestHandler = async (req, res) => {
 	const reqData = createManualRequestSchema.parse(req);
 	await requestsService.createManualRequest(req.user, reqData);
-	res.sendStatus(200);
+	res.sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +193,7 @@ const getAllManualRequests: RequestHandler = async (req, res) => {
 const approveManualRequestSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 	})
 	.transform((data) => ({
@@ -213,7 +214,7 @@ const approveManualRequest: RequestHandler = async (req, res) => {
 const denyManualRequestSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 		body: z.object({
 			reason: z.string(),

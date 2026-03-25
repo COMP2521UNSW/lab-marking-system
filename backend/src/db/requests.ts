@@ -357,6 +357,7 @@ export async function createManualRequest(
 	reason: string,
 	mark: number,
 	tutorZid: string,
+	timestamp: Date,
 ) {
 	const rows = await db
 		.insert(manualRequestsTable)
@@ -366,12 +367,11 @@ export async function createManualRequest(
 			reason,
 			mark,
 			markerZid: tutorZid,
-			createdAt: new Date(),
+			createdAt: timestamp,
 			status: 'pending',
 		})
 		.returning({
 			id: manualRequestsTable.id,
-			createdAt: manualRequestsTable.createdAt,
 		});
 
 	return rows[0];

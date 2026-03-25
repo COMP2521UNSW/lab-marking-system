@@ -13,6 +13,11 @@ const eslintConfig = defineConfig([
 		'build/**',
 		'next-env.d.ts',
 	]),
+	{
+		rules: {
+			'@typescript-eslint/consistent-type-imports': 'warn',
+		},
+	},
 ]);
 
 export default eslintConfig;

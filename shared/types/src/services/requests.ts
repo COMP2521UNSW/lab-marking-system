@@ -5,10 +5,46 @@ import type {
 	StudentWithRequests,
 } from '../requests';
 
+////////////////////////////////////////////////////////////////////////////////
+
+export interface RequestsService {
+	getActiveRequestsForCurrentUser(): Promise<GetActiveRequestsForCurrentUserResponseData>;
+
+	updateRequests(req: UpdateRequestsRequestData): Promise<void>;
+
+	withdrawRequest(req: WithdrawRequestRequestData): Promise<void>;
+
+	getRequestsByClass(
+		req: GetRequestsByClassRequestData,
+	): Promise<GetRequestsByClassResponseData>;
+
+	claimRequest(req: ClaimRequestRequestData): Promise<void>;
+
+	unclaimRequest(req: UnclaimRequestRequestData): Promise<void>;
+
+	declineRequest(req: DeclineRequestRequestData): Promise<void>;
+
+	markRequest(req: MarkRequestRequestData): Promise<void>;
+
+	amendMark(req: AmendMarkRequestData): Promise<void>;
+
+	createManualRequest(req: CreateManualRequestRequestData): Promise<void>;
+
+	getAllManualRequests(): Promise<ManualRequest[]>;
+
+	approveManualRequest(
+		req: ApproveManualRequestRequestData,
+	): Promise<ManualRequest>;
+
+	denyManualRequest(req: DenyManualRequestRequestData): Promise<ManualRequest>;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 export type GetActiveRequestsForCurrentUserResponseData =
 	| {
 			class: null;
-			requests: [];
+			requests: never[];
 	  }
 	| {
 			class: Class;

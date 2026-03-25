@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import type { UserDetails } from '@workspace/types/users';
 
-import * as authService from '@/services/auth';
+import authService from '@/services/auth';
 
 interface AuthContextType {
 	user: UserDetails | null;

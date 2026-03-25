@@ -2,10 +2,14 @@ import * as React from 'react';
 
 import type { ActivityWithStatus } from '@workspace/types/activities';
 import type { Class } from '@workspace/types/classes';
-import type { MarkingRequestAsStudent } from '@workspace/types/requests';
+import type {
+	MarkingRequestAsStudent,
+	OpenRequest,
+} from '@workspace/types/requests';
+import type { JSONified } from '@workspace/types/utils';
 
 import { useStudentSocket } from '@/components/providers/socket-provider';
-import * as pagesService from '@/services/pages';
+import pagesService from '@/services/pages';
 
 import { useDeclinedDialog } from './_declined-dialog/context';
 
@@ -45,9 +49,16 @@ export function useRequestManager(
 
 		socket.on(
 			'requestsUpdated', //
-			(cls: Class, newRequests: MarkingRequestAsStudent[]) => {
+			(cls: Class, newRequests: JSONified<OpenRequest[]>) => {
 				setAttendedClass(cls);
-				setRequests((requests) => requests.concat(newRequests));
+				setRequests((requests) =>
+					requests.concat(
+						newRequests.map((request) => ({
+							...request,
+							createdAt: new Date(request.createdAt),
+						})),
+					),
+				);
 			},
 		);
 
@@ -74,7 +85,7 @@ export function useRequestManager(
 
 		socket.on(
 			'requestMarked', //
-			(id: number, time: Date) => {
+			(id: number, time: JSONified<Date>) => {
 				const request = requestsRef.current.find((r) => r.id === id);
 
 				if (!request) return;
@@ -90,7 +101,7 @@ export function useRequestManager(
 				setRequests((requests) =>
 					requests.map((request) => {
 						if (request.id === id) {
-							return { ...request, status: 'marked', closedAt: time };
+							return { ...request, status: 'marked', closedAt: new Date(time) };
 						} else {
 							return request;
 						}

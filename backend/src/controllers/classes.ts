@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
 
-import * as classesService from '@/services/classes';
+import classesService from '@/services/classes';
 
 ////////////////////////////////////////////////////////////////////////////////
 

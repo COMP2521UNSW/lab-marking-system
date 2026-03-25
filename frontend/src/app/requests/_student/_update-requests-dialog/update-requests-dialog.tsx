@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import { ActivityWithStatus } from '@workspace/types/activities';
+import type { ActivityWithStatus } from '@workspace/types/activities';
 import type { Class } from '@workspace/types/classes';
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
@@ -20,7 +20,7 @@ import { Text } from '@/components/ui/base/typography';
 import { ActivitySelect } from '@/components/ui/requests/activity-select';
 import { ClassSelect } from '@/components/ui/requests/class-select';
 import { ApiError } from '@/lib/errors';
-import * as requestsService from '@/services/requests';
+import requestsService from '@/services/requests';
 
 export function UpdateRequestsDialog({
 	open,
