@@ -11,7 +11,7 @@ import type { Student, User } from '@workspace/types/users';
 import type { JSONified } from '@workspace/types/utils';
 
 import { useTutorSocket } from '@/components/providers/socket-provider';
-import * as requestsService from '@/services/requests';
+import requestsService from '@/services/requests';
 
 type RequestsState = {
 	open: StudentWithRequests[];
@@ -231,7 +231,7 @@ function sortRequests(students: StudentWithRequests[]) {
 		const closed: Exclude<MarkingRequestAsTutor, PendingRequest>[] = [];
 
 		for (const req of stu.requests) {
-			if (req.closedAt === null) {
+			if (req.status === 'pending') {
 				open.push(req);
 			} else {
 				closed.push(req);

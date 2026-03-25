@@ -1,4 +1,5 @@
 import type {
+	AuthService,
 	GetUserResponseData,
 	LogInRequestData,
 	LogInResponseData,
@@ -6,24 +7,22 @@ import type {
 
 import { api } from '@/api/api';
 
-////////////////////////////////////////////////////////////////////////////////
+class FrontendAuthService implements AuthService {
+	async logIn(req: LogInRequestData) {
+		const res = await api.post<LogInResponseData>('/login', req);
+		return res.data;
+	}
 
-export async function logIn(req: LogInRequestData) {
-	const res = await api.post<LogInResponseData>('/login', req);
-	return res.data;
+	async logOut() {
+		await api.post('/logout');
+	}
+
+	async getUser() {
+		const res = await api.get<GetUserResponseData>('/user');
+		return res.data;
+	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
+const authService: AuthService = new FrontendAuthService();
 
-export async function logOut() {
-	await api.post('/logout');
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export async function getUser() {
-	const res = await api.get<GetUserResponseData>('/user');
-	return res.data;
-}
-
-////////////////////////////////////////////////////////////////////////////////
+export default authService;

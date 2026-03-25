@@ -1,99 +1,84 @@
 import * as bcrypt from 'bcrypt';
 
 import type {
-	GetUserResponseData,
+	AuthService,
 	LogInRequestData,
-	LogInResponseData,
 } from '@workspace/types/services/auth';
 import type { SessionUser } from '@workspace/types/users';
 
 import * as dbUsers from '@/db/users';
 import { authenticate } from '@/lib/auth';
-import { UnauthorizedError } from '@/lib/errors';
+import { InternalServerError, UnauthorizedError } from '@/lib/errors';
+import { logger } from '@/lib/logger';
+import type { BackendService } from '@/types/utils';
 
-import { info, internalServerError } from './utils';
+import { toUserDetails } from './utils/mappers';
 
-////////////////////////////////////////////////////////////////////////////////
+class BackendAuthService implements BackendService<AuthService> {
+	//////////////////////////////////////////////////////////////////////////////
 
-export async function logIn(
-	req: LogInRequestData, //
-): Promise<LogInResponseData> {
-	const loggableData = { zid: req.zid };
+	async logIn(_: SessionUser, req: LogInRequestData) {
+		const loggableData = { zid: req.zid };
 
-	const { zid, password } = req;
+		const { zid, password } = req;
 
-	// Checking password first prevents enumeration attack
-	if (!(await authenticateUser(zid, password))) {
-		info(undefined, 'Authentication error', loggableData);
+		// Checking password first prevents enumeration attack
+		if (!(await this.authenticateUser(zid, password))) {
+			logger.info('Authentication error', { loggableData });
 
-		throw new UnauthorizedError('Incorrect zID or password');
+			throw new UnauthorizedError('Incorrect zID or password');
+		}
+
+		const user = await dbUsers.getUserByZid(zid);
+
+		if (user === null || !user.enrolled) {
+			logger.info('Not enrolled', { loggableData });
+
+			throw new UnauthorizedError('Not enrolled in the course');
+		} else {
+			logger.info('Logging in', { user });
+
+			return toUserDetails(user);
+		}
 	}
 
-	const user = await dbUsers.getUserByZid(zid);
-
-	if (user === null || !user.enrolled) {
-		info(undefined, 'Not enrolled', loggableData);
-
-		throw new UnauthorizedError('Not enrolled in the course');
-	} else {
-		info(user, 'Logging in');
-
-		return {
-			zid: user.zid,
-			name: user.name,
-			role: user.role,
-			classCode: user.classCode,
-		};
-	}
-}
-
-async function authenticateUser(zid: string, password: string) {
-	if (isMasterPassword(password)) {
-		return true;
-	} else {
-		return await authenticate(zid, password);
-	}
-}
-
-function isMasterPassword(password: string) {
-	return (
-		process.env.MASTER_PASSWORD_HASH &&
-		bcrypt.compareSync(password, process.env.MASTER_PASSWORD_HASH)
-	);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export function logOut(
-	user: SessionUser, //
-) {
-	info(user, 'Logging out');
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export async function getUser(
-	maybeUser: SessionUser | null, //
-): Promise<GetUserResponseData> {
-	if (maybeUser === null) {
-		return null;
+	private async authenticateUser(zid: string, password: string) {
+		if (this.isMasterPassword(password)) {
+			return true;
+		} else {
+			return await authenticate(zid, password);
+		}
 	}
 
-	const user = await dbUsers.getUserByZid(maybeUser.zid);
-
-	if (user === null) {
-		internalServerError(
-			maybeUser,
-			`Couldn't find user with zid ${maybeUser.zid}`,
+	private isMasterPassword(password: string) {
+		return (
+			process.env.MASTER_PASSWORD_HASH &&
+			bcrypt.compareSync(password, process.env.MASTER_PASSWORD_HASH)
 		);
 	}
 
-	return {
-		zid: user.zid,
-		name: user.name,
-		role: user.role,
-		classCode: user.classCode,
-	};
+	//////////////////////////////////////////////////////////////////////////////
+
+	// eslint-disable-next-line @typescript-eslint/require-await
+	async logOut(user: SessionUser) {
+		logger.info('Logging out', { user });
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+
+	async getUser(user: SessionUser) {
+		const dbUser = await dbUsers.getUserByZid(user.zid);
+
+		if (dbUser === null) {
+			throw new InternalServerError(`Couldn't find user with zid ${user.zid}`);
+		}
+
+		return toUserDetails(dbUser);
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
 }
 
-////////////////////////////////////////////////////////////////////////////////
+const authService: BackendService<AuthService> = new BackendAuthService();
+
+export default authService;

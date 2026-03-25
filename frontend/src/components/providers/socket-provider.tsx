@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Socket } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 
-import { BaseServerToClientEvents } from '@workspace/types/sockets';
+import type { BaseServerToClientEvents } from '@workspace/types/sockets';
 
 import { dismiss, toast } from '@/components/ui/base/toast';
 import { studentSocket, tutorSocket } from '@/sockets/sockets';

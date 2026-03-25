@@ -9,7 +9,7 @@ import type {
 import type { JSONified } from '@workspace/types/utils';
 
 import { useStudentSocket } from '@/components/providers/socket-provider';
-import * as pagesService from '@/services/pages';
+import pagesService from '@/services/pages';
 
 import { useDeclinedDialog } from './_declined-dialog/context';
 

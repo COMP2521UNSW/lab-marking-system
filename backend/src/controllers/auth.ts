@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import z from 'zod';
 
 import { devMode } from '@/lib/utils';
-import * as authService from '@/services/auth';
+import authService from '@/services/auth';
 
 const cookieOptions: CookieOptions = {
 	httpOnly: true,
@@ -24,7 +24,9 @@ const logInSchema = z
 
 const logIn: RequestHandler = async (req, res) => {
 	const reqData = logInSchema.parse(req);
-	const user = await authService.logIn(reqData);
+
+	const dummyUser = { zid: 'z0000000', role: 'student' as const };
+	const user = await authService.logIn(dummyUser, reqData);
 
 	const accessToken = jwt.sign(user, process.env.JWT_SECRET!, {
 		expiresIn: '30 days',
@@ -35,15 +37,17 @@ const logIn: RequestHandler = async (req, res) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-const logOut: RequestHandler = (req, res) => {
-	authService.logOut(req.user);
+const logOut: RequestHandler = async (req, res) => {
+	await authService.logOut(req.user);
+
 	res.clearCookie('token', cookieOptions).sendStatus(204);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
 const getUser: RequestHandler = async (req, res) => {
-	const user = await authService.getUser(req.maybeUser);
+	const user = req.maybeUser && (await authService.getUser(req.maybeUser));
+
 	res.status(200).json(user);
 };
 

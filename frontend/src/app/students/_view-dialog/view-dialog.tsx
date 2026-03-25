@@ -26,7 +26,7 @@ import {
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
 import { formatDate } from '@/lib/date';
-import * as studentsService from '@/services/students';
+import studentsService from '@/services/students';
 
 type DataState =
 	| {

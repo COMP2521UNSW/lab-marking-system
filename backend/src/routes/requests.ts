@@ -6,12 +6,11 @@ import { requireAdmin, requireTutor } from '@/middleware/authorisation';
 
 const router = express.Router();
 
-/* superseded by /pages/requests */
-// router.get(
-// 	'/requests/self', //
-// 	requireLogin,
-// 	requestsController.getActiveRequestsForCurrentUser,
-// );
+router.get(
+	'/requests/self', //
+	requireLogin,
+	requestsController.getActiveRequestsForCurrentUser,
+);
 
 router.post(
 	'/requests', //

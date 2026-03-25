@@ -1,7 +1,8 @@
 import type { RequestHandler } from 'express';
 import z from 'zod';
 
-import * as requestsService from '@/services/requests';
+import { numberSchema } from '@/lib/schemas';
+import requestsService from '@/services/requests';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +35,7 @@ const updateRequests: RequestHandler = async (req, res) => {
 const withdrawRequestSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 		body: z.object({
 			reason: z.string(),
@@ -74,7 +75,7 @@ const getRequestsByClass: RequestHandler = async (req, res) => {
 const claimRequestSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 	})
 	.transform((data) => data.params);
@@ -100,7 +101,7 @@ const unclaimRequest: RequestHandler = async (req, res) => {
 const declineRequestSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 		body: z.object({
 			reason: z.string(),
@@ -122,7 +123,7 @@ const declineRequest: RequestHandler = async (req, res) => {
 const markRequestSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 		body: z.object({
 			mark: z.number(),
@@ -144,7 +145,7 @@ const markRequest: RequestHandler = async (req, res) => {
 const amendMarkSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 		body: z.object({
 			mark: z.number(),
@@ -192,7 +193,7 @@ const getAllManualRequests: RequestHandler = async (req, res) => {
 const approveManualRequestSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 	})
 	.transform((data) => ({
@@ -213,7 +214,7 @@ const approveManualRequest: RequestHandler = async (req, res) => {
 const denyManualRequestSchema = z
 	.object({
 		params: z.object({
-			id: z.string().regex(/\d+/).transform(Number),
+			id: numberSchema,
 		}),
 		body: z.object({
 			reason: z.string(),

@@ -1,7 +1,16 @@
+type LogLevel = 'info' | 'warn' | 'error';
+
+type ErrorOptions = {
+	logLevel?: LogLevel;
+};
+
 class BadRequestError extends Error {
-	constructor(message: string) {
+	logLevel: LogLevel;
+
+	constructor(message: string, options?: ErrorOptions) {
 		super(message);
 		this.name = 'BadRequestError';
+		this.logLevel = options?.logLevel ?? 'warn';
 	}
 }
 
@@ -20,9 +29,12 @@ class ForbiddenError extends Error {
 }
 
 class InternalServerError extends Error {
-	constructor(message: string) {
+	logLevel: LogLevel;
+
+	constructor(message: string, options?: ErrorOptions) {
 		super(message);
 		this.name = 'InternalServerError';
+		this.logLevel = options?.logLevel ?? 'error';
 	}
 }
 
