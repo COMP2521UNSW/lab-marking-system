@@ -2,11 +2,7 @@ import * as React from 'react';
 
 import type { ActivityWithStatus } from '@workspace/types/activities';
 import type { Class } from '@workspace/types/classes';
-import type {
-	MarkingRequestAsStudent,
-	OpenRequest,
-} from '@workspace/types/requests';
-import type { JSONified } from '@workspace/types/utils';
+import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
 import { useStudentSocket } from '@/components/providers/socket-provider';
 import pagesService from '@/services/pages';
@@ -49,7 +45,7 @@ export function useRequestManager(
 
 		socket.on(
 			'requestsUpdated', //
-			(cls: Class, newRequests: JSONified<OpenRequest[]>) => {
+			(cls, newRequests) => {
 				setAttendedClass(cls);
 				setRequests((requests) =>
 					requests.concat(
@@ -64,7 +60,7 @@ export function useRequestManager(
 
 		socket.on(
 			'requestWithdrawn', //
-			(id: number) => {
+			(id) => {
 				setRequests((requests) =>
 					requests.filter((request) => request.id !== id),
 				);
@@ -73,7 +69,7 @@ export function useRequestManager(
 
 		socket.on(
 			'requestDeclined', //
-			(id: number, reason: string) => {
+			(id, reason) => {
 				const request = requestsRef.current.find((r) => r.id === id);
 
 				if (request) {
@@ -85,7 +81,7 @@ export function useRequestManager(
 
 		socket.on(
 			'requestMarked', //
-			(id: number, time: JSONified<Date>) => {
+			(id, time) => {
 				const request = requestsRef.current.find((r) => r.id === id);
 
 				if (!request) return;
