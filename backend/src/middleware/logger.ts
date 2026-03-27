@@ -9,12 +9,20 @@ morgan.token('date', () => {
 	return format(date, 'yyyy-MM-dd HH:mm:ss');
 });
 
+morgan.token('client-ip', (req: Request) => {
+	const xRealIp = req.headers['x-real-ip'];
+	if (xRealIp) {
+		return Array.isArray(xRealIp) ? xRealIp.join(' ') : xRealIp;
+	}
+	return req.ip;
+});
+
 morgan.token('user', (req: Request) =>
 	req.maybeUser ? req.maybeUser.zid : 'anonymous',
 );
 
 const logger = morgan(
-	'[:date] :remote-addr :user ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"',
+	'[:date] :client-ip :user ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"',
 );
 
 export { logger };
