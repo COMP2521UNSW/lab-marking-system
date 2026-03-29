@@ -1,4 +1,3 @@
-import type { Socket } from 'socket.io-client';
 import { io } from 'socket.io-client';
 
 import type {
@@ -7,6 +6,8 @@ import type {
 	TutorClientToServerEvents,
 	TutorServerToClientEvents,
 } from '@workspace/types/sockets';
+
+import type { Socket } from '@/types/sockets';
 
 const { uri, path } = getSocketUriAndPath();
 
