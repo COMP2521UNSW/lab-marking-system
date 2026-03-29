@@ -7,8 +7,7 @@ import type {
 	PendingRequest,
 	StudentWithRequests,
 } from '@workspace/types/requests';
-import type { Student, User } from '@workspace/types/users';
-import type { JSONified } from '@workspace/types/utils';
+import type { Student } from '@workspace/types/users';
 
 import { useTutorSocket } from '@/components/providers/socket-provider';
 import requestsService from '@/services/requests';
@@ -57,7 +56,7 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestsCreated', //
-			(student: Student, requests: JSONified<PendingRequest[]>) => {
+			(student, requests) => {
 				updateRequests((draft) => {
 					addRequests(
 						draft.open,
@@ -73,7 +72,7 @@ export function useRequestManager() {
 
 		socket.on(
 			'studentJoined', //
-			(student: Student, requests: JSONified<PendingRequest[]>) => {
+			(student, requests) => {
 				updateRequests((draft) => {
 					draft.open.push({
 						student,
@@ -88,7 +87,7 @@ export function useRequestManager() {
 
 		socket.on(
 			'studentLeft', //
-			(studentZid: string) => {
+			(studentZid) => {
 				updateRequests((draft) => {
 					draft.open = draft.open.filter(
 						(requests) => requests.student.zid !== studentZid,
@@ -99,7 +98,7 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestWithdrawn', //
-			(id: number, reason: string, time: JSONified<Date>) => {
+			(id, reason, time) => {
 				updateRequests((draft) =>
 					closeRequest(draft, id, (req) => ({
 						...req,
@@ -113,7 +112,7 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestClaimed', //
-			(id: number, tutor: User) => {
+			(id, tutor) => {
 				updateRequests((draft) =>
 					updateRequest(draft.open, id, (req) => ({
 						...req,
@@ -125,7 +124,7 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestUnclaimed', //
-			(id: number) => {
+			(id) => {
 				updateRequests((draft) =>
 					updateRequest(draft.open, id, (req) => {
 						if (req.status === 'pending') {
@@ -140,12 +139,7 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestDeclined', //
-			(
-				id: number,
-				tutorName: string,
-				reason: string,
-				time: JSONified<Date>,
-			) => {
+			(id, tutorName, reason, time) => {
 				updateRequests((draft) =>
 					closeRequest(draft, id, (req) => ({
 						...req,
@@ -160,7 +154,7 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestMarked', //
-			(id: number, markerName: string, mark: number, time: JSONified<Date>) => {
+			(id, markerName, mark, time) => {
 				updateRequests((draft) =>
 					closeRequest(draft, id, (req) => ({
 						...req,
@@ -175,7 +169,7 @@ export function useRequestManager() {
 
 		socket.on(
 			'markAmended', //
-			(id: number, markerName: string, mark: number) => {
+			(id, markerName, mark) => {
 				updateRequests((draft) =>
 					updateRequest(draft.closed, id, (req) => ({
 						...req,

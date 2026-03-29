@@ -10,10 +10,9 @@ type _NonNullableKeys<T, K extends keyof T> = Omit<T, K> & {
 	[P in K]-?: NonNullable<T[P]>;
 };
 
-// Use to treat dates as strings when sent over the network
-export type JSONified<T> = //
+export type Serialized<T> = //
 	T extends Date
-		? Date | string
+		? string
 		: T extends object
-			? { [K in keyof T]: JSONified<T[K]> }
+			? { [K in keyof T]: Serialized<T[K]> }
 			: T;

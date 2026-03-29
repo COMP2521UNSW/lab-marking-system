@@ -2,7 +2,6 @@ import type { Server as HTTPServer } from 'node:http';
 
 import * as cookie from 'cookie';
 import jwt from 'jsonwebtoken';
-import type { Namespace } from 'socket.io';
 import { Server } from 'socket.io';
 
 import type {
@@ -16,6 +15,7 @@ import type { SessionUser } from '@workspace/types/users';
 import type { EmptyObject } from '@workspace/types/utils';
 
 import { logger } from '@/lib/logger';
+import type { Namespace } from '@/types/sockets';
 
 type SocketIOMiddleware = Parameters<
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -95,7 +95,7 @@ function createServer(httpServer: HTTPServer) {
 		const user = socket.data.user;
 		logger.info('Tutor connected', { user });
 
-		socket.on('viewClass', (classCode: string) => {
+		socket.on('viewClass', (classCode) => {
 			if (user.role === 'student') return;
 			socket.rooms.forEach((room) => {
 				if (room !== socket.id) {
