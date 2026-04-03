@@ -3,7 +3,9 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "pnpm -r --parallel dev"
+		"build": "pnpm -r build",
+		"dev": "pnpm -r --parallel dev",
+		"test": "pnpm -r test"
 	},
 	"devDependencies": {
 		"@trivago/prettier-plugin-sort-imports": "catalog:",
