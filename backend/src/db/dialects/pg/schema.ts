@@ -8,15 +8,16 @@ import {
 	real,
 	serial,
 	text,
-	timestamp,
 	unique,
 } from 'drizzle-orm/pg-core';
 
 import {
+	date,
 	eventEnum,
 	manualRequestStatusEnum,
 	requestStatusEnum,
 	time,
+	timestamp,
 	userRoleEnum,
 } from './custom-types';
 
@@ -24,8 +25,8 @@ export const settingsTable = pgTable(
 	'settings', //
 	{
 		id: serial().primaryKey(),
-		termStartDate: timestamp({ withTimezone: true }).notNull(),
-		termEndDate: timestamp({ withTimezone: true }).notNull(), // inclusive
+		termStartDate: date().notNull(),
+		termEndDate: date().notNull(), // inclusive
 	},
 	(table) => [check('singleton_check', sql`${table.id} = 1`)],
 );
@@ -90,12 +91,12 @@ export const requestsTable = pgTable(
 		activityCode: text()
 			.references(() => activitiesTable.code)
 			.notNull(),
-		createdAt: timestamp({ withTimezone: true }).notNull(),
-		requestedAt: timestamp({ withTimezone: true }).notNull(),
+		createdAt: timestamp().notNull(),
+		requestedAt: timestamp().notNull(),
 		status: requestStatusEnum().notNull(),
 		markerZid: text().references(() => usersTable.zid),
 		mark: real(),
-		closedAt: timestamp({ withTimezone: true }),
+		closedAt: timestamp(),
 		withdrawReason: text(),
 		declineReason: text(),
 	},
@@ -115,10 +116,10 @@ export const manualRequestsTable = pgTable(
 		reason: text().notNull(),
 		mark: real().notNull(),
 		markerZid: text().references(() => usersTable.zid),
-		createdAt: timestamp({ withTimezone: true }).notNull(),
+		createdAt: timestamp().notNull(),
 		status: manualRequestStatusEnum().notNull(),
 		approverZid: text().references(() => usersTable.zid),
-		closedAt: timestamp({ withTimezone: true }),
+		closedAt: timestamp(),
 		denyReason: text(),
 	},
 );
@@ -134,7 +135,7 @@ export const marksTable = pgTable(
 			.references(() => activitiesTable.code)
 			.notNull(),
 		mark: real(),
-		enteredAt: timestamp({ withTimezone: true }).notNull(),
+		enteredAt: timestamp().notNull(),
 	},
 	(table) => [unique().on(table.studentZid, table.activityCode)],
 );
@@ -164,7 +165,7 @@ export const logsTable = pgTable(
 		event: eventEnum().notNull(),
 		activityCode: text().references(() => activitiesTable.code),
 		classCode: text().references(() => classesTable.code),
-		timestamp: timestamp({ withTimezone: true }).notNull(),
+		timestamp: timestamp().notNull(),
 		markerZid: text().references(() => usersTable.zid),
 		mark: real(),
 		approverZid: text().references(() => usersTable.zid),

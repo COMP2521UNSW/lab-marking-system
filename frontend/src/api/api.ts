@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Temporal } from 'temporal-polyfill';
 
 import { delay } from '@/lib/delay';
 import { ApiError } from '@/lib/errors';
@@ -6,7 +7,7 @@ import { ApiError } from '@/lib/errors';
 const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const dateReviver = (key: PropertyKey, value: unknown) => {
 	if (typeof value === 'string' && isoDateRegex.test(value)) {
-		return new Date(value);
+		return Temporal.Instant.from(value);
 	}
 	return value;
 };

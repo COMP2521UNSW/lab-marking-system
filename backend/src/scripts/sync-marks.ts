@@ -4,6 +4,7 @@ import { writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 
 import { eq, isNotNull, sql } from 'drizzle-orm';
+import { Temporal } from 'temporal-polyfill';
 
 import type { NonNullableKeys } from '@workspace/types/utils';
 
@@ -139,7 +140,7 @@ async function getSmsMarks(activities: { code: string; smsName: string }[]) {
 ////////////////////////////////////////////////////////////////////////////////
 
 async function saveDiffs(fromDb: Mark[], fromSms: Mark[]) {
-	const timestamp = new Date();
+	const timestamp = Temporal.Now.instant();
 
 	await insertMarksIntoSms(fromDb);
 	await updateMarksTable(fromSms, timestamp);
@@ -176,7 +177,10 @@ async function insertMarksIntoSms(markEntries: Mark[]) {
 	await executeCommand('smsupdate lab_handmarking.upd');
 }
 
-async function updateMarksTable(markEntries: Mark[], timestamp: Date) {
+async function updateMarksTable(
+	markEntries: Mark[],
+	timestamp: Temporal.Instant,
+) {
 	if (markEntries.length === 0) {
 		logger.info('No marks to copy from SMS to DB');
 		return;

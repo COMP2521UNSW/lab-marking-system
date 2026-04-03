@@ -1,11 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 
-import { format } from 'date-fns';
 import type { Request } from 'express';
 import morgan from 'morgan';
+import { Temporal } from 'temporal-polyfill';
 
-import { toLocalDate } from '@/lib/date';
+import { LOCAL_TIME_ZONE } from '@workspace/config';
+
+import { formatDateTime } from '@/lib/date';
 import { rootDir } from '@@/path-config';
 
 const logStream = fs.createWriteStream(
@@ -16,8 +18,8 @@ const logStream = fs.createWriteStream(
 );
 
 morgan.token('date', () => {
-	const date = toLocalDate(new Date());
-	return format(date, 'yyyy-MM-dd HH:mm:ss');
+	const date = Temporal.Now.zonedDateTimeISO(LOCAL_TIME_ZONE);
+	return formatDateTime(date);
 });
 
 morgan.token('user', (req: Request) =>

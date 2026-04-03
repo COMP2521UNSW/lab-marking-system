@@ -1,6 +1,6 @@
 import '@/lib/polyfills/group-by';
 
-import { format } from 'date-fns';
+import type { Temporal } from 'temporal-polyfill';
 
 import type { ClassDetails } from '@workspace/types/classes';
 import type { ClassesService } from '@workspace/types/services/classes';
@@ -11,9 +11,9 @@ import * as dbClasses from '@/db/classes';
 import type { BackendService } from '@/types/utils';
 
 import { getClassState } from './utils/classes';
+import { now } from './utils/date-time';
 import { toClassList } from './utils/mappers';
 import { getTermDate, termInProgress } from './utils/term';
-import { getDate } from './utils/time';
 
 class BackendClassesService implements BackendService<ClassesService> {
 	async getAllClasses(user: SessionUser) {
@@ -59,17 +59,17 @@ export async function getActiveClassesForTutor() {
  * (in < 15 minutes) and classes which have ended recently (up to 1 hour ago)
  */
 async function getActiveClasses() {
-	const date = getDate();
+	const date = now();
 
 	return await get(
-		// we can key by HH:mm because TTL is 1 minute
-		`getActiveClasses:${format(date, 'HH:mm')}`,
+		// we can key by minute because TTL is 1 minute
+		`getActiveClasses:${date.minute}`,
 		() => getActiveClassesByTime(date),
 		60,
 	);
 }
 
-async function getActiveClassesByTime(date: Date) {
+async function getActiveClassesByTime(date: Temporal.ZonedDateTime) {
 	if (!(await termInProgress(date))) {
 		return {
 			current: [],

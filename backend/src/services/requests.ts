@@ -1,6 +1,6 @@
 import '@/lib/polyfills/group-by';
 
-import { isSameDay } from 'date-fns';
+import { Temporal } from 'temporal-polyfill';
 
 import { MAX_REASON_LEN } from '@workspace/lib/constants';
 import type { ActivityAsTutor } from '@workspace/types/activities';
@@ -26,7 +26,7 @@ import * as dbLogs from '@/db/logs';
 import * as dbMarks from '@/db/marks';
 import * as dbRequests from '@/db/requests';
 import * as dbUsers from '@/db/users';
-import { toLocalStartOfDay } from '@/lib/date';
+import { isToday } from '@/lib/date';
 import { BadRequestError, InternalServerError } from '@/lib/errors';
 import { logger } from '@/lib/logger';
 import activitiesService from '@/services/activities';
@@ -79,7 +79,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 			throw new BadRequestError("Can't change classes with no requests");
 		}
 
-		const timestamp = new Date();
+		const timestamp = Temporal.Now.instant();
 
 		const classChanged = currClass !== null && req.classCode !== currClass.code;
 
@@ -198,7 +198,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		req = this.validateWithdrawRequest(req);
 
-		const timestamp = new Date();
+		const timestamp = Temporal.Now.instant();
 
 		const res = await dbRequests.withdrawRequest(
 			user.zid,
@@ -258,7 +258,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		const requests = await dbRequests.getActiveOrRecentRequestsByClass(
 			req.classCode,
-			toLocalStartOfDay(new Date()),
+			Temporal.Now.instant().subtract({ hours: 24 }),
 		);
 
 		const groupedRequests = Map.groupBy(
@@ -323,7 +323,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		req = this.validateDeclineRequest(req);
 
-		const timestamp = new Date();
+		const timestamp = Temporal.Now.instant();
 
 		const res = await dbRequests.declineRequest(
 			req.id,
@@ -384,7 +384,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		await this.validateMarkRequest(req);
 
-		const timestamp = new Date();
+		const timestamp = Temporal.Now.instant();
 
 		const res = await dbRequests.markRequest(
 			req.id,
@@ -454,7 +454,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		await this.validateAmendMark(req);
 
-		const timestamp = new Date();
+		const timestamp = Temporal.Now.instant();
 
 		const res = await dbRequests.amendMark(req.id, user.zid, req.mark);
 
@@ -494,7 +494,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 		}
 
 		// A mark can only be amended on the same day as it was marked
-		if (!isSameDay(request.markedAt, new Date())) {
+		if (!isToday(request.markedAt)) {
 			throw new BadRequestError('Too late to amend mark');
 		}
 
@@ -519,7 +519,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		req = await this.validateCreateManualRequest(req);
 
-		const timestamp = new Date();
+		const timestamp = Temporal.Now.instant();
 
 		const res = await dbRequests.createManualRequest(
 			req.studentZid,
@@ -588,7 +588,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 	) {
 		logger.info('Approving manual request', { user, req });
 
-		const timestamp = new Date();
+		const timestamp = Temporal.Now.instant();
 
 		const res = await dbRequests.approveManualRequest(
 			req.id,
@@ -631,7 +631,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 
 		req = this.validateDenyManualRequest(req);
 
-		const timestamp = new Date();
+		const timestamp = Temporal.Now.instant();
 
 		const res = await dbRequests.denyManualRequest(
 			req.id,

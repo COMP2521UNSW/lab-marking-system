@@ -1,3 +1,5 @@
+import type { Temporal } from 'temporal-polyfill';
+
 export type EmptyObject = Record<PropertyKey, never>;
 
 export type Expand<T> = { [K in keyof T]: T[K] } & {};
@@ -11,7 +13,7 @@ type _NonNullableKeys<T, K extends keyof T> = Omit<T, K> & {
 };
 
 export type Serialized<T> = //
-	T extends Date
+	T extends Temporal.Instant
 		? string
 		: T extends object
 			? { [K in keyof T]: Serialized<T[K]> }

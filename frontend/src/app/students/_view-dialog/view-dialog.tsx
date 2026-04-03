@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/base/table';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
-import { formatDate } from '@/lib/date';
+import { formatTimestamp } from '@/lib/date';
 import studentsService from '@/services/students';
 
 type DataState =
@@ -111,7 +111,7 @@ export function ViewDialog({
 													{result.markedAt === null ? (
 														<NotApplicable />
 													) : (
-														formatDate(result.markedAt)
+														formatTimestamp(result.markedAt)
 													)}
 												</TableCell>
 											</TableRow>

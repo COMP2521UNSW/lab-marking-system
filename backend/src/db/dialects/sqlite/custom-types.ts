@@ -1,4 +1,5 @@
 import { customType } from 'drizzle-orm/sqlite-core';
+import { Temporal } from 'temporal-polyfill';
 
 import type { EventType } from '@workspace/types/logs';
 import type {
@@ -23,16 +24,33 @@ const boolean = customType<{
 	},
 });
 
-const timestamp = customType<{
-	data: Date;
+const date = customType<{
+	data: Temporal.PlainDate;
 	driverData: string;
-	config: { withTimezone: boolean };
 }>({
-	dataType(config) {
-		return `timestamp${config?.withTimezone ? ' with time zone' : ''}`;
+	dataType() {
+		return 'text';
 	},
-	fromDriver(value: string): Date {
-		return new Date(value);
+	toDriver(value: Temporal.PlainDate) {
+		return value.toString();
+	},
+	fromDriver(value: string) {
+		return Temporal.PlainDate.from(value);
+	},
+});
+
+const timestamp = customType<{
+	data: Temporal.Instant;
+	driverData: string;
+}>({
+	dataType() {
+		return 'text';
+	},
+	toDriver(value: Temporal.Instant) {
+		return value.toString();
+	},
+	fromDriver(value: string) {
+		return Temporal.Instant.from(value);
 	},
 });
 
@@ -83,6 +101,7 @@ const eventEnum = customType<{
 
 export {
 	boolean,
+	date,
 	eventEnum,
 	manualRequestStatusEnum,
 	requestStatusEnum,

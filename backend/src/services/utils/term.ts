@@ -1,11 +1,11 @@
-import { addDays, differenceInWeeks, isBefore } from 'date-fns';
+import { Temporal } from 'temporal-polyfill';
 
 import type { Time } from '@workspace/types/time';
 
 import * as dbSettings from '@/db/settings';
-import { toLocalDayAndTime } from '@/lib/date';
+import { formatTime } from '@/lib/date';
 
-import { getDate } from './time';
+import { now } from './date-time';
 
 export type TermDate = {
 	week: number;
@@ -13,29 +13,39 @@ export type TermDate = {
 	time: Time;
 };
 
-export async function getTermDate(date?: Date): Promise<TermDate> {
-	date ??= getDate();
+export async function getTermDate(
+	dateTime?: Temporal.ZonedDateTime,
+): Promise<TermDate> {
+	dateTime ??= now();
 
-	const week = await getCurrentWeek(date);
-	const { day, time } = toLocalDayAndTime(date);
-	return { week, day, time };
+	const week = await getCurrentWeek(dateTime);
+
+	return {
+		week,
+		day: dateTime.dayOfWeek,
+		time: formatTime(dateTime),
+	};
 }
 
-export async function getCurrentWeek(date?: Date) {
-	date ??= getDate();
+export async function getCurrentWeek(dateTime?: Temporal.ZonedDateTime) {
+	dateTime ??= now();
+
 	const { startDate } = await dbSettings.getTermDates();
 
-	if (isBefore(date, startDate)) {
+	if (Temporal.PlainDate.compare(dateTime, startDate) < 0) {
 		return 0;
 	} else {
-		return 1 + differenceInWeeks(date, startDate);
+		return 1 + startDate.until(dateTime, { smallestUnit: 'weeks' }).weeks;
 	}
 }
 
-export async function termInProgress(date?: Date) {
-	date ??= getDate();
+export async function termInProgress(dateTime?: Temporal.ZonedDateTime) {
+	dateTime ??= now();
+
 	const { startDate, endDate } = await dbSettings.getTermDates();
 
-	// endDate is inclusive, so add 1 day before comparing
-	return date >= startDate && date < addDays(endDate, 1);
+	return (
+		Temporal.PlainDate.compare(dateTime, startDate) >= 0 &&
+		Temporal.PlainDate.compare(dateTime, endDate) <= 0
+	);
 }

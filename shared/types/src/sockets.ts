@@ -1,3 +1,5 @@
+import type { Temporal } from 'temporal-polyfill';
+
 import type { ActiveClasses, Class } from './classes';
 import type { OpenRequest, PendingRequest } from './requests';
 import type { SessionUser, User } from './users';
@@ -13,7 +15,7 @@ interface StudentServerToClientEvents extends BaseServerToClientEvents {
 	requestsUpdated: (cls: Class, requests: OpenRequest[]) => void;
 	requestWithdrawn: (id: number) => void;
 	requestDeclined: (id: number, reason: string) => void;
-	requestMarked: (id: number, time: Date) => void;
+	requestMarked: (id: number, timestamp: Temporal.Instant) => void;
 }
 
 interface TutorClientToServerEvents {
@@ -24,20 +26,24 @@ interface TutorServerToClientEvents extends BaseServerToClientEvents {
 	requestsCreated: (student: User, requests: PendingRequest[]) => void;
 	studentJoined: (student: User, requests: PendingRequest[]) => void;
 	studentLeft: (studentZid: string) => void;
-	requestWithdrawn: (id: number, reason: string, time: Date) => void;
+	requestWithdrawn: (
+		id: number,
+		reason: string,
+		timestamp: Temporal.Instant,
+	) => void;
 	requestClaimed: (id: number, tutor: User) => void;
 	requestUnclaimed: (id: number) => void;
 	requestDeclined: (
 		id: number,
 		tutorName: string,
 		reason: string,
-		time: Date,
+		timestamp: Temporal.Instant,
 	) => void;
 	requestMarked: (
 		id: number,
 		markerName: string,
 		mark: number,
-		time: Date,
+		timestamp: Temporal.Instant,
 	) => void;
 	markAmended: (id: number, markerName: string, mark: number) => void;
 }

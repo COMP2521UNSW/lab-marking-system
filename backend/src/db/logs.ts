@@ -1,4 +1,5 @@
 import { eq } from 'drizzle-orm';
+import type { Temporal } from 'temporal-polyfill';
 
 import { activitiesTable, alias, db, logsTable, usersTable } from './db';
 
@@ -7,7 +8,7 @@ import { activitiesTable, alias, db, logsTable, usersTable } from './db';
 export async function logClassChanged(
 	studentZid: string,
 	classCode: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	await db.insert(logsTable).values({
 		studentZid,
@@ -21,7 +22,7 @@ export async function logRequestsCreated(
 	studentZid: string,
 	activityCodes: string[],
 	classCode: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	await db.insert(logsTable).values(
 		activityCodes.map((activityCode) => ({
@@ -39,7 +40,7 @@ export async function logRequestWithdrawn(
 	activityCode: string,
 	classCode: string,
 	reason: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	await db.insert(logsTable).values({
 		studentZid,
@@ -57,7 +58,7 @@ export async function logRequestDeclined(
 	classCode: string,
 	markerZid: string,
 	reason: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	await db.insert(logsTable).values({
 		studentZid,
@@ -76,7 +77,7 @@ export async function logRequestMarked(
 	classCode: string,
 	markerZid: string,
 	mark: number,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	await db.insert(logsTable).values({
 		studentZid,
@@ -95,7 +96,7 @@ export async function logMarkAmended(
 	classCode: string,
 	markerZid: string,
 	mark: number,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	await db.insert(logsTable).values({
 		studentZid,
@@ -114,7 +115,7 @@ export async function logManualRequestCreated(
 	markerZid: string,
 	mark: number,
 	reason: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	await db.insert(logsTable).values({
 		studentZid,
@@ -131,7 +132,7 @@ export async function logManualRequestApproved(
 	studentZid: string,
 	activityCode: string,
 	approverZid: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	await db.insert(logsTable).values({
 		studentZid,
@@ -147,7 +148,7 @@ export async function logManualRequestDenied(
 	activityCode: string,
 	approverZid: string,
 	reason: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	await db.insert(logsTable).values({
 		studentZid,
@@ -165,7 +166,7 @@ export async function logMarksImportedFromSms(
 		activityCode: string;
 		mark: number | null;
 	}[],
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	if (marks.length === 0) return;
 

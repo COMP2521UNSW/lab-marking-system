@@ -1,3 +1,5 @@
+import type { Temporal } from 'temporal-polyfill';
+
 import type { PendingRequest } from '@workspace/types/requests';
 import type { User } from '@workspace/types/users';
 
@@ -27,9 +29,9 @@ function requestWithdrawn(
 	classCode: string,
 	id: number,
 	reason: string,
-	time: Date,
+	timestamp: Temporal.Instant,
 ) {
-	tutorSocket.to(classCode).emit('requestWithdrawn', id, reason, time);
+	tutorSocket.to(classCode).emit('requestWithdrawn', id, reason, timestamp);
 }
 
 function requestClaimed(classCode: string, id: number, claimer: User) {
@@ -45,11 +47,11 @@ function requestDeclined(
 	id: number,
 	tutorName: string,
 	reason: string,
-	time: Date,
+	timestamp: Temporal.Instant,
 ) {
 	tutorSocket
 		.to(classCode)
-		.emit('requestDeclined', id, tutorName, reason, time);
+		.emit('requestDeclined', id, tutorName, reason, timestamp);
 }
 
 function requestMarked(
@@ -57,9 +59,11 @@ function requestMarked(
 	id: number,
 	markerName: string,
 	mark: number,
-	time: Date,
+	timestamp: Temporal.Instant,
 ) {
-	tutorSocket.to(classCode).emit('requestMarked', id, markerName, mark, time);
+	tutorSocket
+		.to(classCode)
+		.emit('requestMarked', id, markerName, mark, timestamp);
 }
 
 function markAmended(

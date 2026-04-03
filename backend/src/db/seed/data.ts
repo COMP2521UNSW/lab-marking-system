@@ -1,11 +1,14 @@
+import { Temporal } from 'temporal-polyfill';
+
 import type { activitiesTable, settingsTable } from '@/db/db';
 
 import { genClasses, genUsers } from './gen';
 
 export const fakeSettings: (typeof settingsTable.$inferInsert)[] = [
 	{
-		termStartDate: new Date(2026, 1, 16),
-		termEndDate: new Date(2026, 3, 24),
+		id: 1,
+		termStartDate: new Temporal.PlainDate(2026, 2, 16),
+		termEndDate: new Temporal.PlainDate(2026, 4, 24),
 	},
 ];
 
