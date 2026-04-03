@@ -5,7 +5,7 @@ import { io, studentSocket, tutorSocket } from '@/server';
 import {
 	getActiveClassesForStudent,
 	getActiveClassesForTutor,
-} from '@/services/utils/classes';
+} from '@/services/classes';
 
 function registerCronJob() {
 	// NOTE: this assumes that classes start at 15-minute boundaries only
