@@ -1,3 +1,5 @@
+import type { Temporal } from 'temporal-polyfill';
+
 import type { ActivityAsStudent, ActivityAsTutor } from './activities';
 import type { Student, User } from './users';
 
@@ -7,7 +9,7 @@ export type RequestStatus = 'pending' | 'withdrawn' | 'declined' | 'marked';
 
 interface BaseMarkingRequest {
 	id: number;
-	createdAt: Date;
+	createdAt: Temporal.Instant;
 	status: RequestStatus;
 }
 
@@ -23,7 +25,7 @@ export interface OpenRequest extends BaseMarkingRequestAsStudent {
 
 export interface ClosedRequest extends BaseMarkingRequestAsStudent {
 	status: 'withdrawn' | 'declined' | 'marked';
-	closedAt: Date;
+	closedAt: Temporal.Instant;
 }
 
 export type MarkingRequestAsTutor =
@@ -43,20 +45,20 @@ export interface PendingRequest extends BaseMarkingRequestAsTutor {
 
 export interface WithdrawnRequest extends BaseMarkingRequestAsTutor {
 	status: 'withdrawn';
-	closedAt: Date;
+	closedAt: Temporal.Instant;
 	reason: string;
 }
 
 export interface DeclinedRequest extends BaseMarkingRequestAsTutor {
 	status: 'declined';
-	closedAt: Date;
+	closedAt: Temporal.Instant;
 	tutorName: string;
 	reason: string;
 }
 
 export interface MarkedRequest extends BaseMarkingRequestAsTutor {
 	status: 'marked';
-	closedAt: Date;
+	closedAt: Temporal.Instant;
 	markerName: string;
 	mark: number;
 }
@@ -86,7 +88,7 @@ interface BaseManualRequest {
 	reason: string;
 	mark: number;
 	markerName: string;
-	markedAt: Date;
+	markedAt: Temporal.Instant;
 	status: ManualRequestStatus;
 }
 
@@ -97,13 +99,13 @@ export interface PendingManualRequest extends BaseManualRequest {
 export interface ApprovedManualRequest extends BaseManualRequest {
 	status: 'approved';
 	approverName: string;
-	closedAt: Date;
+	closedAt: Temporal.Instant;
 }
 
 export interface DeniedManualRequest extends BaseManualRequest {
 	status: 'denied';
 	approverName: string;
-	closedAt: Date;
+	closedAt: Temporal.Instant;
 	denyReason: string;
 }
 

@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/base/table';
 import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
-import { formatDate } from '@/lib/date';
+import { formatTimestamp } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import studentsService from '@/services/students';
 
@@ -148,7 +148,7 @@ function LogTableRow({ event }: { event: LogEvent }) {
 				<TableCell>
 					<LogData>{staffName}</LogData>
 				</TableCell>
-				<TableCell>{formatDate(event.timestamp)}</TableCell>
+				<TableCell>{formatTimestamp(event.timestamp)}</TableCell>
 				<TableCell className="flex items-center" aria-hidden={reason === null}>
 					{reason !== null && (
 						<button

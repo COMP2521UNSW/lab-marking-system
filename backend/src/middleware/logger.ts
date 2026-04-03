@@ -1,12 +1,14 @@
-import { format } from 'date-fns';
 import type { Request } from 'express';
 import morgan from 'morgan';
+import { Temporal } from 'temporal-polyfill';
 
-import { toLocalDate } from '@/lib/date';
+import { LOCAL_TIME_ZONE } from '@workspace/config';
+
+import { formatDateTime } from '@/lib/date';
 
 morgan.token('date', () => {
-	const date = toLocalDate(new Date());
-	return format(date, 'yyyy-MM-dd HH:mm:ss');
+	const date = Temporal.Now.zonedDateTimeISO(LOCAL_TIME_ZONE);
+	return formatDateTime(date);
 });
 
 morgan.token('client-ip', (req: Request) => {

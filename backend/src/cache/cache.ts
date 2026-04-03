@@ -2,7 +2,7 @@ import NodeCache from 'node-cache';
 
 const TTL_SECONDS = 86400; // 1 day
 
-const cache = new NodeCache({ stdTTL: TTL_SECONDS });
+const cache = new NodeCache({ stdTTL: TTL_SECONDS, useClones: false });
 
 async function get<T>(
 	key: string,

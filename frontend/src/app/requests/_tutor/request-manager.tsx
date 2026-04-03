@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Temporal } from 'temporal-polyfill';
 import { useImmer } from 'use-immer';
 
 import type { Class } from '@workspace/types/classes';
@@ -63,7 +64,7 @@ export function useRequestManager() {
 						student,
 						requests.map((request) => ({
 							...request,
-							createdAt: new Date(request.createdAt),
+							createdAt: Temporal.Instant.from(request.createdAt),
 						})),
 					);
 				});
@@ -78,7 +79,7 @@ export function useRequestManager() {
 						student,
 						requests: requests.map((request) => ({
 							...request,
-							createdAt: new Date(request.createdAt),
+							createdAt: Temporal.Instant.from(request.createdAt),
 						})),
 					});
 				});
@@ -98,12 +99,12 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestWithdrawn', //
-			(id, reason, time) => {
+			(id, reason, timestamp) => {
 				updateRequests((draft) =>
 					closeRequest(draft, id, (req) => ({
 						...req,
 						status: 'withdrawn',
-						closedAt: new Date(time),
+						closedAt: Temporal.Instant.from(timestamp),
 						reason,
 					})),
 				);
@@ -139,12 +140,12 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestDeclined', //
-			(id, tutorName, reason, time) => {
+			(id, tutorName, reason, timestamp) => {
 				updateRequests((draft) =>
 					closeRequest(draft, id, (req) => ({
 						...req,
 						status: 'declined',
-						closedAt: new Date(time),
+						closedAt: Temporal.Instant.from(timestamp),
 						tutorName,
 						reason,
 					})),
@@ -154,12 +155,12 @@ export function useRequestManager() {
 
 		socket.on(
 			'requestMarked', //
-			(id, markerName, mark, time) => {
+			(id, markerName, mark, timestamp) => {
 				updateRequests((draft) =>
 					closeRequest(draft, id, (req) => ({
 						...req,
 						status: 'marked',
-						closedAt: new Date(time),
+						closedAt: Temporal.Instant.from(timestamp),
 						markerName,
 						mark,
 					})),
@@ -242,11 +243,13 @@ function sortRequests(students: StudentWithRequests[]) {
 
 	res.open.sort(
 		(a, b) =>
-			a.requests[0].createdAt.getTime() - b.requests[0].createdAt.getTime(),
+			a.requests[0].createdAt.epochMilliseconds -
+			b.requests[0].createdAt.epochMilliseconds,
 	);
 	res.closed.sort(
 		(a, b) =>
-			a.requests[0].closedAt.getTime() - b.requests[0].closedAt.getTime(),
+			a.requests[0].closedAt.epochMilliseconds -
+			b.requests[0].closedAt.epochMilliseconds,
 	);
 
 	return res;

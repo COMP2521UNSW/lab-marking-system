@@ -1,3 +1,5 @@
+import type { Temporal } from 'temporal-polyfill';
+
 import type { ActivityAsTutor } from './activities';
 
 export type EventType =
@@ -26,7 +28,7 @@ export type LogEvent =
 
 interface BaseLogEvent {
 	eventType: EventType;
-	timestamp: Date;
+	timestamp: Temporal.Instant;
 }
 
 export interface ClassChangedEvent extends BaseLogEvent {

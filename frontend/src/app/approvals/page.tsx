@@ -26,7 +26,7 @@ import {
 import { toast } from '@/components/ui/base/toast';
 import { Toggle } from '@/components/ui/base/toggle';
 import { Text } from '@/components/ui/base/typography';
-import { formatDate } from '@/lib/date';
+import { formatTimestamp } from '@/lib/date';
 import { ApiError } from '@/lib/errors';
 import { cn } from '@/lib/utils';
 import requestsService from '@/services/requests';
@@ -388,14 +388,15 @@ function RequestRow({
 							</Text>
 							<Text className="text-wrap">
 								<span className="font-semibold">Date requested:</span>{' '}
-								{formatDate(request.markedAt)}
+								{formatTimestamp(request.markedAt)}
 							</Text>
 							{request.status !== 'pending' && (
 								<>
 									<Text className="text-wrap">
 										<span className="font-semibold">Status:</span>{' '}
 										{request.status === 'approved' ? 'Approved' : 'Denied'} by{' '}
-										{request.approverName} on {formatDate(request.closedAt)}
+										{request.approverName} on{' '}
+										{formatTimestamp(request.closedAt)}
 									</Text>
 									{request.status === 'denied' && (
 										<Text className="text-wrap">

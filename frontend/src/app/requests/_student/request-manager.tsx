@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Temporal } from 'temporal-polyfill';
 
 import type { ActivityWithStatus } from '@workspace/types/activities';
 import type { Class } from '@workspace/types/classes';
@@ -51,7 +52,7 @@ export function useRequestManager(
 					requests.concat(
 						newRequests.map((request) => ({
 							...request,
-							createdAt: new Date(request.createdAt),
+							createdAt: Temporal.Instant.from(request.createdAt),
 						})),
 					),
 				);
@@ -81,7 +82,7 @@ export function useRequestManager(
 
 		socket.on(
 			'requestMarked', //
-			(id, time) => {
+			(id, timestamp) => {
 				const request = requestsRef.current.find((r) => r.id === id);
 
 				if (!request) return;
@@ -97,7 +98,11 @@ export function useRequestManager(
 				setRequests((requests) =>
 					requests.map((request) => {
 						if (request.id === id) {
-							return { ...request, status: 'marked', closedAt: new Date(time) };
+							return {
+								...request,
+								status: 'marked',
+								closedAt: Temporal.Instant.from(timestamp),
+							};
 						} else {
 							return request;
 						}

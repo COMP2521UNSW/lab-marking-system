@@ -1,4 +1,5 @@
 import { and, eq } from 'drizzle-orm';
+import type { Temporal } from 'temporal-polyfill';
 
 import { activitiesTable, db, marksTable } from './db';
 
@@ -6,7 +7,7 @@ async function setMark(
 	studentZid: string,
 	activityCode: string,
 	mark: number,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	await db
 		.insert(marksTable)

@@ -1,4 +1,5 @@
 import { and, eq, gte, inArray, isNull, or, sql } from 'drizzle-orm';
+import type { Temporal } from 'temporal-polyfill';
 
 import type { NonNullableKeys } from '@workspace/types/utils';
 
@@ -74,7 +75,7 @@ export async function getOpenRequestsByUser(
 export async function updateRequestsClass(
 	zid: string,
 	classCode: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	await db
 		.update(requestsTable)
@@ -91,7 +92,7 @@ export async function createRequests(
 	zid: string,
 	classCode: string,
 	activityCodes: string[],
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	if (activityCodes.length === 0) {
 		return;
@@ -118,7 +119,7 @@ export async function withdrawRequest(
 	zid: string,
 	id: number,
 	reason: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	const rows = await db
 		.update(requestsTable)
@@ -146,7 +147,7 @@ export async function withdrawRequest(
 
 export async function getActiveOrRecentRequestsByClass(
 	classCode: string,
-	startOfDay: Date,
+	recentTimestamp: Temporal.Instant,
 ) {
 	const markersTable = alias(usersTable, 'markersTable');
 
@@ -186,7 +187,7 @@ export async function getActiveOrRecentRequestsByClass(
 				eq(requestsTable.classCode, classCode),
 				or(
 					isNull(requestsTable.closedAt),
-					gte(requestsTable.closedAt, startOfDay),
+					gte(requestsTable.closedAt, recentTimestamp),
 				),
 			),
 		)
@@ -244,7 +245,7 @@ export async function declineRequest(
 	id: number,
 	tutorZid: string,
 	reason: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	const rows = await db
 		.update(requestsTable)
@@ -275,7 +276,7 @@ export async function markRequest(
 	id: number,
 	markerZid: string,
 	mark: number,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	const rows = await db
 		.update(requestsTable)
@@ -357,7 +358,7 @@ export async function createManualRequest(
 	reason: string,
 	mark: number,
 	tutorZid: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	const rows = await db
 		.insert(manualRequestsTable)
@@ -417,7 +418,7 @@ export async function getManualRequests(ids?: number[]) {
 export async function approveManualRequest(
 	id: number, //
 	approverZid: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	const rows = await db
 		.update(manualRequestsTable)
@@ -446,7 +447,7 @@ export async function denyManualRequest(
 	id: number,
 	approverZid: string,
 	reason: string,
-	timestamp: Date,
+	timestamp: Temporal.Instant,
 ) {
 	const rows = await db
 		.update(manualRequestsTable)
