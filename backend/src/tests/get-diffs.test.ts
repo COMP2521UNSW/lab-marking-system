@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals';
 
-import { getDiffs } from '@/scripts/sync-marks';
+import { getDiffs } from '@/scripts/utils/marks';
 
 test('new marks should be detected', () => {
 	const syncedMarks = [
