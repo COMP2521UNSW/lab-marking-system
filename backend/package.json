@@ -10,6 +10,7 @@
 		"build": "tsc && tsc-alias",
 		"db:push": "drizzle-kit push",
 		"db:seed": "tsx src/db/seed/index.ts",
+		"db:studio": "drizzle-kit studio",
 		"dev": "cross-env NODE_ENV=development tsx watch src/index.ts",
 		"start": "node dist/src/index.js",
 		"test": "jest"
