@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals';
 
-import { mergeDiffs } from '@/scripts/sync-marks';
+import { mergeDiffs } from '@/scripts/utils/marks';
 
 test('diffs should be sorted correctly', () => {
 	const dbDiffs = [

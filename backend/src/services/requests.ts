@@ -30,11 +30,11 @@ import { toLocalStartOfDay } from '@/lib/date';
 import { BadRequestError, InternalServerError } from '@/lib/errors';
 import { logger } from '@/lib/logger';
 import activitiesService from '@/services/activities';
+import { classIsOpen } from '@/services/classes';
 import * as studentMessages from '@/sockets/student-messages';
 import * as tutorMessages from '@/sockets/tutor-messages';
 import type { BackendService } from '@/types/utils';
 
-import { classIsOpen } from './utils/classes';
 import {
 	toClass,
 	toManualRequest,
