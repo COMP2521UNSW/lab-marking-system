@@ -1,3 +1,5 @@
+import type { Temporal } from 'temporal-polyfill';
+
 import type { Class } from '@workspace/types/classes';
 import type { OpenRequest } from '@workspace/types/requests';
 
@@ -15,8 +17,8 @@ function requestDeclined(zid: string, id: number, reason: string) {
 	studentSocket.to(zid).emit('requestDeclined', id, reason);
 }
 
-function requestMarked(zid: string, id: number, time: Date) {
-	studentSocket.to(zid).emit('requestMarked', id, time);
+function requestMarked(zid: string, id: number, timestamp: Temporal.Instant) {
+	studentSocket.to(zid).emit('requestMarked', id, timestamp);
 }
 
 export { requestDeclined, requestMarked, requestsUpdated, requestWithdrawn };

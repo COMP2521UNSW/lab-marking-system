@@ -29,7 +29,6 @@
 		"axios": "catalog:",
 		"class-variance-authority": "catalog:",
 		"clsx": "catalog:",
-		"date-fns": "catalog:",
 		"dayjs": "catalog:",
 		"immer": "catalog:",
 		"lucide-react": "catalog:",
@@ -42,6 +41,7 @@
 		"socket.io-client": "catalog:",
 		"sonner": "catalog:",
 		"tailwind-merge": "catalog:",
+		"temporal-polyfill": "catalog:",
 		"use-debounce": "catalog:",
 		"use-immer": "catalog:",
 		"zod": "catalog:"

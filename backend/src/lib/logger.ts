@@ -1,13 +1,14 @@
 import path from 'path';
 
-import { format as formatDate } from 'date-fns';
+import { Temporal } from 'temporal-polyfill';
 import { SPLAT } from 'triple-beam';
 import { addColors, createLogger, format, transports } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 
+import { LOCAL_TIME_ZONE } from '@workspace/config';
 import type { SessionUser } from '@workspace/types/users';
 
-import { toLocalDate } from '@/lib/date';
+import { formatDateTime } from '@/lib/date';
 import { rootDir } from '@@/path-config';
 
 type Meta = {
@@ -16,8 +17,8 @@ type Meta = {
 
 const timestampFormatter = format.timestamp({
 	format: () => {
-		const date = toLocalDate(new Date());
-		return formatDate(date, 'yyyy-MM-dd HH:mm:ss');
+		const date = Temporal.Now.zonedDateTimeISO(LOCAL_TIME_ZONE);
+		return formatDateTime(date);
 	},
 });
 

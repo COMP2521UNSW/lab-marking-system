@@ -13,6 +13,7 @@
 	},
 	"devDependencies": {
 		"eslint": "catalog:",
+		"temporal-polyfill": "catalog:",
 		"typescript": "catalog:",
 		"typescript-eslint": "catalog:"
 	}

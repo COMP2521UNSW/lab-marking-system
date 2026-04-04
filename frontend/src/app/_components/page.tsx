@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { Temporal } from 'temporal-polyfill';
 
 import { Button } from '@/components/ui/base/button';
 import { PasswordInput, TextInput } from '@/components/ui/base/input';
@@ -260,9 +261,9 @@ function StudentRequestCards() {
 					request={{
 						id: 1,
 						activity: { code: 'lab01', name: 'lab01' },
-						createdAt: new Date(),
+						createdAt: Temporal.Now.instant(),
 						status: 'marked',
-						closedAt: new Date(),
+						closedAt: Temporal.Now.instant(),
 					}}
 					onWithdrawClick={() => console.log('withdraw button clicked: lab01')}
 				/>
@@ -271,9 +272,9 @@ function StudentRequestCards() {
 					request={{
 						id: 2,
 						activity: { code: 'lab02', name: 'lab02' },
-						createdAt: new Date(),
+						createdAt: Temporal.Now.instant(),
 						status: 'marked',
-						closedAt: new Date(),
+						closedAt: Temporal.Now.instant(),
 					}}
 					onWithdrawClick={() => console.log('withdraw button clicked: lab02')}
 				/>
@@ -282,7 +283,7 @@ function StudentRequestCards() {
 					request={{
 						id: 3,
 						activity: { code: 'lab03', name: 'lab03' },
-						createdAt: new Date(),
+						createdAt: Temporal.Now.instant(),
 						status: 'pending',
 					}}
 					onWithdrawClick={() => console.log('withdraw button clicked: lab03')}
@@ -292,7 +293,7 @@ function StudentRequestCards() {
 					request={{
 						id: 4,
 						activity: { code: 'lab04', name: 'lab with a long name' },
-						createdAt: new Date(),
+						createdAt: Temporal.Now.instant(),
 						status: 'pending',
 					}}
 					onWithdrawClick={() => console.log('withdraw button clicked: lab04')}
@@ -305,7 +306,7 @@ function StudentRequestCards() {
 							code: 'lab05',
 							name: 'lab with a very very very very very very very very very long name',
 						},
-						createdAt: new Date(),
+						createdAt: Temporal.Now.instant(),
 						status: 'pending',
 					}}
 					onWithdrawClick={() => console.log('withdraw button clicked: lab05')}
@@ -318,7 +319,7 @@ function StudentRequestCards() {
 							code: 'lab07',
 							name: 'lab with a veryveryveryveryveryveryveryveryvery long name',
 						},
-						createdAt: new Date(),
+						createdAt: Temporal.Now.instant(),
 						status: 'pending',
 					}}
 					onWithdrawClick={() => console.log('withdraw button clicked: lab07')}
@@ -340,25 +341,25 @@ function TutorRequestCards() {
 						{
 							id: 1,
 							activity: { code: 'lab01', name: 'lab01', maxMark: 3 },
-							createdAt: new Date(),
+							createdAt: Temporal.Now.instant(),
 							status: 'marked',
-							closedAt: new Date(),
+							closedAt: Temporal.Now.instant(),
 							markerName: 'Sussus Amogus',
 							mark: 3,
 						},
 						{
 							id: 2,
 							activity: { code: 'lab02', name: 'lab02', maxMark: 1 },
-							createdAt: new Date(),
+							createdAt: Temporal.Now.instant(),
 							status: 'marked',
-							closedAt: new Date(),
+							closedAt: Temporal.Now.instant(),
 							markerName: 'Sussus Amogus',
 							mark: 1,
 						},
 						{
 							id: 3,
 							activity: { code: 'lab03', name: 'lab03', maxMark: 5 },
-							createdAt: new Date(),
+							createdAt: Temporal.Now.instant(),
 							status: 'pending',
 							claimer: null,
 						},
@@ -369,7 +370,7 @@ function TutorRequestCards() {
 								name: 'lab with a long name',
 								maxMark: 1,
 							},
-							createdAt: new Date(),
+							createdAt: Temporal.Now.instant(),
 							status: 'pending',
 							claimer: null,
 						},
@@ -380,7 +381,7 @@ function TutorRequestCards() {
 								name: 'lab with a very very very very very very very very very long name',
 								maxMark: 1,
 							},
-							createdAt: new Date(),
+							createdAt: Temporal.Now.instant(),
 							status: 'pending',
 							claimer: null,
 						},
@@ -391,7 +392,7 @@ function TutorRequestCards() {
 								name: 'lab with a veryveryveryveryveryveryveryveryvery long name',
 								maxMark: 5,
 							},
-							createdAt: new Date(),
+							createdAt: Temporal.Now.instant(),
 							status: 'pending',
 							claimer: null,
 						},
