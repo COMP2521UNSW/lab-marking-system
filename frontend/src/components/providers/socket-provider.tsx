@@ -4,6 +4,7 @@ import type { Socket } from 'socket.io-client';
 import type { BaseServerToClientEvents } from '@workspace/types/sockets';
 
 import { dismiss, toast } from '@/components/ui/base/toast';
+import debugService from '@/services/debug';
 import { studentSocket, tutorSocket } from '@/sockets/sockets';
 
 type ReconnectCallback = () => Promise<void>;
@@ -51,6 +52,7 @@ function SocketProvider({
 		socket.io.on('reconnect_attempt', handleReconnectAttempt);
 
 		const handleReconnect = async () => {
+			debugService.debug({ message: `Recovered: ${socket.recovered}` });
 			if (!socket.recovered) {
 				await Promise.all(reconnectHandlersRef.current.map((fn) => fn()));
 			}

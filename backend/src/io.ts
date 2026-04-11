@@ -97,6 +97,8 @@ function createServer(httpServer: HTTPServer) {
 
 		socket.on('viewClass', (classCode) => {
 			if (user.role === 'student') return;
+
+			logger.info(`Tutor viewing class ${classCode}`, { user });
 			socket.rooms.forEach((room) => {
 				if (room !== socket.id) {
 					void socket.leave(room);
