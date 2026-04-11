@@ -29,7 +29,7 @@ const logIn: RequestHandler = async (req, res) => {
 	const user = await authService.logIn(dummyUser, reqData);
 
 	const accessToken = jwt.sign(user, process.env.JWT_SECRET!, {
-		expiresIn: '30 days',
+		expiresIn: '1 week',
 	});
 
 	res.cookie('token', accessToken, cookieOptions).status(200).json(user);
