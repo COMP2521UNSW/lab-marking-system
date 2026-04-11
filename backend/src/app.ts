@@ -3,7 +3,7 @@ import express from 'express';
 
 import { processToken } from '@/middleware/authentication';
 import { errorHandler } from '@/middleware/error-handler';
-import { logger } from '@/middleware/logger';
+import { logger } from '@/middleware/logging';
 // import { rateLimiter } from '@/middleware/rate-limiter';
 import { router as activitiesRouter } from '@/routes/activities';
 import { router as authRouter } from '@/routes/auth';
