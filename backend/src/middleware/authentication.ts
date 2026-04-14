@@ -7,7 +7,7 @@ type Cookies = {
 	token?: string;
 };
 
-const processToken: RequestHandler = (req, res, next) => {
+const parseToken: RequestHandler = (req, res, next) => {
 	// Necessary to avoid type error
 	const cookies = req.cookies as Cookies;
 	const token = cookies.token;
@@ -39,4 +39,4 @@ const requireLogin: RequestHandler = (req, res, next) => {
 	next();
 };
 
-export { processToken, requireLogin };
+export { parseToken, requireLogin };

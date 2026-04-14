@@ -1,7 +1,7 @@
 import cookieParser from 'cookie-parser';
 import express from 'express';
 
-import { processToken } from '@/middleware/authentication';
+import { parseToken } from '@/middleware/authentication';
 import { errorHandler } from '@/middleware/error-handler';
 import { logger } from '@/middleware/logging';
 // import { rateLimiter } from '@/middleware/rate-limiter';
@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(processToken);
+app.use(parseToken);
 
 app.use(logger);
 

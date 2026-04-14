@@ -52,7 +52,9 @@ function SocketProvider({
 		socket.io.on('reconnect_attempt', handleReconnectAttempt);
 
 		const handleReconnect = async () => {
-			debugService.debug({ message: `Recovered: ${socket.recovered}` });
+			debugService.debug({
+				message: `(${socket.id}) Recovered: ${socket.recovered}`,
+			});
 			if (!socket.recovered) {
 				await Promise.all(reconnectHandlersRef.current.map((fn) => fn()));
 			}
