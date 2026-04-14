@@ -27,7 +27,7 @@ function createServer(httpServer: HTTPServer) {
 		httpServer,
 		{
 			connectionStateRecovery: {
-				maxDisconnectionDuration: 5 * 60 * 1000,
+				maxDisconnectionDuration: 2 * 60 * 1000,
 				skipMiddlewares: true,
 			},
 		},
@@ -67,12 +67,12 @@ function createServer(httpServer: HTTPServer) {
 
 	studentNamespace.on('connection', (socket) => {
 		const user = socket.data.user;
-		logger.info('Student connected', { user });
+		logger.info(`(${socket.id}) Student connected`, { user });
 
 		void socket.join(user.zid);
 
 		socket.on('disconnect', () => {
-			logger.info('Student disconnected', { user });
+			logger.info(`(${socket.id}) Student disconnected`, { user });
 		});
 	});
 
@@ -93,12 +93,12 @@ function createServer(httpServer: HTTPServer) {
 
 	tutorNamespace.on('connection', (socket) => {
 		const user = socket.data.user;
-		logger.info('Tutor connected', { user });
+		logger.info(`(${socket.id}) Tutor connected`, { user });
 
 		socket.on('viewClass', (classCode) => {
 			if (user.role === 'student') return;
 
-			logger.info(`Tutor viewing class ${classCode}`, { user });
+			logger.info(`(${socket.id}) Tutor viewing class ${classCode}`, { user });
 			socket.rooms.forEach((room) => {
 				if (room !== socket.id) {
 					void socket.leave(room);
@@ -108,7 +108,7 @@ function createServer(httpServer: HTTPServer) {
 		});
 
 		socket.on('disconnect', () => {
-			logger.info('Tutor disconnected', { user });
+			logger.info(`(${socket.id}) Tutor disconnected`, { user });
 		});
 	});
 
