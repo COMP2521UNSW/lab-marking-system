@@ -25,12 +25,6 @@ type SocketIOMiddleware = Parameters<
 function createServer(httpServer: HTTPServer) {
 	const io = new Server<EmptyObject, EmptyObject, EmptyObject, SocketData>(
 		httpServer,
-		{
-			connectionStateRecovery: {
-				maxDisconnectionDuration: 2 * 60 * 1000,
-				skipMiddlewares: true,
-			},
-		},
 	);
 
 	const readToken: SocketIOMiddleware = (socket, next) => {

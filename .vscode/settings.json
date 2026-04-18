@@ -4,5 +4,6 @@
 	"editor.formatOnSave": true,
 	"editor.rulers": [80],
 	"editor.tabSize": 2,
-	"files.eol": "\n"
+	"files.eol": "\n",
+  "prettier.prettierPath": "./node_modules/prettier"
 }
