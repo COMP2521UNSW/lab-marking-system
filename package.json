@@ -12,5 +12,5 @@
 		"prettier": "catalog:",
 		"prettier-plugin-packagejson": "catalog:"
 	},
-	"packageManager": "pnpm@10.30.3"
+	"packageManager": "pnpm@10.33.0"
 }
