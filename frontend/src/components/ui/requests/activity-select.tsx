@@ -3,6 +3,11 @@
 import { ChevronDownIcon } from 'lucide-react';
 import * as React from 'react';
 
+import type {
+	ActivityAsStudent,
+	ActivityWithStatus,
+} from '@workspace/types/activities';
+
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -13,28 +18,20 @@ import { Tag } from '@/components/ui/base/tag';
 import { Text } from '@/components/ui/base/typography';
 import { cn } from '@/lib/utils';
 
-type SelectOption = {
-	value: string;
-	label: string;
-	marked: boolean;
-};
-
 export function ActivitySelect({
-	options,
+	activities,
 	preselected = [],
 	placeholder = 'Select activities...',
 	className,
 	onValueChange,
 	...props
 }: {
-	options: SelectOption[];
-	preselected?: string[];
+	activities: ActivityWithStatus[];
+	preselected?: ActivityAsStudent[];
 	placeholder?: string;
 	className?: string;
 	onValueChange?: (ids: string[]) => void;
 } & React.ComponentProps<typeof DropdownMenuTrigger>) {
-	const ref = React.useRef<HTMLDivElement | null>(null);
-	const [open, setOpen] = React.useState(false);
 	const [selected, setSelected] = React.useState<string[]>([]);
 
 	const handleSelect = (value: string) => {
@@ -45,53 +42,27 @@ export function ActivitySelect({
 		onValueChange?.(newSelected);
 	};
 
-	const handleDeleteClick = (value: string) => {
-		const newSelected = selected.filter((val) => val !== value);
-		setSelected(newSelected);
-		onValueChange?.(newSelected);
-	};
-
-	const isInCloseButton = (target: EventTarget | null) => {
-		return target instanceof SVGElement && ref.current?.contains(target);
-	};
-
 	return (
-		<DropdownMenu open={open}>
+		<DropdownMenu>
 			<DropdownMenuTrigger
 				className={cn(
 					'flex items-center justify-between gap-2 rounded-weak border border-outline py-[5px] px-3 whitespace-nowrap focus-ring',
 					className,
 				)}
-				onPointerDown={(e) => {
-					if (!isInCloseButton(e.target)) setOpen(true);
-				}}
-				onKeyDown={(e) => {
-					if ([' ', 'Enter'].includes(e.key) && !isInCloseButton(e.target)) {
-						setOpen(true);
-					}
-				}}
 				{...props}
 			>
 				<SelectedActivities
-					ref={ref}
-					options={options}
+					activities={activities}
 					preselected={preselected}
 					selected={selected}
 					placeholder={placeholder}
-					onDeleteClick={handleDeleteClick}
 					className="overflow-hidden"
 				/>
 				<ChevronDownIcon className="flex-none size-6 stroke-foreground" />
 			</DropdownMenuTrigger>
-			<DropdownMenuContent
-				className="w-[var(--radix-dropdown-menu-trigger-width)] border border-outline shadow-regular p-2 bg-card"
-				onPointerDownOutside={(e) => {
-					if (!isInCloseButton(e.target)) setOpen(false);
-				}}
-				onEscapeKeyDown={() => setOpen(false)}
-			>
+			<DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) border border-outline shadow-regular p-2 bg-card">
 				<ActivitySelectList
-					options={options}
+					activities={activities}
 					preselected={preselected}
 					selected={selected}
 					onSelect={handleSelect}
@@ -102,41 +73,31 @@ export function ActivitySelect({
 }
 
 function SelectedActivities({
-	ref,
-	options,
+	activities,
 	preselected,
 	selected,
 	placeholder,
-	onDeleteClick,
 	className,
 }: {
-	ref: React.RefObject<HTMLDivElement | null>;
-	options: SelectOption[];
-	preselected: string[];
+	activities: ActivityWithStatus[];
+	preselected: ActivityAsStudent[];
 	selected: string[];
 	placeholder: string;
-	onDeleteClick: (id: string) => void;
 	className?: string;
 }) {
 	return (
-		<div
-			ref={ref}
-			className={cn('flex items-center gap-2 flex-wrap', className)}
-		>
-			{preselected.map((value) => {
-				const option = options.find((opt) => opt.value === value);
-				return option && <Tag key={value} label={option.label} />;
+		<div className={cn('flex items-center gap-2 flex-wrap', className)}>
+			{preselected.map((activity) => {
+				return <Tag key={activity.code} label={activity.name} />;
 			})}
 
-			{selected.map((value) => {
-				const option = options.find((opt) => opt.value === value);
+			{selected.map((code) => {
+				const option = activities.find(
+					({ activity }) => activity.code === code,
+				);
 				return (
 					option && (
-						<Tag
-							key={option.value}
-							label={option.label}
-							// onDeleteClick={() => onDeleteClick(option.value)}
-						/>
+						<Tag key={option.activity.code} label={option.activity.name} />
 					)
 				);
 			})}
@@ -149,37 +110,42 @@ function SelectedActivities({
 }
 
 function ActivitySelectList({
-	options,
+	activities,
 	preselected,
 	selected,
 	onSelect,
 }: {
-	options: SelectOption[];
-	preselected: string[];
+	activities: ActivityWithStatus[];
+	preselected: ActivityAsStudent[];
 	selected: string[];
 	onSelect: (value: string) => void;
 }) {
-	return options.map((option) => {
-		const status = option.marked
+	return activities.map(({ activity, marked }) => {
+		const isPreselected = !!preselected.find(
+			(preselectedActivity) => preselectedActivity.code === activity.code,
+		);
+		const isSelected = selected.includes(activity.code);
+
+		const status = marked
 			? 'already marked'
-			: preselected.includes(option.value)
+			: isPreselected
 				? 'already requested'
-				: selected.includes(option.value)
+				: isSelected
 					? 'selected'
 					: null;
 
 		return (
 			<DropdownMenuCheckboxItem
-				key={option.value}
-				checked={selected.includes(option.value)}
-				disabled={option.marked || preselected.includes(option.value)}
+				key={activity.code}
+				checked={isSelected}
+				disabled={marked || isPreselected}
 				onClick={(e) => {
-					onSelect(option.value);
+					onSelect(activity.code);
 					e.preventDefault();
 				}}
 			>
 				<Text>
-					{option.label} {status && ` - ${status}`}
+					{activity.name} {status && ` - ${status}`}
 				</Text>
 			</DropdownMenuCheckboxItem>
 		);

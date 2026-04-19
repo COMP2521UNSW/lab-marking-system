@@ -159,14 +159,8 @@ export function UpdateRequestsDialog({
 
 						<ActivitySelect
 							className="w-full max-w-84"
-							options={activeActivities.map((activeActivity) => ({
-								value: activeActivity.activity.code,
-								label: activeActivity.activity.name,
-								marked: activeActivity.marked,
-							}))}
-							preselected={pendingRequests.map(
-								(request) => request.activity.code,
-							)}
+							activities={activeActivities}
+							preselected={pendingRequests.map((request) => request.activity)}
 							onValueChange={(ids) => setSelectedActivities(ids)}
 							aria-describedby="activities-desc-1 activities-desc-2"
 						/>

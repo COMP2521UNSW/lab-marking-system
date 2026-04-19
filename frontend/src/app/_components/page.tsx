@@ -151,54 +151,58 @@ function ActivitySelects() {
 
 			<div className="w-[320px] flex flex-col space-y-2">
 				<ActivitySelect
-					options={[
-						{ value: 'lab01', label: 'lab01', marked: false },
-						{ value: 'lab02', label: 'lab02', marked: false },
-						{ value: 'lab03', label: 'lab03', marked: false },
+					activities={[
+						{ activity: { code: 'lab01', name: 'Lab 1' }, marked: false },
+						{ activity: { code: 'lab02', name: 'Lab 2' }, marked: false },
+						{ activity: { code: 'lab03', name: 'Lab 3' }, marked: false },
 					]}
 					placeholder="Select labs..."
 					onChange={(value) => console.log(`lab selection changed: ${value}`)}
 				/>
 
 				<ActivitySelect
-					options={[
-						{ value: 'lab01', label: 'lab01', marked: true },
-						{ value: 'lab02', label: 'lab02', marked: false },
-						{ value: 'lab03', label: 'lab03', marked: false },
+					activities={[
+						{ activity: { code: 'lab01', name: 'Lab 1' }, marked: true },
+						{ activity: { code: 'lab02', name: 'Lab 2' }, marked: false },
+						{ activity: { code: 'lab03', name: 'Lab 3' }, marked: false },
 					]}
 					placeholder="Select labs..."
 					onChange={(value) => console.log(`lab selection changed: ${value}`)}
 				/>
 
 				<ActivitySelect
-					options={[
-						{ value: 'lab01', label: 'lab01', marked: false },
-						{ value: 'lab02', label: 'lab02', marked: false },
-						{ value: 'lab03', label: 'lab03', marked: false },
+					activities={[
+						{ activity: { code: 'lab01', name: 'Lab 1' }, marked: false },
+						{ activity: { code: 'lab02', name: 'Lab 2' }, marked: false },
+						{ activity: { code: 'lab03', name: 'Lab 3' }, marked: false },
 					]}
-					preselected={['lab01']}
+					preselected={[{ code: 'lab01', name: 'Lab 1' }]}
 					placeholder="Select labs..."
 					onChange={(value) => console.log(`lab selection changed: ${value}`)}
 				/>
 
 				<ActivitySelect
-					options={[
-						{ value: 'lab01', label: 'lab01', marked: true },
-						{ value: 'lab02', label: 'lab02', marked: false },
-						{ value: 'lab03', label: 'lab03', marked: false },
+					activities={[
+						{ activity: { code: 'lab01', name: 'Lab 1' }, marked: true },
+						{ activity: { code: 'lab02', name: 'Lab 2' }, marked: false },
+						{ activity: { code: 'lab03', name: 'Lab 3' }, marked: false },
 					]}
-					preselected={['lab02']}
+					preselected={[{ code: 'lab02', name: 'Lab 2' }]}
 					placeholder="Select labs..."
 					onChange={(value) => console.log(`lab selection changed: ${value}`)}
 				/>
 
 				<ActivitySelect
-					options={[
-						{ value: 'lab01', label: 'lab01', marked: false },
-						{ value: 'lab02', label: 'lab02', marked: false },
-						{ value: 'lab03', label: 'lab03', marked: false },
+					activities={[
+						{ activity: { code: 'lab01', name: 'Lab 1' }, marked: false },
+						{ activity: { code: 'lab02', name: 'Lab 2' }, marked: false },
+						{ activity: { code: 'lab03', name: 'Lab 3' }, marked: false },
 					]}
-					preselected={['lab01', 'lab02', 'lab03']}
+					preselected={[
+						{ code: 'lab01', name: 'Lab 1' },
+						{ code: 'lab02', name: 'Lab 2' },
+						{ code: 'lab03', name: 'Lab 3' },
+					]}
 					placeholder="Select labs..."
 					onChange={(value) => console.log(`lab selection changed: ${value}`)}
 				/>
