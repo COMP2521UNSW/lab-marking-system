@@ -10,9 +10,8 @@ import { Button } from '@/components/ui/base/button';
 import { Field, FieldError, FieldGroup } from '@/components/ui/base/field';
 import { PasswordInput, TextInput } from '@/components/ui/base/input';
 import { Link } from '@/components/ui/base/link';
-import { toast } from '@/components/ui/base/toast';
+import { errorToast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
-import { ApiError } from '@/lib/errors';
 
 const formSchema = z.object({
 	zid: z.string().min(1, { message: 'zID is required' }),
@@ -38,11 +37,7 @@ export function LoginForm() {
 		try {
 			await logIn(values.zid, values.zpass);
 		} catch (err) {
-			if (err instanceof ApiError) {
-				toast(err.message);
-			} else {
-				toast('Something went wrong, please try again');
-			}
+			errorToast(err);
 			setLoading(false);
 		}
 	};

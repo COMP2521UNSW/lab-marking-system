@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import type { ActiveClasses } from '@workspace/types/classes';
 
+import { errorToast } from '@/components/ui/base/toast';
 import classesService from '@/services/classes';
 
 import { useSocket } from './socket-provider';
@@ -28,8 +29,12 @@ export function ActiveClassesProvider({
 
 	React.useEffect(() => {
 		const handleReconnect = async () => {
-			const activeClasses = await classesService.getActiveClasses();
-			setActiveClasses(activeClasses);
+			try {
+				const activeClasses = await classesService.getActiveClasses();
+				setActiveClasses(activeClasses);
+			} catch (err) {
+				errorToast(err);
+			}
 		};
 		addReconnectHandler(handleReconnect);
 

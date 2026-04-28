@@ -24,9 +24,8 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/base/table';
-import { toast } from '@/components/ui/base/toast';
+import { errorToast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
-import { ApiError } from '@/lib/errors';
 import { cn } from '@/lib/utils';
 import activitiesService from '@/services/activities';
 import studentsService from '@/services/students';
@@ -75,11 +74,7 @@ function StudentSearchPage() {
 					data: { activities },
 				});
 			} catch (err) {
-				if (err instanceof ApiError) {
-					toast(err.message);
-				} else {
-					toast('Something went wrong, please try again');
-				}
+				errorToast(err);
 			}
 		}
 
@@ -115,9 +110,15 @@ function StudentSearch() {
 
 		queryRef.current = query;
 		setLoading(true);
-		const students = await studentsService.searchStudents({ q: query });
-		if (query === queryRef.current) {
-			setResults(students.sort((a, b) => a.name.localeCompare(b.name)));
+
+		try {
+			const students = await studentsService.searchStudents({ q: query });
+			if (query === queryRef.current) {
+				setResults(students.sort((a, b) => a.name.localeCompare(b.name)));
+				setLoading(false);
+			}
+		} catch (err) {
+			errorToast(err);
 			setLoading(false);
 		}
 	}, 500);

@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/base/button';
 import { Card } from '@/components/ui/base/card';
 import { Image } from '@/components/ui/base/image';
 import { Loading } from '@/components/ui/base/loading';
-import { toast } from '@/components/ui/base/toast';
+import { errorToast } from '@/components/ui/base/toast';
 import {
 	Tooltip,
 	TooltipContent,
@@ -25,7 +25,6 @@ import {
 } from '@/components/ui/base/tooltip';
 import { Text } from '@/components/ui/base/typography';
 import { StudentRequestCard } from '@/components/ui/requests/student-request-card';
-import { ApiError } from '@/lib/errors';
 import pagesService from '@/services/pages';
 
 import { DeclinedDialogProvider } from './_declined-dialog/context';
@@ -74,11 +73,7 @@ export function StudentRequestsPage() {
 					},
 				});
 			} catch (err) {
-				if (err instanceof ApiError) {
-					toast(err.message);
-				} else {
-					toast('Something went wrong, please try again');
-				}
+				errorToast(err);
 			}
 		}
 

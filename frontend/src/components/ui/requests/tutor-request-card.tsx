@@ -13,10 +13,9 @@ import type { Student } from '@workspace/types/users';
 import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/base/button';
 import { Separator } from '@/components/ui/base/separator';
-import { toast } from '@/components/ui/base/toast';
+import { errorToast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
 import { TutorRequestStatus } from '@/components/ui/requests/request-status';
-import { ApiError } from '@/lib/errors';
 import { cn } from '@/lib/utils';
 import requestsService from '@/services/requests';
 
@@ -98,11 +97,7 @@ function RequestRow({
 				await requestsService.unclaimRequest({ id: request.id });
 			}
 		} catch (err) {
-			toast(
-				err instanceof ApiError
-					? err.message
-					: 'Something went wrong, please try again',
-			);
+			errorToast(err);
 		}
 		setLoading(false);
 	};

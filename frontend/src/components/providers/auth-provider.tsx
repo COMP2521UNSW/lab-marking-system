@@ -5,6 +5,7 @@ import * as React from 'react';
 
 import type { UserDetails } from '@workspace/types/users';
 
+import { errorToast } from '@/components/ui/base/toast';
 import authService from '@/services/auth';
 
 interface AuthContextType {
@@ -30,17 +31,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	React.useEffect(() => {
 		const fetchUser = async () => {
-			const user = await authService.getUser();
-			setUser(user);
-			setLoading(false);
+			try {
+				const user = await authService.getUser();
+				setUser(user);
+				setLoading(false);
+			} catch (err) {
+				errorToast(err);
+			}
 		};
 
 		fetchUser();
 	}, []);
 
 	const logIn = async (zid: string, password: string) => {
-		const user = await authService.logIn({ zid, password });
-		setUser(user);
+		try {
+			const user = await authService.logIn({ zid, password });
+			setUser(user);
+		} catch (err) {
+			errorToast(err);
+		}
 	};
 
 	const logOut = async () => {
@@ -53,8 +62,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				router.push('/login');
 				setLoading(false);
 			});
-		} catch (error) {
-			console.error(error);
+		} catch (err) {
+			errorToast(err);
 		}
 	};
 

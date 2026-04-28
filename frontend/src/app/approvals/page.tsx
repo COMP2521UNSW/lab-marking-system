@@ -23,11 +23,10 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/base/table';
-import { toast } from '@/components/ui/base/toast';
+import { errorToast, toast } from '@/components/ui/base/toast';
 import { Toggle } from '@/components/ui/base/toggle';
 import { Text } from '@/components/ui/base/typography';
 import { formatTimestamp } from '@/lib/date';
-import { ApiError } from '@/lib/errors';
 import { cn } from '@/lib/utils';
 import requestsService from '@/services/requests';
 
@@ -75,11 +74,7 @@ function MarkApprovalsPage() {
 					data: { requests },
 				});
 			} catch (err) {
-				if (err instanceof ApiError) {
-					toast(err.message);
-				} else {
-					toast('Something went wrong, please try again');
-				}
+				errorToast(err);
 			}
 		}
 
@@ -280,11 +275,7 @@ function RequestRow({
 			closeRequest(updatedRequest);
 			toast('Request approved');
 		} catch (err) {
-			if (err instanceof ApiError) {
-				toast(err.message);
-			} else {
-				toast('Something went wrong, please try again');
-			}
+			errorToast(err);
 		}
 
 		setLoading(false);
@@ -301,11 +292,7 @@ function RequestRow({
 				toast('Manual request denied');
 				closeRequest(updatedRequest);
 			} catch (err) {
-				if (err instanceof ApiError) {
-					toast(err.message);
-				} else {
-					toast('Something went wrong, please try again');
-				}
+				errorToast(err);
 
 				throw err;
 			}

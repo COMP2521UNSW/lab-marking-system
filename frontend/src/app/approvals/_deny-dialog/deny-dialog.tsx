@@ -12,9 +12,7 @@ import {
 	DialogTitle,
 } from '@/components/ui/base/dialog';
 import { TextInput } from '@/components/ui/base/input';
-import { toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
-import { ApiError } from '@/lib/errors';
 
 export function DenyDialog({
 	open,
@@ -32,6 +30,7 @@ export function DenyDialog({
 	React.useEffect(() => {
 		if (open) {
 			setReason('');
+			setLoading(false);
 		}
 	}, [open]);
 
@@ -42,13 +41,7 @@ export function DenyDialog({
 			await onConfirmed(reason);
 
 			setOpen(false);
-		} catch (err) {
-			if (err instanceof ApiError) {
-				toast(err.message);
-			} else {
-				toast('Something went wrong, please try again');
-			}
-
+		} catch {
 			setLoading(false);
 		}
 	};

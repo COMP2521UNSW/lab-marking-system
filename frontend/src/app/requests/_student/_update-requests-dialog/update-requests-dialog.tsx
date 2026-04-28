@@ -15,11 +15,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/base/dialog';
-import { toast } from '@/components/ui/base/toast';
+import { errorToast, toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
 import { ActivitySelect } from '@/components/ui/requests/activity-select';
 import { ClassSelect } from '@/components/ui/requests/class-select';
-import { ApiError } from '@/lib/errors';
 import requestsService from '@/services/requests';
 
 export function UpdateRequestsDialog({
@@ -93,12 +92,7 @@ export function UpdateRequestsDialog({
 			}
 			setOpen(false);
 		} catch (err) {
-			if (err instanceof ApiError) {
-				toast(err.message);
-			} else {
-				toast('Something went wrong, please try again');
-			}
-
+			errorToast(err);
 			setLoading(false);
 		}
 	};

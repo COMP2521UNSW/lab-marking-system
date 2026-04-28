@@ -11,6 +11,7 @@ import type {
 import type { Student } from '@workspace/types/users';
 
 import { useTutorSocket } from '@/components/providers/socket-provider';
+import { errorToast } from '@/components/ui/base/toast';
 import requestsService from '@/services/requests';
 
 type RequestsState = {
@@ -30,11 +31,15 @@ export function useRequestManager() {
 
 	const loadClass = React.useCallback(
 		async (cls: Class) => {
-			socket.emit('viewClass', cls.code);
-			const requests = await requestsService.getRequestsByClass({
-				classCode: cls.code,
-			});
-			updateRequests(sortRequests(requests));
+			try {
+				socket.emit('viewClass', cls.code);
+				const requests = await requestsService.getRequestsByClass({
+					classCode: cls.code,
+				});
+				updateRequests(sortRequests(requests));
+			} catch (err) {
+				errorToast(err);
+			}
 		},
 		[socket, updateRequests],
 	);

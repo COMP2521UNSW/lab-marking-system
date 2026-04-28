@@ -14,9 +14,8 @@ import {
 } from '@/components/ui/base/dialog';
 import { TextInput } from '@/components/ui/base/input';
 import { Select } from '@/components/ui/base/select';
-import { toast } from '@/components/ui/base/toast';
+import { errorToast, toast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
-import { ApiError } from '@/lib/errors';
 import requestsService from '@/services/requests';
 
 const reasonPresets = [
@@ -65,12 +64,7 @@ export function WithdrawDialog({
 			toast('Request withdrawn');
 			setOpen(false);
 		} catch (err) {
-			if (err instanceof ApiError) {
-				toast(err.message);
-			} else {
-				toast('Something went wrong, please try again');
-			}
-
+			errorToast(err);
 			setLoading(false);
 		}
 	};

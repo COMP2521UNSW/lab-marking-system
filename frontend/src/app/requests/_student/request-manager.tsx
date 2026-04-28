@@ -6,6 +6,7 @@ import type { Class } from '@workspace/types/classes';
 import type { MarkingRequestAsStudent } from '@workspace/types/requests';
 
 import { useStudentSocket } from '@/components/providers/socket-provider';
+import { errorToast } from '@/components/ui/base/toast';
 import pagesService from '@/services/pages';
 
 import { useDeclinedDialog } from './_declined-dialog/context';
@@ -36,11 +37,15 @@ export function useRequestManager(
 
 	React.useEffect(() => {
 		const handleReconnect = async () => {
-			const { activeActivities, requestDetails } =
-				await pagesService.getStudentRequestsPage();
-			setAttendedClass(requestDetails.class);
-			setRequests(requestDetails.requests);
-			setActiveActivities(activeActivities);
+			try {
+				const { activeActivities, requestDetails } =
+					await pagesService.getStudentRequestsPage();
+				setAttendedClass(requestDetails.class);
+				setRequests(requestDetails.requests);
+				setActiveActivities(activeActivities);
+			} catch (err) {
+				errorToast(err);
+			}
 		};
 		addReconnectHandler(handleReconnect);
 
