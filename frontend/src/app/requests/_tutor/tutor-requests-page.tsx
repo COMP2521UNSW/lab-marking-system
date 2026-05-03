@@ -15,12 +15,11 @@ import { Card } from '@/components/ui/base/card';
 import { Image } from '@/components/ui/base/image';
 import { Loading } from '@/components/ui/base/loading';
 import { Spinner } from '@/components/ui/base/spinner';
-import { toast } from '@/components/ui/base/toast';
+import { errorToast } from '@/components/ui/base/toast';
 import { Toggle } from '@/components/ui/base/toggle';
 import { Text } from '@/components/ui/base/typography';
 import { ClassSelect } from '@/components/ui/requests/class-select';
 import { TutorRequestCard } from '@/components/ui/requests/tutor-request-card';
-import { ApiError } from '@/lib/errors';
 import classesService from '@/services/classes';
 
 import { AmendDialogProvider, useAmendDialog } from './_amend-dialog/context';
@@ -58,11 +57,7 @@ export function TutorRequestsPage() {
 					data: { activeClasses },
 				});
 			} catch (err) {
-				if (err instanceof ApiError) {
-					toast(err.message);
-				} else {
-					toast('Something went wrong, please try again');
-				}
+				errorToast(err);
 			}
 		}
 

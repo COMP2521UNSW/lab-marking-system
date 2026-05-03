@@ -11,6 +11,8 @@ import { useTheme } from 'next-themes';
 import type { ExternalToast, ToasterProps } from 'sonner';
 import { Toaster as Sonner, toast as sonnerToast } from 'sonner';
 
+import { ApiError } from '@/lib/errors';
+
 const Toaster = ({ ...props }: ToasterProps) => {
 	const { theme = 'system' } = useTheme();
 
@@ -43,6 +45,15 @@ interface ToastProps {
 	message: string;
 }
 
+function errorToast(err: unknown, data?: ExternalToast) {
+	toast(
+		err instanceof ApiError
+			? err.message
+			: 'Something went wrong, please try again',
+		data,
+	);
+}
+
 function toast(message: string, data?: ExternalToast) {
 	return sonnerToast.custom((id) => <Toast id={id} message={message} />, data);
 }
@@ -61,4 +72,4 @@ function dismiss(toastId: number | string) {
 	sonnerToast.dismiss(toastId);
 }
 
-export { dismiss, toast, Toaster };
+export { dismiss, errorToast, toast, Toaster };

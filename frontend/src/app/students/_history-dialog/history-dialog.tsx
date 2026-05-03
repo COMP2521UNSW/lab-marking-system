@@ -25,7 +25,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/base/table';
-import { toast } from '@/components/ui/base/toast';
+import { errorToast } from '@/components/ui/base/toast';
 import { Text } from '@/components/ui/base/typography';
 import { formatTimestamp } from '@/lib/date';
 import { cn } from '@/lib/utils';
@@ -59,8 +59,8 @@ export function HistoryDialog({
 					zid: student.zid,
 				});
 				setState({ loaded: true, logs });
-			} catch {
-				toast('Something went wrong, please try again');
+			} catch (err) {
+				errorToast(err);
 			}
 		}
 
