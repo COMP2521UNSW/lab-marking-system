@@ -12,7 +12,7 @@ import { activitiesTable, db, marksTable, syncedMarksTable } from '@/db/db';
 import { logMarksImportedFromSms } from '@/db/logs';
 import { logger } from '@/lib/logger';
 
-import { executeCommand } from './utils';
+import { executeCommand } from './utils/exec';
 import type { Mark } from './utils/marks';
 import { getDiffs, mergeDiffs } from './utils/marks';
 

@@ -2,7 +2,7 @@ import '@@/env-config';
 
 import { SESSION } from '@workspace/config';
 
-import { executeCommand } from './utils';
+import { executeCommand } from './utils/exec';
 
 async function main() {
 	const tutors = await parseTutors();

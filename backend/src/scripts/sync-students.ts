@@ -9,7 +9,8 @@ import { COURSE_CODE, SESSION } from '@workspace/config';
 import { classesTable, db, usersTable } from '@/db/db';
 import { logger } from '@/lib/logger';
 
-import { executeCommand, parseError } from './utils';
+import { parseError } from './utils/errors';
+import { executeCommand } from './utils/exec';
 
 type Student = {
 	zid: string;

@@ -11,7 +11,7 @@ import type { Time } from '@workspace/types/time';
 import { classesTable, db } from '@/db/db';
 import { logger } from '@/lib/logger';
 
-import { parseError } from './utils';
+import { parseError } from './utils/errors';
 
 type Class = typeof classesTable.$inferInsert;
 
