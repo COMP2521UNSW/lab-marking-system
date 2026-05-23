@@ -10,7 +10,7 @@ import z, { ZodError } from 'zod';
 import { activitiesTable, db } from '@/db/db';
 import { logger } from '@/lib/logger';
 
-import { parseError } from './utils';
+import { parseError } from './utils/errors';
 
 const activitySchema = z.object({
 	code: z.string(),

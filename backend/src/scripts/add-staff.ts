@@ -10,7 +10,7 @@ import z, { ZodError } from 'zod';
 import { db, usersTable } from '@/db/db';
 import { logger } from '@/lib/logger';
 
-import { parseError } from './utils';
+import { parseError } from './utils/errors';
 
 const userSchema = z.object({
 	zid: z.string(),

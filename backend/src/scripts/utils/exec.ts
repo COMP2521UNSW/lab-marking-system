@@ -2,6 +2,8 @@ import { exec } from 'child_process';
 
 import { logger } from '@/lib/logger';
 
+import { parseError } from './errors';
+
 export const executeCommand = (
 	command: string,
 	printError = true,
@@ -19,17 +21,4 @@ export const executeCommand = (
 			resolve(stdout);
 		});
 	});
-};
-
-/**
- * Attempts to decode an error into a string to be logged
- * @param err error to be decoded
- */
-export const parseError = (err: unknown): string => {
-	if (err instanceof Error) {
-		return err.message;
-	} else if (typeof err === 'string') {
-		return err;
-	}
-	return JSON.stringify(err);
 };
