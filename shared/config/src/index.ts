@@ -1,6 +1,6 @@
 const COURSE_CODE = 'COMP2521';
 
-const SESSION = '26T1';
+const SESSION = '26T2';
 
 const LOCAL_TIME_ZONE = 'Australia/Sydney';
 
