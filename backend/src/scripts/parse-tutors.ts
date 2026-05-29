@@ -32,7 +32,7 @@ function printTutorsToml(tutors: Awaited<ReturnType<typeof parseTutors>>) {
 	console.log('tutors = [');
 	for (const tutor of tutors) {
 		const name = tutor.name.replace('\\', '\\\\').replace('"', '\\"');
-		console.log(`\t{ zid = '${tutor.zid}', name = "${name}" }`);
+		console.log(`\t{ zid = '${tutor.zid}', name = "${name}" },`);
 	}
 	console.log(']');
 }
