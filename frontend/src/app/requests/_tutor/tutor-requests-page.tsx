@@ -19,6 +19,7 @@ import { errorToast } from '@/components/ui/base/toast';
 import { Toggle } from '@/components/ui/base/toggle';
 import { Text } from '@/components/ui/base/typography';
 import { ClassSelect } from '@/components/ui/requests/class-select';
+import { ConfirmClaimDialogProvider } from '@/components/ui/requests/confirm-claim-dialog/context';
 import { TutorRequestCard } from '@/components/ui/requests/tutor-request-card';
 import classesService from '@/services/classes';
 
@@ -75,15 +76,17 @@ export function TutorRequestsPage() {
 					<ActiveClassesProvider
 						initialActiveClasses={loadingState.data.activeClasses}
 					>
-						<DeclineDialogProvider>
-							<MarkDialogProvider>
-								<AmendDialogProvider>
-									<ViewDialogProvider>
-										<TutorRequests />
-									</ViewDialogProvider>
-								</AmendDialogProvider>
-							</MarkDialogProvider>
-						</DeclineDialogProvider>
+						<ConfirmClaimDialogProvider>
+							<DeclineDialogProvider>
+								<MarkDialogProvider>
+									<AmendDialogProvider>
+										<ViewDialogProvider>
+											<TutorRequests />
+										</ViewDialogProvider>
+									</AmendDialogProvider>
+								</MarkDialogProvider>
+							</DeclineDialogProvider>
+						</ConfirmClaimDialogProvider>
 					</ActiveClassesProvider>
 				</TutorSocketProvider>
 			)}
