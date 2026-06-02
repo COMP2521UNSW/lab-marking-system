@@ -19,6 +19,8 @@ import { TutorRequestStatus } from '@/components/ui/requests/request-status';
 import { cn } from '@/lib/utils';
 import requestsService from '@/services/requests';
 
+import { useConfirmClaimDialog } from './confirm-claim-dialog/context';
+
 export function TutorRequestCard({
 	student,
 	requests,
@@ -80,6 +82,7 @@ function RequestRow({
 	onViewClick: (request: WithdrawnRequest | DeclinedRequest) => void;
 }) {
 	const { user } = useAuth();
+	const { confirmClaim } = useConfirmClaimDialog();
 
 	const claimedBySelf =
 		request.status === 'pending' && request.claimer?.zid === user?.zid;
@@ -88,6 +91,13 @@ function RequestRow({
 
 	const handleClaimClick = async () => {
 		if (request.status !== 'pending') return;
+
+		if (request.claimer !== null && request.claimer.zid !== user?.zid) {
+			const firstName = request.claimer.name.split(' ')[0];
+			if (!(await confirmClaim(firstName))) {
+				return;
+			}
+		}
 
 		setLoading(true);
 		try {
