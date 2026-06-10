@@ -36,6 +36,7 @@ async function main() {
 
 	const classMap = await getClassMap();
 	const sourceStudents = await parseEnrollments(ENROLLMENTS_FILE, classMap);
+	await setPreferredNames(sourceStudents);
 
 	const diffs = getDiffs(dbStudents, sourceStudents);
 
@@ -108,6 +109,39 @@ async function parseEnrollments(
 		logger.error(parseError(err));
 		process.exit(1);
 	}
+}
+
+async function setPreferredNames(students: Student[]) {
+	const zids = students.map((student) => student.zid).join(' ');
+
+	let stdout: string;
+	try {
+		stdout = await executeCommand(`acc format='$CN\t$PREF' ${zids}`);
+	} catch {
+		process.exit(1);
+	}
+
+	// stdout is expected to contain lines in the format:
+	// z5555555 John Doe
+	const nameMap = new Map(
+		stdout
+			.replace(/\n$/, '')
+			.split('\n')
+			.map((line) => {
+				const [zid, name] = line.split('\t');
+				if (!zid || !name) {
+					logger.error(`Failed to parse zID and name from line: ${line}`);
+					process.exit(1);
+				}
+				return [zid, name];
+			}),
+	);
+
+	students.forEach((student) => {
+		if (nameMap.has(student.zid)) {
+			student.name = nameMap.get(student.zid)!;
+		}
+	});
 }
 
 function getDiffs(dbStudents: Student[], sourceStudents: Student[]) {
