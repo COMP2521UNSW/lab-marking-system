@@ -30,6 +30,7 @@ async function dbGetStudentByZid(zid: string) {
 		.select({
 			zid: usersTable.zid,
 			name: usersTable.name,
+			classCode: usersTable.classCode,
 		})
 		.from(usersTable)
 		.where(and(eq(usersTable.zid, zid), eq(usersTable.role, 'student')));

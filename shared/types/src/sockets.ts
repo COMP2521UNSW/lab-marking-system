@@ -2,7 +2,7 @@ import type { Temporal } from 'temporal-polyfill';
 
 import type { ActiveClasses, Class } from './classes';
 import type { OpenRequest, PendingRequest } from './requests';
-import type { SessionUser, User } from './users';
+import type { SessionUser, Student, User } from './users';
 import type { EmptyObject, Serialized } from './utils';
 
 interface BaseServerToClientEvents {
@@ -23,8 +23,8 @@ interface TutorClientToServerEvents {
 }
 
 interface TutorServerToClientEvents extends BaseServerToClientEvents {
-	requestsCreated: (student: User, requests: PendingRequest[]) => void;
-	studentJoined: (student: User, requests: PendingRequest[]) => void;
+	requestsCreated: (student: Student, requests: PendingRequest[]) => void;
+	studentJoined: (student: Student, requests: PendingRequest[]) => void;
 	studentLeft: (studentZid: string) => void;
 	requestWithdrawn: (
 		id: number,

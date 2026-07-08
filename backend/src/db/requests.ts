@@ -157,6 +157,7 @@ export async function getActiveOrRecentRequestsByClass(
 			student: {
 				zid: usersTable.zid,
 				name: usersTable.name,
+				classCode: usersTable.classCode,
 			},
 			activity: {
 				code: activitiesTable.code,
@@ -388,6 +389,7 @@ export async function getManualRequests(ids?: number[]) {
 			student: {
 				zid: usersTable.zid,
 				name: usersTable.name,
+				classCode: usersTable.classCode,
 			},
 			activity: {
 				code: activitiesTable.code,

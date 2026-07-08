@@ -1,13 +1,13 @@
 import type { Temporal } from 'temporal-polyfill';
 
 import type { PendingRequest } from '@workspace/types/requests';
-import type { User } from '@workspace/types/users';
+import type { Student, User } from '@workspace/types/users';
 
 import { tutorSocket } from '@/server';
 
 function requestsCreated(
 	classCode: string,
-	student: User,
+	student: Student,
 	requests: PendingRequest[],
 ) {
 	tutorSocket.to(classCode).emit('requestsCreated', student, requests);
@@ -15,7 +15,7 @@ function requestsCreated(
 
 function studentJoined(
 	classCode: string,
-	student: User,
+	student: Student,
 	requests: PendingRequest[],
 ) {
 	tutorSocket.to(classCode).emit('studentJoined', student, requests);

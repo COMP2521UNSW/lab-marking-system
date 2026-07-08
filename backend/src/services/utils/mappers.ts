@@ -11,7 +11,7 @@ import type {
 	OpenRequest,
 	PendingRequest,
 } from '@workspace/types/requests';
-import type { StudentDetails, User, UserDetails } from '@workspace/types/users';
+import type { Student, User, UserDetails } from '@workspace/types/users';
 
 import type * as dbLogs from '@/db/logs';
 import type * as dbMarks from '@/db/marks';
@@ -35,13 +35,11 @@ export function toUserDetails(user: UserDetails): UserDetails {
 	};
 }
 
-export function toStudentDetailsList(
-	students: StudentDetails[],
-): StudentDetails[] {
-	return students.map(toStudentDetails);
+export function toStudentList(students: Student[]): Student[] {
+	return students.map(toStudent);
 }
 
-export function toStudentDetails(student: StudentDetails): StudentDetails {
+export function toStudent(student: Student): Student {
 	return {
 		zid: student.zid,
 		name: student.name,

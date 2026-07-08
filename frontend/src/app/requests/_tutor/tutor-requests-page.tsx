@@ -128,6 +128,7 @@ function TutorRequests() {
 					<Spinner className="size-12" />
 				) : (
 					<Requests
+						currClass={selectedClass}
 						openRequests={openRequests}
 						closedRequests={closedRequests}
 					/>
@@ -137,9 +138,11 @@ function TutorRequests() {
 }
 
 function Requests({
+	currClass,
 	openRequests,
 	closedRequests,
 }: {
+	currClass: Class;
 	openRequests: StudentWithRequests[];
 	closedRequests: StudentWithRequests[];
 }) {
@@ -164,6 +167,7 @@ function Requests({
 
 			<RequestList
 				key={tab}
+				currClass={currClass}
 				mode={tab}
 				students={tab === 'open' ? openRequests : closedRequests}
 			/>
@@ -172,9 +176,11 @@ function Requests({
 }
 
 function RequestList({
+	currClass,
 	mode,
 	students,
 }: {
+	currClass: Class;
 	mode: 'open' | 'closed';
 	students: StudentWithRequests[];
 }) {
@@ -208,6 +214,7 @@ function RequestList({
 					className="w-full"
 					student={stu.student}
 					requests={stu.requests}
+					currClass={currClass}
 					onMarkClick={(request) => mark(stu.student, request)}
 					onDeclineClick={(request) => decline(stu.student, request)}
 					onAmendClick={(request) => amend(stu.student, request)}

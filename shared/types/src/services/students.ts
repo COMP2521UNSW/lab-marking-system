@@ -1,6 +1,6 @@
 import type { LogEvent } from '../logs';
 import type { MarkEntry } from '../marks';
-import type { StudentDetails } from '../users';
+import type { Student } from '../users';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -24,7 +24,7 @@ export type SearchStudentsRequestData = {
 	q: string;
 };
 
-export type SearchStudentsResponseData = StudentDetails[];
+export type SearchStudentsResponseData = Student[];
 
 export type GetStudentMarksRequestData = {
 	zid: string;

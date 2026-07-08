@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import type { ActivityAsTutor } from '@workspace/types/activities';
-import type { StudentDetails } from '@workspace/types/users';
+import type { Student } from '@workspace/types/users';
 
 import { MAX_WIDTH, MIN_WIDTH } from '@/app/layout';
 import { LoginRequired } from '@/components/guards/login-required';
@@ -103,7 +103,7 @@ function StudentSearch() {
 	const queryRef = React.useRef('');
 	const [loading, setLoading] = React.useState(false);
 
-	const [results, setResults] = React.useState<StudentDetails[] | null>(null);
+	const [results, setResults] = React.useState<Student[] | null>(null);
 
 	const debouncedSearch = useDebouncedCallback(async (query: string) => {
 		if (query.trim().length < 2) return;
@@ -150,7 +150,7 @@ function StudentSearch() {
 	);
 }
 
-function SearchResults({ students }: { students: StudentDetails[] }) {
+function SearchResults({ students }: { students: Student[] }) {
 	return (
 		<div className="space-y-4">
 			<Text>
@@ -167,7 +167,7 @@ function ResultsTable({
 	students,
 	className,
 }: {
-	students: StudentDetails[];
+	students: Student[];
 	className?: string;
 }) {
 	const { markStudent } = useMarkDialog();

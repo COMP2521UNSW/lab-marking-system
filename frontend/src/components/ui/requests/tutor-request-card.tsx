@@ -1,7 +1,10 @@
 'use client';
 
+import { CheckBadgeIcon } from '@heroicons/react/24/solid';
+import { BadgeAlertIcon, BadgeInfoIcon } from 'lucide-react';
 import * as React from 'react';
 
+import type { Class } from '@workspace/types/classes';
 import type {
 	DeclinedRequest,
 	MarkedRequest,
@@ -14,6 +17,11 @@ import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/base/button';
 import { Separator } from '@/components/ui/base/separator';
 import { errorToast } from '@/components/ui/base/toast';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from '@/components/ui/base/tooltip';
 import { Text } from '@/components/ui/base/typography';
 import { TutorRequestStatus } from '@/components/ui/requests/request-status';
 import { cn } from '@/lib/utils';
@@ -22,6 +30,7 @@ import requestsService from '@/services/requests';
 import { useConfirmClaimDialog } from './confirm-claim-dialog/context';
 
 export function TutorRequestCard({
+	currClass,
 	student,
 	requests,
 	className,
@@ -30,6 +39,7 @@ export function TutorRequestCard({
 	onAmendClick,
 	onViewClick,
 }: {
+	currClass: Class;
 	student: Student;
 	requests: MarkingRequestAsTutor[];
 	className?: string;
@@ -46,7 +56,10 @@ export function TutorRequestCard({
 			)}
 		>
 			<div className="flex justify-between p-2">
-				<Text>{student.name}</Text>
+				<div className="flex gap-2">
+					<Text>{student.name}</Text>
+					<MembershipIcon currClass={currClass} student={student} />
+				</div>
 				<Text>{student.zid}</Text>
 			</div>
 
@@ -64,6 +77,47 @@ export function TutorRequestCard({
 					/>
 				))}
 			</div>
+		</div>
+	);
+}
+
+function MembershipIcon({
+	currClass,
+	student,
+}: {
+	currClass: Class;
+	student: Student;
+}) {
+	const isClassMember = student.classCode === currClass.code;
+
+	return (
+		<Tooltip>
+			<TooltipTrigger className="rounded-full outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]">
+				{isClassMember ? (
+					<MemberIcon />
+				) : (
+					<BadgeInfoIcon className="size-5 stroke-[1.75]" />
+				)}
+			</TooltipTrigger>
+			<TooltipContent>
+				{isClassMember
+					? 'Enrolled in this class'
+					: student.classCode === null
+						? 'Not enrolled in any classes'
+						: `Enrolled in ${student.classCode}`}
+			</TooltipContent>
+		</Tooltip>
+	);
+}
+
+function MemberIcon() {
+	return (
+		<div className="relative">
+			<div className="absolute top-0 left-0 size-full rounded-full p-1 bg-white bg-clip-content" />
+			<CheckBadgeIcon
+				className="relative size-5 fill-primary"
+				viewBox="1 1 22 22"
+			/>
 		</div>
 	);
 }

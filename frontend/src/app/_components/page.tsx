@@ -340,7 +340,8 @@ function TutorRequestCards() {
 
 			<div className="space-y-2">
 				<TutorRequestCard
-					student={{ zid: 'z5123456', name: 'Andrew Taylor' }}
+					currClass={{ code: 'F11A', labLocation: 'Alto Lab' }}
+					student={{ zid: 'z5123456', name: 'Andrew Taylor', classCode: null }}
 					requests={[
 						{
 							id: 1,
