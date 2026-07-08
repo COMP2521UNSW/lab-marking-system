@@ -42,6 +42,7 @@ import {
 	toMarkingRequestAsTutorList,
 	toOpenRequestList,
 	toPendingRequestList,
+	toStudent,
 	toUser,
 } from './utils/mappers';
 import { getCurrentWeek } from './utils/term';
@@ -267,7 +268,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 		);
 
 		return Array.from(groupedRequests.entries()).map(([zid, requests]) => ({
-			student: toUser(requests[0].student),
+			student: toStudent(requests[0].student),
 			requests: toMarkingRequestAsTutorList(requests),
 		}));
 	}
@@ -692,7 +693,7 @@ class BackendRequestsService implements BackendService<RequestsService> {
 		if (dbStudent === null) {
 			throw new InternalServerError(`Couldn't find user with zid ${zid}`);
 		}
-		return toUser(dbStudent);
+		return toStudent(dbStudent);
 	}
 
 	private async getClass(code: string) {

@@ -17,9 +17,7 @@ export type UserDetails = {
 	classCode: string | null;
 };
 
-export type Student = User;
-
-export type StudentDetails = {
+export type Student = {
 	zid: string;
 	name: string;
 	classCode: string | null;

@@ -15,7 +15,7 @@ import type { BackendService } from '@/types/utils';
 import {
 	toLogEventList,
 	toMarkEntryList,
-	toStudentDetailsList,
+	toStudentList,
 } from './utils/mappers';
 
 class BackendStudentsService implements BackendService<StudentsService> {
@@ -26,7 +26,7 @@ class BackendStudentsService implements BackendService<StudentsService> {
 
 		const students = await dbStudents.searchStudents(req.q);
 
-		return toStudentDetailsList(students);
+		return toStudentList(students);
 	}
 
 	private validateSearchStudents(req: SearchStudentsRequestData) {
