@@ -33,6 +33,8 @@ export function MarkDialog({
 	student: Student;
 	request: MarkingRequestAsTutor;
 }) {
+	const [prevOpen, setPrevOpen] = React.useState(open);
+
 	const formSchema = React.useMemo(
 		() =>
 			z.object({
@@ -68,12 +70,13 @@ export function MarkDialog({
 
 	const [loading, setLoading] = React.useState(false);
 
-	React.useEffect(() => {
+	if (open !== prevOpen) {
+		setPrevOpen(open);
 		if (open) {
 			form.reset();
 			setLoading(false);
 		}
-	}, [form, open]);
+	}
 
 	const handleSubmit = async (values: z.infer<typeof formSchema>) => {
 		setLoading(true);

@@ -40,6 +40,8 @@ export function UpdateRequestsDialog({
 
 	const { activeClasses } = useActiveClasses();
 
+	const [prevOpen, setPrevOpen] = React.useState(open);
+
 	const [selectedClass, setSelectedClass] = React.useState(attendedClass);
 
 	const [selectedActivities, setSelectedActivities] = React.useState<string[]>(
@@ -48,20 +50,18 @@ export function UpdateRequestsDialog({
 
 	const [loading, setLoading] = React.useState(false);
 
-	const enrolledClass = React.useMemo(
-		() =>
-			activeClasses.current.find((cls) => cls.code === user?.classCode) ||
-			activeClasses.upcoming.find((cls) => cls.code === user?.classCode),
-		[activeClasses, user?.classCode],
-	);
-
-	React.useEffect(() => {
+	if (open !== prevOpen) {
+		setPrevOpen(open);
 		if (open) {
 			setSelectedClass(attendedClass);
 			setSelectedActivities([]);
 			setLoading(false);
 		}
-	}, [open, attendedClass]);
+	}
+
+	const enrolledClass =
+		activeClasses.current.find((cls) => cls.code === user?.classCode) ||
+		activeClasses.upcoming.find((cls) => cls.code === user?.classCode);
 
 	const canSubmit =
 		(mode === 'create' &&
