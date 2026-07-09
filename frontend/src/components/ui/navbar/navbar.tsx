@@ -31,6 +31,7 @@ import {
 import { Link } from '@/components/ui/base/link';
 import { LogoImage, LogoText } from '@/components/ui/base/logo';
 import { ThemeToggle } from '@/components/ui/base/theme-toggle';
+import { errorToast } from '@/components/ui/base/toast';
 import {
 	Tooltip,
 	TooltipContent,
@@ -279,10 +280,18 @@ function NavbarMenuLinkGroup({ navLinks }: { navLinks: NavLink[] }) {
 function NavbarMenuLogInOut({ loggedIn }: { loggedIn: boolean }) {
 	const { logOut } = useAuth();
 
+	const handleLogOut = () => {
+		try {
+			logOut();
+		} catch (err) {
+			errorToast(err);
+		}
+	};
+
 	return (
 		<DropdownMenuGroup>
 			{loggedIn ? (
-				<DropdownMenuItem role="button" onSelect={logOut}>
+				<DropdownMenuItem role="button" onSelect={handleLogOut}>
 					<LogOutIcon className="size-5" />
 					<Text>Log Out</Text>
 				</DropdownMenuItem>
