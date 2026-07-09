@@ -23,16 +23,19 @@ export function DenyDialog({
 	setOpen: (open: boolean) => void;
 	onConfirmed: (reason: string) => Promise<void>;
 }) {
+	const [prevOpen, setPrevOpen] = React.useState(open);
+
 	const [reason, setReason] = React.useState('');
 
 	const [loading, setLoading] = React.useState(false);
 
-	React.useEffect(() => {
+	if (open !== prevOpen) {
+		setPrevOpen(open);
 		if (open) {
 			setReason('');
 			setLoading(false);
 		}
-	}, [open]);
+	}
 
 	const handleConfirm = async () => {
 		setLoading(true);

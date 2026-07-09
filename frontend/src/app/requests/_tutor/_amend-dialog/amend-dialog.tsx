@@ -34,6 +34,8 @@ export function AmendDialog({
 	student: Student;
 	request: MarkedRequest;
 }) {
+	const [prevOpen, setPrevOpen] = React.useState(open);
+
 	const formSchema = React.useMemo(
 		() =>
 			z.object({
@@ -73,12 +75,13 @@ export function AmendDialog({
 
 	const [loading, setLoading] = React.useState(false);
 
-	React.useEffect(() => {
+	if (open !== prevOpen) {
+		setPrevOpen(open);
 		if (open) {
 			form.reset();
 			setLoading(false);
 		}
-	}, [form, open]);
+	}
 
 	const handleSubmit = async (values: z.infer<typeof formSchema>) => {
 		setLoading(true);

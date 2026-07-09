@@ -40,6 +40,8 @@ export function MarkDialog({
 	student: Student;
 	activities: ActivityAsTutor[];
 }) {
+	const [prevOpen, setPrevOpen] = React.useState(open);
+
 	const [activity, setActivity] = React.useState<ActivityAsTutor | null>(null);
 
 	const formSchema = React.useMemo(() => {
@@ -86,13 +88,14 @@ export function MarkDialog({
 
 	const [loading, setLoading] = React.useState(false);
 
-	React.useEffect(() => {
+	if (open !== prevOpen) {
+		setPrevOpen(open);
 		if (open) {
 			setActivity(null);
 			form.reset();
 			setLoading(false);
 		}
-	}, [form, open]);
+	}
 
 	React.useEffect(() => {
 		if (activity !== null && form.getFieldState('mark').isTouched) {

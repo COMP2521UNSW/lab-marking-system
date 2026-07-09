@@ -32,16 +32,19 @@ export function DeclineDialog({
 	setOpen: (open: boolean) => void;
 	request: MarkingRequestAsTutor;
 }) {
+	const [prevOpen, setPrevOpen] = React.useState(open);
+
 	const [reason, setReason] = React.useState({ value: '', text: '' });
 
 	const [loading, setLoading] = React.useState(false);
 
-	React.useEffect(() => {
+	if (open !== prevOpen) {
+		setPrevOpen(open);
 		if (open) {
 			setReason({ value: '', text: '' });
 			setLoading(false);
 		}
-	}, [open]);
+	}
 
 	const handleReasonSelect = (value: string) => {
 		const newReason = reasonPresets.find((reason) => reason.value === value);
