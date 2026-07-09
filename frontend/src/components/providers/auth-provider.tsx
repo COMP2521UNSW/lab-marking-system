@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			const user = await authService.logIn({ zid, password });
 			setUser(user);
 		} catch (err) {
-			errorToast(err);
+			throw err;
 		}
 	};
 
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				setLoading(false);
 			});
 		} catch (err) {
-			errorToast(err);
+			throw err;
 		}
 	};
 
