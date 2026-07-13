@@ -12,6 +12,7 @@
 		"start": "next start"
 	},
 	"dependencies": {
+		"@base-ui/react": "^1.6.0",
 		"@dr.pogodin/react-helmet": "catalog:",
 		"@heroicons/react": "catalog:",
 		"@hookform/resolvers": "catalog:",
