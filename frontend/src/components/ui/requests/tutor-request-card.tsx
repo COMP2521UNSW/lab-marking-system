@@ -91,11 +91,7 @@ function MembershipIcon({
 
 	return (
 		<Tooltip>
-			<TooltipTrigger
-				delay={50}
-				openOnHover={true}
-				className="rounded-full outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
-			>
+			<TooltipTrigger className="rounded-full outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]">
 				{isClassMember ? (
 					<MemberIcon />
 				) : (
