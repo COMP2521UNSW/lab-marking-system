@@ -1,7 +1,6 @@
 'use client';
 
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
-import { BadgeAlertIcon, BadgeInfoIcon } from 'lucide-react';
 import * as React from 'react';
 
 import type { Class } from '@workspace/types/classes';
@@ -21,7 +20,7 @@ import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from '@/components/ui/base/tooltip';
+} from '@/components/ui/base/tooltip-v2';
 import { Text } from '@/components/ui/base/typography';
 import { TutorRequestStatus } from '@/components/ui/requests/request-status';
 import { cn } from '@/lib/utils';
@@ -92,11 +91,15 @@ function MembershipIcon({
 
 	return (
 		<Tooltip>
-			<TooltipTrigger className="rounded-full outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]">
+			<TooltipTrigger
+				delay={50}
+				openOnHover={true}
+				className="rounded-full outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+			>
 				{isClassMember ? (
 					<MemberIcon />
 				) : (
-					<BadgeInfoIcon className="size-5 stroke-[1.75]" />
+					<CheckBadgeIcon className="size-5 fill-border" viewBox="1 1 22 22" />
 				)}
 			</TooltipTrigger>
 			<TooltipContent>
