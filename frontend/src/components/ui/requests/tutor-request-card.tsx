@@ -95,7 +95,10 @@ function MembershipIcon({
 				{isClassMember ? (
 					<MemberIcon />
 				) : (
-					<CheckBadgeIcon className="size-5 fill-border" viewBox="1 1 22 22" />
+					<CheckBadgeIcon
+						className="size-5 fill-muted-foreground/40"
+						viewBox="1 1 22 22"
+					/>
 				)}
 			</TooltipTrigger>
 			<TooltipContent>
