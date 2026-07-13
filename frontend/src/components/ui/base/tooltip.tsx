@@ -3,6 +3,7 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import * as React from 'react';
 
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
 function TooltipProvider({
@@ -19,11 +20,28 @@ function TooltipProvider({
 }
 
 function Tooltip({
+	open,
+	onOpenChange,
 	...props
 }: React.ComponentProps<typeof TooltipPrimitive.Root>) {
+	const isMobile = useIsMobile();
+
+	const [isOpen, setIsOpen] = React.useState(false);
+
+	const handleOpenChange = (isOpen: boolean) => {
+		setIsOpen(isOpen);
+		onOpenChange?.(isOpen);
+	};
+
 	return (
 		<TooltipProvider>
-			<TooltipPrimitive.Root data-slot="tooltip" {...props} />
+			<TooltipPrimitive.Root
+				data-slot="tooltip"
+				// don't show tooltip on mobile
+				open={!isMobile && (open ?? isOpen)}
+				onOpenChange={handleOpenChange}
+				{...props}
+			/>
 		</TooltipProvider>
 	);
 }

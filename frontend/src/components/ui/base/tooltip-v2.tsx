@@ -9,7 +9,14 @@ function Tooltip({ ...props }: PopoverPrimitive.Root.Props) {
 }
 
 function TooltipTrigger({ ...props }: PopoverPrimitive.Trigger.Props) {
-	return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
+	return (
+		<PopoverPrimitive.Trigger
+			data-slot="popover-trigger"
+			delay={0}
+			openOnHover={true}
+			{...props}
+		/>
+	);
 }
 
 function TooltipContent({

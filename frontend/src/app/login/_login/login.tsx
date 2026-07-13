@@ -8,7 +8,7 @@ import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from '@/components/ui/base/tooltip';
+} from '@/components/ui/base/tooltip-v2';
 import { Text } from '@/components/ui/base/typography';
 import { cn } from '@/lib/utils';
 
@@ -77,24 +77,28 @@ function LogInWithSSOButton() {
 	return (
 		// https://ui.shadcn.com/docs/components/radix/tooltip - Disabled Button
 		<Tooltip>
-			<TooltipTrigger asChild>
-				<span
-					className="inline-block w-full outline-none"
-					tabIndex={0}
-					role="button"
-					aria-label="Log in with zID @ a d . u n s w . e d u . a u"
-					aria-description="This is currently unavailable, please log in with your zID and zPass"
-					aria-disabled
-				>
-					<Button
-						disabled
-						variant="primary"
-						className="w-full py-4 outline-none"
+			<TooltipTrigger
+				nativeButton={false}
+				render={
+					// eslint-disable-next-line jsx-a11y/role-supports-aria-props
+					<span
+						className="inline-block w-full outline-none"
+						tabIndex={0}
+						role="button"
+						aria-label="Log in with zID @ a d . u n s w . e d u . a u"
+						aria-description="This is currently unavailable, please log in with your zID and zPass"
+						aria-disabled
 					>
-						<Text>Log in with zID@ad.unsw.edu.au</Text>
-					</Button>
-				</span>
-			</TooltipTrigger>
+						<Button
+							disabled
+							variant="primary"
+							className="w-full py-4 outline-none"
+						>
+							<Text>Log in with zID@ad.unsw.edu.au</Text>
+						</Button>
+					</span>
+				}
+			/>
 			<TooltipContent className="text-center">
 				This is currently unavailable,
 				<br />

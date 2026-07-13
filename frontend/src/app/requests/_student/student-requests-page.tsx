@@ -22,7 +22,7 @@ import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from '@/components/ui/base/tooltip';
+} from '@/components/ui/base/tooltip-v2';
 import { Text } from '@/components/ui/base/typography';
 import { StudentRequestCard } from '@/components/ui/requests/student-request-card';
 import pagesService from '@/services/pages';
