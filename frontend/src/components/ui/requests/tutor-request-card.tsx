@@ -22,6 +22,7 @@ import {
 	TooltipTrigger,
 } from '@/components/ui/base/tooltip-v2';
 import { Text } from '@/components/ui/base/typography';
+import ClassMemberIcon from '@/components/ui/icons/class-member-icon';
 import { TutorRequestStatus } from '@/components/ui/requests/request-status';
 import { cn } from '@/lib/utils';
 import requestsService from '@/services/requests';
@@ -54,11 +55,13 @@ export function TutorRequestCard({
 				className,
 			)}
 		>
-			<div className="flex justify-between p-2">
-				<div className="flex gap-2">
-					<Text>{student.name}</Text>
-					<MembershipIcon currClass={currClass} student={student} />
-				</div>
+			<div className="flex justify-between items-center gap-2 p-2">
+				<Text>
+					{student.name}{' '}
+					<span className="inline leading-0 align-[-5px]">
+						<MembershipIcon currClass={currClass} student={student} />
+					</span>
+				</Text>
 				<Text>{student.zid}</Text>
 			</div>
 
@@ -93,7 +96,10 @@ function MembershipIcon({
 		<Tooltip>
 			<TooltipTrigger className="rounded-full outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]">
 				{isClassMember ? (
-					<MemberIcon />
+					<ClassMemberIcon
+						className="size-5 fill-primary"
+						viewBox="1 1 22 22"
+					/>
 				) : (
 					<CheckBadgeIcon
 						className="size-5 fill-muted-foreground/40"
@@ -109,18 +115,6 @@ function MembershipIcon({
 						: `Enrolled in ${student.classCode}`}
 			</TooltipContent>
 		</Tooltip>
-	);
-}
-
-function MemberIcon() {
-	return (
-		<div className="relative">
-			<div className="absolute top-0 left-0 size-full rounded-full p-1 bg-white bg-clip-content" />
-			<CheckBadgeIcon
-				className="relative size-5 fill-primary"
-				viewBox="1 1 22 22"
-			/>
-		</div>
 	);
 }
 
