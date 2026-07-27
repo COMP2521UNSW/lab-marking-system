@@ -55,7 +55,7 @@ export function TutorRequestCard({
 				className,
 			)}
 		>
-			<div className="flex justify-between items-center gap-2 p-2">
+			<div className="flex justify-between items-center gap-4 p-2">
 				<Text>
 					{student.name}{' '}
 					<span className="inline leading-0 align-[-5px]">
