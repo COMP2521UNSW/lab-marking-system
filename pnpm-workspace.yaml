@@ -5,6 +5,7 @@ packages:
   - shared/*
 
 allowBuilds:
+  '@parcel/watcher': true
   bcrypt: true
   esbuild: true
   sharp: true
@@ -14,22 +15,22 @@ catalog:
   '@babel/core': 7.29.7
   '@babel/preset-env': 7.29.7
   '@babel/preset-typescript': 7.29.7
-  '@dr.pogodin/react-helmet': 3.2.2
-  '@eslint/js': 9.39.4
-  '@faker-js/faker': 10.5.0
+  '@dr.pogodin/react-helmet': 3.2.3
+  '@eslint/js': 9.39.5
+  '@faker-js/faker': 10.6.0
   '@heroicons/react': 2.2.0
-  '@hookform/resolvers': 5.4.0
-  '@jest/globals': 30.4.1
+  '@hookform/resolvers': 5.9.1
+  '@jest/globals': 30.5.0
   '@libsql/client': 0.17.4
-  '@radix-ui/react-dialog': 1.1.19
-  '@radix-ui/react-dropdown-menu': 2.1.20
-  '@radix-ui/react-label': 2.1.11
-  '@radix-ui/react-scroll-area': 1.2.14
-  '@radix-ui/react-separator': 1.1.11
-  '@radix-ui/react-slot': 1.3.0
-  '@radix-ui/react-tabs': 1.1.17
-  '@radix-ui/react-tooltip': 1.2.12
-  '@tailwindcss/postcss': 4.3.2
+  '@radix-ui/react-dialog': 1.1.23
+  '@radix-ui/react-dropdown-menu': 2.1.24
+  '@radix-ui/react-label': 2.1.15
+  '@radix-ui/react-scroll-area': 1.2.18
+  '@radix-ui/react-separator': 1.1.15
+  '@radix-ui/react-slot': 1.3.3
+  '@radix-ui/react-tabs': 1.1.21
+  '@radix-ui/react-tooltip': 1.2.16
+  '@tailwindcss/postcss': 4.3.3
   '@trivago/prettier-plugin-sort-imports': 6.0.2
   '@types/bcrypt': 6.0.0
   '@types/cookie-parser': 1.4.10
@@ -37,70 +38,70 @@ catalog:
   '@types/http-proxy': 1.17.17
   '@types/jsonwebtoken': 9.0.10
   '@types/morgan': 1.9.10
-  '@types/node': 26.1.1
-  '@types/pg': 8.20.0
-  '@types/react': 19.2.17
-  '@types/react-dom': 19.2.3
+  '@types/node': 26.4.0
+  '@types/pg': 8.23.1
+  '@types/react': 19.2.18
+  '@types/react-dom': 19.2.5
   '@types/triple-beam': 1.3.5
   '@types/wait-on': 5.3.4
-  axios: 1.18.1
-  babel-jest: 30.4.1
+  axios: 1.20.0
+  babel-jest: 30.5.0
   bcrypt: 6.0.0
-  chalk: 5.6.2
+  chalk: 6.0.0
   cheerio: 1.2.0
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   cookie: 2.0.1
   cookie-parser: 1.4.7
   cross-env: 10.1.0
-  dayjs: 1.11.21
+  dayjs: 1.11.23
   dotenv: 17.4.2
   drizzle-kit: 0.31.10
   drizzle-orm: 0.45.2
-  eslint: 9.39.4
-  eslint-config-next: 16.2.10
+  eslint: 9.39.5
+  eslint-config-next: 16.3.3
   express: 5.2.1
-  express-rate-limit: 8.5.2
-  globals: 17.7.0
+  express-rate-limit: 8.7.0
+  globals: 17.11.0
   http-proxy: 1.18.1
-  immer: 11.1.11
-  jest: 30.4.2
+  immer: 11.1.18
+  jest: 30.5.0
   jiti: 2.7.0
   jsonwebtoken: 9.0.3
-  ldapts: 8.1.8
-  lucide-react: 1.23.0
-  morgan: 1.11.0
-  next: 16.2.10
+  ldapts: 9.0.0
+  lucide-react: 1.38.0
+  morgan: 1.12.0
+  next: 16.3.3
   next-themes: 0.4.6
   node-cache: 5.1.2
   node-cron: 4.6.0
-  pg: 8.22.0
-  prettier: 3.9.4
+  pg: 8.23.0
+  prettier: 3.9.6
   prettier-plugin-packagejson: 3.0.2
-  radix-ui: 1.6.2
-  react: 19.2.7
-  react-dom: 19.2.7
-  react-hook-form: 7.81.0
-  smol-toml: 1.7.0
+  radix-ui: 1.6.7
+  react: 19.2.8
+  react-dom: 19.2.8
+  react-hook-form: 7.87.0
+  smol-toml: 1.8.0
   socket.io: 4.8.3
   socket.io-client: 4.8.3
-  sonner: 2.0.7
+  sonner: 2.0.8
   tailwind-merge: 3.6.0
-  tailwindcss: 4.3.2
+  tailwindcss: 4.3.3
   temporal-polyfill: 0.3.2
   triple-beam: 1.4.1
   ts-node: 10.9.2
-  tsc-alias: 1.9.0
-  tsx: 4.23.0
+  tsc-alias: 1.9.2
+  tsx: 4.23.13
   tw-animate-css: 1.4.0
   typescript: 6.0.3
-  typescript-eslint: 8.63.0
+  typescript-eslint: 8.68.0
   use-debounce: 10.1.1
   use-immer: 0.11.0
-  wait-on: 9.0.10
+  wait-on: 9.1.0
   winston: 3.19.0
   winston-daily-rotate-file: 5.0.0
-  zod: 4.4.3
+  zod: 4.5.4
 
 minimumReleaseAgeExclude:
   - '@typescript/typescript-aix-ppc64@7.0.2'
@@ -124,3 +125,53 @@ minimumReleaseAgeExclude:
   - '@typescript/typescript-win32-arm64@7.0.2'
   - '@typescript/typescript-win32-x64@7.0.2'
   - typescript@7.0.2
+  - '@jest/console@30.5.0'
+  - '@jest/core@30.5.0'
+  - '@jest/diff-sequences@30.5.0'
+  - '@jest/environment@30.5.0'
+  - '@jest/expect-utils@30.5.0'
+  - '@jest/expect@30.5.0'
+  - '@jest/fake-timers@30.5.0'
+  - '@jest/get-type@30.5.0'
+  - '@jest/globals@30.5.0'
+  - '@jest/pattern@30.5.0'
+  - '@jest/reporters@30.5.0'
+  - '@jest/schemas@30.5.0'
+  - '@jest/snapshot-utils@30.5.0'
+  - '@jest/source-map@30.5.0'
+  - '@jest/test-result@30.5.0'
+  - '@jest/test-sequencer@30.5.0'
+  - '@jest/transform@30.5.0'
+  - '@jest/types@30.5.0'
+  - babel-jest@30.5.0
+  - babel-plugin-jest-hoist@30.5.0
+  - babel-preset-jest@30.5.0
+  - expect@30.5.0
+  - express-rate-limit@8.7.0
+  - jest-changed-files@30.5.0
+  - jest-circus@30.5.0
+  - jest-cli@30.5.0
+  - jest-config@30.5.0
+  - jest-diff@30.5.0
+  - jest-docblock@30.5.0
+  - jest-each@30.5.0
+  - jest-environment-node@30.5.0
+  - jest-haste-map@30.5.0
+  - jest-leak-detector@30.5.0
+  - jest-matcher-utils@30.5.0
+  - jest-message-util@30.5.0
+  - jest-mock@30.5.0
+  - jest-regex-util@30.5.0
+  - jest-resolve-dependencies@30.5.0
+  - jest-resolve@30.5.0
+  - jest-runner@30.5.0
+  - jest-runtime@30.5.0
+  - jest-snapshot@30.5.0
+  - jest-util@30.5.0
+  - jest-validate@30.5.0
+  - jest-watcher@30.5.0
+  - jest-worker@30.5.0
+  - jest@30.5.0
+  - lucide-react@1.35.0 || 1.38.0
+  - pretty-format@30.5.0
+  - zod@4.5.2
