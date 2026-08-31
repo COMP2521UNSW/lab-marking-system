@@ -83,7 +83,7 @@ export function ViewDialog({
 						<ScrollArea className={state.marks.length > 10 ? 'h-96' : 'h-auto'}>
 							<Table>
 								<TableHeader>
-									<TableRow className="**:[&th]:text-base **:[&th]:text-primary **:[&th]:font-light">
+									<TableRow className="[&_th]:text-base [&_th]:text-primary [&_th]:font-light">
 										<TableHead>Activity</TableHead>
 										<TableHead>Mark</TableHead>
 										<TableHead>Time marked</TableHead>

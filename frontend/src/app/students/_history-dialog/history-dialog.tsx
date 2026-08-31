@@ -86,7 +86,7 @@ export function HistoryDialog({
 						<ScrollArea className={state.logs.length > 10 ? 'h-96' : 'h-auto'}>
 							<Table>
 								<TableHeader>
-									<TableRow className="**:[&th]:text-base **:[&th]:text-primary **:[&th]:font-light">
+									<TableRow className="[&_th]:text-base [&_th]:text-primary [&_th]:font-light">
 										<TableHead>Event</TableHead>
 										<TableHead>Activity</TableHead>
 										<TableHead>Class</TableHead>
